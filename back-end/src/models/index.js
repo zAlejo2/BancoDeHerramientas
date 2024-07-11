@@ -128,22 +128,6 @@ Elemento.belongsToMany(Encargo, {
     as: 'encargos'
 });
 
-// Sincronización con la base de datos (opcional)
-sequelize.sync()
-    .then(() => console.log('Models synchronized with database'))
-    .catch((error) => console.error('Error syncing models:', error));
-
-    // Buscar un usuario y sus préstamos
-// Buscar un usuario y sus préstamos
-Usuario.findOne({ where: { documento: 1 }, include: ['prestamos'] })
-  .then(user => console.log(user))
-  .catch(err => console.error(err));
-
-
-
-
-
-
 export {
     Administrador,
     Usuario,

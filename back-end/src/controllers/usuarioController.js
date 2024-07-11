@@ -1,8 +1,7 @@
-// controllers/userController.js
-import Usuario from '../models/index.js';
+import { Usuario } from '../models/index.js';
 
 // Obtener todos los usuarios
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
     try {
         const users = await Usuario.findAll();
         res.json(users);
@@ -11,14 +10,14 @@ exports.getAllUsers = async (req, res) => {
     }
 };
 
-// Obtener un usuario por ID
-exports.getUserById = async (req, res) => {
+// Obtener un usuario por documento
+const getUserById = async (req, res) => {
     try {
-        const user = await Usuario.findByPk(req.params.id);
+        const user = await Usuario.findByPk(req.params.documento);
         if (user) {
             res.json(user);
         } else {
-            res.status(404).json({ message: 'User not found' });
+            res.status(404).json({ message: 'El usuario ingresado no existe' });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -26,7 +25,7 @@ exports.getUserById = async (req, res) => {
 };
 
 // Crear un nuevo usuario
-exports.createUser = async (req, res) => {
+const createUser = async (req, res) => {
     try {
         const user = await Usuario.create(req.body);
         res.status(201).json(user);
@@ -36,13 +35,13 @@ exports.createUser = async (req, res) => {
 };
 
 // Actualizar un usuario
-exports.updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
     try {
         const [updated] = await Usuario.update(req.body, {
-            where: { id: req.params.id }
+            where: { documento: req.params.documento }
         });
         if (updated) {
-            const updatedUser = await Usuario.findByPk(req.params.id);
+            const updatedUser = await Usuario.findByPk(req.params.documento);
             res.json(updatedUser);
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -53,13 +52,14 @@ exports.updateUser = async (req, res) => {
 };
 
 // Eliminar un usuario
-exports.deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
     try {
         const deleted = await Usuario.destroy({
-            where: { id: req.params.id }
+            where: { documento: req.params.documento }
         });
         if (deleted) {
-            res.status(204).send();
+            res.status(200).json({ message: 'usuario eliminado correctamente' });
+            // el 204 indica que el servidor ha recibido la solicitud con éxito, pero no devuelve ningún contenido.
         } else {
             res.status(404).json({ message: 'User not found' });
         }
@@ -67,3 +67,5 @@ exports.deleteUser = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+export { getAllUsers, getUserById, createUser, updateUser, deleteUser };
