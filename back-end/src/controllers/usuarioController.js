@@ -27,8 +27,14 @@ const getUserById = async (req, res) => {
 // Crear un nuevo Usuario
 const createUser = async (req, res) => {
     try {
-        const user = await Usuario.create(req.body);
-        res.status(201).json(user);
+        const userExisting = await Usuario.findByPk(req.body.documento);
+
+        if(!userExisting) { 
+            const user = await Usuario.create(req.body);
+            res.status(201).json(user);
+        } else {
+            res.status(400).json({ message: 'El Usuario ingresado ya existe' });
+        }
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -38,7 +44,7 @@ const createUser = async (req, res) => {
 const updateUser = async (req, res) => {
     try {
         const user = await Usuario.findByPk(req.params.documento);
-        
+
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado' });
         }
@@ -54,8 +60,8 @@ const updateUser = async (req, res) => {
         });
 
         if (updated) {
-            const updateduser = await Usuario.findByPk(req.params.documento);
-            res.json(updateduser);
+            const updatedUser = await Usuario.findByPk(req.params.documento);
+            res.json(updatedUser);
         } else {
             res.status(404).json({ message: 'Error al actualizar el Usuario' });
         }
@@ -63,7 +69,6 @@ const updateUser = async (req, res) => {
         res.status(400).json({ error: error.message });
     }
 };
-
 
 // Eliminar un Usuario
 const deleteUser = async (req, res) => {
