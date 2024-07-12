@@ -2,8 +2,11 @@ import express from 'express';
 import config from './config/config.js';
 import cors from 'cors';
 // import path from 'path';
-import userRoutes from './routes/usuarioRoute.js';
-// import adminRoutes from './routes/administradorRoute.js';
+
+import adminRoutes from './routes/administradorRouter.js';
+import userRoutes from './routes/usuarioRouter.js';
+import roleRoutes from './routes/rolRouter.js';
+import elementRoutes from './routes/elementoRouter.js';
 import sequelize from './db/connection.js';
 
 const app = express();
@@ -13,7 +16,10 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
-app.use('/api/users', userRoutes);  
+app.use('/api/admins', adminRoutes);
+app.use('/api/users', userRoutes); 
+app.use('/api/roles', roleRoutes); 
+app.use('/api/elements',elementRoutes);
 
 // // Sirviendo archivos estáticos para admin
 // app.use('/admin', express.static(path.join(__dirname, '../front-end/admin/build')));

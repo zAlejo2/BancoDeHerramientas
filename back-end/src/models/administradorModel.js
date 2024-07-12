@@ -4,7 +4,7 @@ import sequelize from '../db/connection.js'; // Importa la instancia de Sequeliz
 class Administrador extends Model {}
 
 // Expresión regular para validar la contraseña
-// const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
 // Definición del modelo
 Administrador.init({
@@ -16,13 +16,13 @@ Administrador.init({
   contrasena: {
     type: DataTypes.STRING(45),
     allowNull: false,
-    // validate: {
-    //   // Validaciones personalizadas
-    //   is: {
-    //     args: passwordRegex,
-    //     msg: 'Mínimo 6 caracteres, mínimo un número, una letra y un caracter especial '
-    //   }
-    // }
+    validate: {
+      // Validaciones personalizadas
+      is: {
+        args: passwordRegex,
+        msg: 'Mínimo 6 caracteres, mínimo un número, una letra y un caracter especial '
+      }
+    }
   }
 }, {
   sequelize,         // Instancia de Sequelize

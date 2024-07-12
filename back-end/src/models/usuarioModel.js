@@ -4,9 +4,6 @@ import Rol from './rolModel.js';
 
 class Usuario extends Model {}
 
-// Expresión regular para validar la contraseña
-// const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
 Usuario.init ({
     documento: {
         type: DataTypes.INTEGER,
@@ -24,16 +21,16 @@ Usuario.init ({
     contrasena: {
         type: DataTypes.STRING(45),
         allowNull: true,
-    //     validate: {
-    //         len: {
-    //           args: [6, 100],
-    //           msg: 'Mínimo 6 caracteres'
-    //         },
-    //         is: {
-    //           args: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/,
-    //           msg: 'Mínimo 6 caracteres, mínimo 2 número, una letra y un caracter especial'
-    //         }
-    //     }
+        validate: {
+            len: {
+              args: [6, 100],
+              msg: 'Mínimo 6 caracteres'
+            },
+            is: {
+              args: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/,
+              msg: 'Mínimo 6 caracteres, mínimo 2 número, una letra y un caracter especial'
+            }
+        }
     },
     fechaInicio: {
         type: DataTypes.DATE,
