@@ -23,12 +23,16 @@ Administrador.init({
         msg: 'Mínimo 6 caracteres, mínimo un número, una letra y un caracter especial '
       }
     }
+  },
+  nombre: {
+    type: DataTypes.STRING(50),
+    allowNull: false
   }
 }, {
   sequelize,         // Instancia de Sequelize
   modelName: 'Administrador',
-  tableName: 'administrador',
-  timestamps: false  // La tabla no tiene campos de timestamps
+  tableName: 'administradores',
+  timestamps: false
 });
 
 export default Administrador;

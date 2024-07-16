@@ -1,6 +1,7 @@
 import { Elemento } from '../models/index.js';
+import { Sequelize } from 'sequelize';
 
-// Obtener todos los roles
+// Obtener todos los elementos
 const getAllElements = async (req, res) => {
     try {
         const elements = await Elemento.findAll();
@@ -10,7 +11,7 @@ const getAllElements = async (req, res) => {
     }
 };
 
-// Obtener un rol por id
+// Obtener un elemento por id
 const getElementById = async (req, res) => {
     try {
         const element = await Elemento.findByPk(req.params.idelemento);
@@ -24,34 +25,77 @@ const getElementById = async (req, res) => {
     }
 };
 
-// Crear un nuevo rol
-const createElement = async (req, res) => {
+// Obtener un elemento por su nombre
+const getElementByName = async (req, res) => {
     try {
-        const element = await Elemento.create(req.body);
-        res.status(201).json(element);
+        const descripcion = req.params.descripcion.toLowerCase();
+        console.log('Descripción buscada:', descripcion); // Log de la descripción buscada
+
+        const elements = await Elemento.findAll({ 
+            where: Sequelize.where(
+                Sequelize.fn('LOWER', Sequelize.col('descripcion')),
+                'LIKE',
+                `%${descripcion}%`
+            )
+        });
+        
+        if (elements.length > 0) {
+            res.json(elements);
+        } else {
+            res.status(404).json({ message: 'El elemento buscado no se encuentra' });
+        }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
-// Actualizar un rol
-const updateElement = async (req, res) => {
+// Crear un nuevo elemento
+const createElement = async (req, res) => {
     try {
-        const [updated] = await Elemento.update(req.body, {
-            where: { idelemento: req.params.idelemento }
-        });
-        if (updated) {
-            const updatedElement = await Elemento.findByPk(req.params.idelemento);
-            res.json(updatedElement);
+        const elementExisting = await Elemento.findByPk(req.body.idelemento);
+
+        if(!elementExisting) { 
+            const element = await Elemento.create(req.body);
+            res.status(201).json(element);
         } else {
-            res.status(404).json({ message: 'Elemento no encontrado' });
+            res.status(400).json({ message: 'El elemento ingresado ya existe' });
         }
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
 
-// Eliminar un rol
+// Actualizar un elemento
+const updateElement = async (req, res) => {
+    try {
+        const element = await Elemento.findByPk(req.params.idelemento);
+
+        if (!element) {
+            return res.status(404).json({ message: 'elemento no encontrado' });
+        }
+
+        const isSameData = Object.keys(req.body).every(key => element[key] === req.body[key]);
+
+        if (isSameData) {
+            return res.status(400).json({ message: 'No se ha hecho ningún cambio en el elemento' });
+        }
+
+        const [updated] = await Elemento.update(req.body, {
+            where: { idelemento: req.params.idelemento }
+        });
+
+        if (updated) {
+            const updatedElement = await Elemento.findByPk(req.params.idelemento);
+            res.json(updatedElement);
+        } else {
+            res.status(404).json({ message: 'Error al actualizar el elemento' });
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+// Eliminar un elemento
 const deleteElement = async (req, res) => {
     try {
         const deleted = await Elemento.destroy({
@@ -68,4 +112,4 @@ const deleteElement = async (req, res) => {
     }
 };
 
-export { getAllElements, getElementById, createElement, updateElement, deleteElement };
+export { getAllElements, getElementById, getElementByName, createElement, updateElement, deleteElement };

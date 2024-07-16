@@ -27,8 +27,14 @@ const getRoleById = async (req, res) => {
 // Crear un nuevo rol
 const createRole = async (req, res) => {
     try {
-        const role = await Rol.create(req.body);
-        res.status(201).json(role);
+        const roleExisting = await Rol.findByPk(req.body.idrol);
+
+        if(!roleExisting) { 
+            const role = await Rol.create(req.body);
+            res.status(201).json(role);
+        } else {
+            res.status(400).json({ message: 'El Rol ingresado ya existe' });
+        }
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -37,14 +43,27 @@ const createRole = async (req, res) => {
 // Actualizar un rol
 const updateRole = async (req, res) => {
     try {
+        const role = await Rol.findByPk(req.params.idrol);
+
+        if (!role) {
+            return res.status(404).json({ message: 'Rol no encontrado' });
+        }
+
+        const isSameData = Object.keys(req.body).every(key => role[key] === req.body[key]);
+
+        if (isSameData) {
+            return res.status(400).json({ message: 'No se ha hecho ningún cambio en el Rol' });
+        }
+
         const [updated] = await Rol.update(req.body, {
             where: { idrol: req.params.idrol }
         });
+
         if (updated) {
             const updatedRole = await Rol.findByPk(req.params.idrol);
             res.json(updatedRole);
         } else {
-            res.status(404).json({ message: 'Rol no encontrado' });
+            res.status(404).json({ message: 'Error al actualizar el Rol' });
         }
     } catch (error) {
         res.status(400).json({ error: error.message });
