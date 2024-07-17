@@ -1,30 +1,53 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../db/connection.js';
+import { DataTypes, Model, Sequelize } from 'sequelize';
+import sequelize from '../db/connection.js'; 
+import Elemento from './elementoModel.js';
+import Prestamo from './prestamoModel.js';
 
-const ElementoHasPrestamo = sequelize.define('ElementoHasPrestamo', {
+class ElementoHasPrestamo extends Model{}
+
+ElementoHasPrestamo.init({
   elementos_idelemento: {
     type: DataTypes.INTEGER,
     primaryKey: true,
+    references: {
+        model: Elemento,
+        key: 'idelemento'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
   },
   prestamos_idprestamo: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      references: {
+          model: Prestamo,
+          key: 'idprestamo'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE'
+  },
+  cantidad: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+  },
+  fecha: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+  },
+  observaciones: {
+      type: DataTypes.STRING(45),
+      allowNull: true
+  },
+  estado: {
+      type: DataTypes.ENUM('actual', 'finalizado'),
+      allowNull: false
   }
 }, {
+  sequelize,
+  modelName: 'ElementoHasPrestamo',
   tableName: 'elementos_has_prestamos',
   timestamps: false
 });
-
-// Definición de las relaciones
-ElementoHasPrestamo.associate = (models) => {
-  ElementoHasPrestamo.belongsTo(models.Elemento, {
-    foreignKey: 'elementos_idelemento',
-    onDelete: 'CASCADE',
-  });
-  ElementoHasPrestamo.belongsTo(models.Prestamo, {
-    foreignKey: 'prestamos_idprestamo',
-    onDelete: 'CASCADE',
-  });
-};
 
 export default ElementoHasPrestamo;

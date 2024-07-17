@@ -1,5 +1,6 @@
 import sequelize from '../db/connection.js'; // Importa la conexión
 import Administrador from './administradorModel.js';
+import AdminSesion from './adminsesionModel.js';
 import Usuario from './usuarioModel.js';
 import Rol from './rolModel.js';
 import Elemento from './elementoModel.js';
@@ -13,6 +14,18 @@ import ElementoHasConsumo from './elementoHasConsumoModel.js';
 import ElementoHasEncargo from './elementoHasEncargoModel.js';
 
 // Definición de relaciones
+
+// Un administrador puede tener muchas sesiones
+Administrador.hasMany(AdminSesion, { 
+    foreignKey: 'administradores_documento',
+    as: 'sesiones' 
+});
+
+// Una sesión puede tener un administrador
+AdminSesion.belongsTo(Administrador, { 
+    foreignKey: 'administradores_documento',
+    as: 'administrador'
+});
 
 // Un Usuario pertenece a un Rol
 Usuario.belongsTo(Rol, {
@@ -128,8 +141,33 @@ Elemento.belongsToMany(Encargo, {
     as: 'encargos'
 });
 
+// Un Elemento puede tener muchos Danos
+Elemento.hasMany(Dano, { 
+    foreignKey: 'elementos_idelemento',
+    as: 'danos'
+});
+
+// Un Daño pertenece a un Elemento
+Dano.belongsTo(Elemento, { 
+    foreignKey: 'elementos_idelemento',
+    as: 'elemento'
+});
+
+// Un Elemento puede tener muchas Moras
+Elemento.hasMany(Mora, { 
+    foreignKey: 'elementos_idelemento',
+    as: 'moras' 
+});
+
+// Una mora pertenece a un Elemento 
+Mora.belongsTo(Elemento, { 
+    foreignKey: 'elementos_idelemento',
+    as: 'elemento' 
+});
+
 export {
     Administrador,
+    AdminSesion,
     Usuario,
     Rol,
     Elemento,

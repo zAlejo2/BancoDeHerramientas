@@ -10,29 +10,16 @@ Prestamo.init({
         primaryKey: true,
         allowNull: false 
     },
-    cantidad: {
-        type: DataTypes.INTEGER,
-        allowNull: false 
-    },
-    fecha: {
-        type: DataTypes.DATE,
-        allowNull: false 
-    },
-    observaciones: {
-        type: DataTypes.STRING(45),
-        allowNull: true 
-    },
-    estado: {
-        type: DataTypes.ENUM('actual', 'finalizado'),
-        allowNull: false 
-    },
     usuarios_documento: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
           model: Usuario,
           key: 'documento',
           allowNull: false
-        } 
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 },  {
     sequelize,

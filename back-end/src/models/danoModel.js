@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../db/connection.js';
 import Elemento from './elementoModel.js';
 import Usuario from './usuarioModel.js';
@@ -17,7 +17,8 @@ Dano.init({
     },
     fecha: {
         type: DataTypes.DATE,
-        allowNull: false 
+        allowNull: false, 
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
     },
     observaciones: {
         type: DataTypes.STRING(45),
@@ -25,19 +26,24 @@ Dano.init({
     },
     elementos_idelemento: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {  
           model: Elemento,
-          key: 'idelemento',
-          allowNull: false
-        } 
+          key: 'idelemento'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     },
     usuarios_documento: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
           model: Usuario,
           key: 'documento',
           allowNull: false
-        } 
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 },  {
     sequelize,

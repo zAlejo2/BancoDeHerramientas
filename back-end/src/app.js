@@ -37,9 +37,9 @@ app.use('/api/elements',elementRoutes);
 //   res.sendFile(path.join(__dirname, '../front-end/user/build/index.html'));
 // });
 
-// Sincronización con la base de datos
+// Sincronización de modelos con la base de datos
 sequelize.sync()
-  .then(() => console.log('Models synchronized with database'))
+  .then(() => console.log('Modelos sincronizados con la base de datos'))
   .catch((error) => console.error('Error syncing models:', error));
 
 // configuración

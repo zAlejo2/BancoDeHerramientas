@@ -1,4 +1,4 @@
-import { DataTypes, Model } from 'sequelize';
+import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../db/connection.js'; // Importa la instancia de Sequelize
 import Administrador from './administradorModel.js';
 
@@ -8,11 +8,12 @@ AdminSesion.init({
   idsesion: {
     type: DataTypes.INTEGER,
     autoIncrement: true,
-    primaryKey: true
+    primaryKey: true,
+    allowNull: false
   },
   login: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
   },
   logout: {
     type: DataTypes.DATE,
@@ -24,7 +25,8 @@ AdminSesion.init({
     references: {
         model: Administrador,
         key: 'documento'
-    },
+    },  
+    onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   }
 }, {
@@ -35,3 +37,6 @@ AdminSesion.init({
 });
 
 export default AdminSesion;
+
+// REOCORDAR tener en cuenta qué hacer si se borra algún registro de alguna tabla
+// con las llaves foráneas:     onDelete: 'CASCADE'    preguntar a jorge

@@ -11,7 +11,7 @@ Usuario.init ({
         allowNull: false 
     },
     nombreCompleto: {
-        type: DataTypes.STRING(45),
+        type: DataTypes.STRING(50),
         allowNull: false 
     },
     correo: {
@@ -33,11 +33,11 @@ Usuario.init ({
         }
     },
     fechaInicio: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false 
     },
     fechaFin: {
-        type: DataTypes.DATE,
+        type: DataTypes.DATEONLY,
         allowNull: false 
     },
     observaciones: {
@@ -46,11 +46,14 @@ Usuario.init ({
     },
     roles_idrol: {
         type: DataTypes.INTEGER,
+        allowNull: false,
         references: {
           model: Rol,
           key: 'idrol',
           allowNull: false
-        } 
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 },  {
     sequelize,

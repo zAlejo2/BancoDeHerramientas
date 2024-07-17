@@ -1,31 +1,14 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
+import Usuario from './usuarioModel.js';
 
 class Encargo extends Model {}
-
-// Definición del modelo
 
 Encargo.init({
     idencargo: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false
-    }, 
-    cantidad: {
-        type: DataTypes.INTEGER,
-        allowNull: false 
-    },
-    observaciones: {
-        type: DataTypes.STRING(45),
-        allowNull: true
-    }, 
-    fechaPedido: {
-        type: DataTypes.DATE,
-        allowNull: false 
-    },
-    fechaReclamo: {
-        type: DataTypes.DATE,
-        allowNull: false 
     },
     correo: {
         type: DataTypes.STRING(45),
@@ -34,6 +17,17 @@ Encargo.init({
     numero: {
         type: DataTypes.STRING(45),
         allowNull: false
+    },
+    usuarios_documento: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: Usuario,
+          key: 'documento',
+          allowNull: false
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 }, {
     sequelize,
