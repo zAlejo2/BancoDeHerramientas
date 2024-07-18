@@ -7,7 +7,8 @@ Elemento.init({
   idelemento: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    allowNull: false
+    allowNull: false,
+    autoIncrement: true
   },
   descripcion: {
     type: DataTypes.STRING(45),

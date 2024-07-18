@@ -8,7 +8,8 @@ Consumo.init({
     idconsumo: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false 
+        allowNull: false,
+        autoIncrement: true 
     },
     usuarios_documento: {
         type: DataTypes.INTEGER,

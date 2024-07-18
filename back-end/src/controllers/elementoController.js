@@ -29,7 +29,6 @@ const getElementById = async (req, res) => {
 const getElementByName = async (req, res) => {
     try {
         const descripcion = req.params.descripcion.toLowerCase();
-        console.log('Descripción buscada:', descripcion); // Log de la descripción buscada
 
         const elements = await Elemento.findAll({ 
             where: Sequelize.where(

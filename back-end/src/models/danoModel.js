@@ -9,7 +9,8 @@ Dano.init({
     iddano: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false 
+        allowNull: false,
+        autoIncrement: true 
     }, 
     cantidad: {
         type: DataTypes.INTEGER,

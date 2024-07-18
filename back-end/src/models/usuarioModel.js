@@ -10,7 +10,7 @@ Usuario.init ({
         primaryKey: true,
         allowNull: false 
     },
-    nombreCompleto: {
+    nombre: {
         type: DataTypes.STRING(50),
         allowNull: false 
     },

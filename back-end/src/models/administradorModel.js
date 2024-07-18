@@ -27,6 +27,10 @@ Administrador.init({
   nombre: {
     type: DataTypes.STRING(50),
     allowNull: false
+  },
+  tipo: {
+    type: DataTypes.ENUM('admin', 'contratista', 'practicante'),
+    allowNull: false
   }
 }, {
   sequelize,         // Instancia de Sequelize
