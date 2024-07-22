@@ -16,4 +16,6 @@ sequelize en la carpeta db en el archivo connection.js
 
 18/07/2024 : puse autoincremental los ids de algunos modelos y lo modifiqué en la bd,
 también agregué un campo tipo (tipo enum con valores: 'admin', 'contratista', 'practicante') a 
-la tabla de administrador, y corregí algunos errores en los modelos y controladores.s
+la tabla de administrador, y corregí algunos errores en los modelos y controladores
+
+RECORDAR IMOPRTARNTE COMO HACER BACKLOG O COPIA DEL PROYECTO!!!!
