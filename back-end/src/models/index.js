@@ -5,10 +5,12 @@ import Rol from './rolModel.js';
 import Area from './areaModel.js';
 import Elemento from './elementoModel.js';
 import PrestamoCorriente from './prestamocorrienteModel.js';
+import PrestamoEspecial from './prestamoespecialModel.js';
 import Mora from './moraModel.js';
 import Dano from './danoModel.js';
 import Consumo from './consumoModel.js';
 import Encargo from './encargoModel.js';
+import ElementoHasPrestamoEspecial from './elementoHasPrestamoespecialModel.js';
 import ElementoHasPrestamoCorriente from './elementoHasPrestamocorrienteModel.js';
 import ElementoHasConsumo from './elementoHasConsumoModel.js';
 import ElementoHasEncargo from './elementoHasEncargoModel.js';
@@ -66,11 +68,23 @@ Rol.hasMany(Cliente, {
 // Un Cliente puede tener muchos PrestamosCorrientes
 Cliente.hasMany(PrestamoCorriente, {
     foreignKey: 'clientes_documento',
-    as: 'prestamos'
+    as: 'prestamoscorrientes'
 });
 
 // Un PrestamoCorriente pertenece a un Cliente
 PrestamoCorriente.belongsTo(Cliente, {
+    foreignKey: 'clientes_documento',
+    as: 'cliente'
+});
+
+// Un Cliente puede tener muchos PrestamosEspeciales
+Cliente.hasMany(PrestamoEspecial, {
+    foreignKey: 'clientes_documento',
+    as: 'prestamosespeciales'
+});
+
+// Un PrestamoEspecial pertenece a un Cliente
+PrestamoEspecial.belongsTo(Cliente, {
     foreignKey: 'clientes_documento',
     as: 'cliente'
 });
@@ -126,7 +140,7 @@ Encargo.belongsTo(Cliente, {
 // Un PrestamoCorrriente puede tener muchos Elementos
 PrestamoCorriente.belongsToMany(Elemento, {
     through: ElementoHasPrestamoCorriente,
-    foreignKey: 'prestamos_idprestamo',
+    foreignKey: 'prestamoscorrientes_idprestamo',
     as: 'elementos'
 });
 
@@ -134,7 +148,21 @@ PrestamoCorriente.belongsToMany(Elemento, {
 Elemento.belongsToMany(PrestamoCorriente, {
     through: ElementoHasPrestamoCorriente,
     foreignKey: 'elementos_idelemento',
-    as: 'prestamos'
+    as: 'prestamoscorrientes'
+});
+
+// Un PrestamoEspecial puede tener muchos Elementos
+PrestamoEspecial.belongsToMany(Elemento, {
+    through: ElementoHasPrestamoEspecial,
+    foreignKey: 'prestamosespeciales_idprestamo',
+    as: 'elementos'
+});
+
+// Un Elemento puede estar en muchos PrestamosEspeciales
+Elemento.belongsToMany(PrestamoEspecial, {
+    through: ElementoHasPrestamoEspecial,
+    foreignKey: 'elementos_idelemento',
+    as: 'prestamosespeciales'
 });
 
 // Un Consumo puede tener muchos Elementos
@@ -197,10 +225,12 @@ export {
     Rol,
     Elemento,
     PrestamoCorriente,
+    PrestamoEspecial,
     Mora,
     Dano,
     Consumo,
     Encargo,
+    ElementoHasPrestamoEspecial,
     ElementoHasPrestamoCorriente,
     ElementoHasConsumo,
     ElementoHasEncargo
