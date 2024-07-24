@@ -1,21 +1,21 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
-import Usuario from './usuarioModel.js';
+import Cliente from './clienteModel.js';
 
-class Prestamo extends Model {}
+class PrestamoCorriente extends Model {}
 
-Prestamo.init({
+PrestamoCorriente.init({
     idprestamo: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
         autoIncrement: true
     },
-    usuarios_documento: {
+    clientes_documento: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: Usuario,
+          model: Cliente,
           key: 'documento',
           allowNull: false
         },
@@ -24,9 +24,9 @@ Prestamo.init({
     }
 },  {
     sequelize,
-    modelName: 'Prestamo',
-    tableName: 'prestamos',
+    modelName: 'PrestamoCorriente',
+    tableName: 'prestamoscorrientes',
     timestamps: false 
 });
 
-export default Prestamo;
+export default PrestamoCorriente;

@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js'; // Importa la instancia de Sequelize
+import Area from './areaModel.js';
 
 class Administrador extends Model {}
 
@@ -31,7 +32,18 @@ Administrador.init({
   tipo: {
     type: DataTypes.ENUM('admin', 'contratista', 'practicante'),
     allowNull: false
-  }
+  },
+  areas_idarea: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Area,
+      key: 'idarea',
+      allowNull: false
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+}
 }, {
   sequelize,         // Instancia de Sequelize
   modelName: 'Administrador',

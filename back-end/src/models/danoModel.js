@@ -1,7 +1,7 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../db/connection.js';
 import Elemento from './elementoModel.js';
-import Usuario from './usuarioModel.js';
+import Cliente from './clienteModel.js';
 
 class Dano extends Model{} 
 
@@ -35,11 +35,11 @@ Dano.init({
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
     },
-    usuarios_documento: {
+    clientes_documento: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: Usuario,
+          model: Cliente,
           key: 'documento',
           allowNull: false
         },

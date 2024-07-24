@@ -1,11 +1,11 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../db/connection.js'; 
 import Elemento from './elementoModel.js';
-import Prestamo from './prestamoModel.js';
+import PrestamoEspecial from './prestamoespecialModel.js';
 
-class ElementoHasPrestamo extends Model{}
+class ElementoHasPrestamoEspecial extends Model{}
 
-ElementoHasPrestamo.init({
+ElementoHasPrestamoEspecial.init({
   elementos_idelemento: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -16,11 +16,11 @@ ElementoHasPrestamo.init({
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE'
   },
-  prestamos_idprestamo: {
+  prestamosespeciales_idprestamo: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
-          model: Prestamo,
+          model: PrestamoEspecial,
           key: 'idprestamo'
       },
       onUpdate: 'CASCADE',
@@ -30,9 +30,14 @@ ElementoHasPrestamo.init({
       type: DataTypes.INTEGER,
       allowNull: false
   },
-  fecha: {
+  fecha_entrega: {
       type: DataTypes.DATE,
       allowNull: false,
+      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+  },
+  fecha_devolucion: {
+      type: DataTypes.DATE,
+      allowNull: true,
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
   },
   observaciones: {
@@ -45,9 +50,9 @@ ElementoHasPrestamo.init({
   }
 }, {
   sequelize,
-  modelName: 'ElementoHasPrestamo',
-  tableName: 'elementos_has_prestamos',
+  modelName: 'ElementoHasPrestamoEspecial',
+  tableName: 'elementos_has_prestamosespeciales',
   timestamps: false
 });
 
-export default ElementoHasPrestamo;
+export default ElementoHasPrestamoEspecial;

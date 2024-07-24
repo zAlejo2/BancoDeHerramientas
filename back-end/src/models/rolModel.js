@@ -22,5 +22,3 @@ Rol.init({
 });
 
 export default Rol;
-
-// Ahora `Role` es un modelo Sequelize que se puede utilizar para interactuar con la tabla `roles`

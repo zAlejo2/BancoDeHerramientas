@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
-import Usuario from './usuarioModel.js';
+import Cliente from './clienteModel.js';
 
 class Consumo extends Model {}
 
@@ -11,11 +11,11 @@ Consumo.init({
         allowNull: false,
         autoIncrement: true 
     },
-    usuarios_documento: {
+    clientes_documento: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-          model: Usuario,
+          model: Cliente,
           key: 'documento',
           allowNull: false
         },

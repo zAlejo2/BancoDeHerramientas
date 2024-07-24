@@ -1,5 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
+import Area from './areaModel.js';
 
 class Elemento extends Model {}
 
@@ -33,7 +34,22 @@ Elemento.init({
   estado: {
     type: DataTypes.ENUM('disponible', 'agotado'),
     allowNull: false
-  }
+  },
+  foto: {
+    type: DataTypes.STRING(100),
+    allowNull: true
+  },
+  areas_idarea: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: Area,
+      key: 'idarea',
+      allowNull: false
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+}
 }, {
   sequelize,
   modelName: 'Elemento',

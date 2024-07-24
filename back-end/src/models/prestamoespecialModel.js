@@ -2,22 +2,14 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import Cliente from './clienteModel.js';
 
-class Encargo extends Model {}
+class PrestamoEspecial extends Model {}
 
-Encargo.init({
-    idencargo: {
+PrestamoEspecial.init({
+    idprestamo: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,
         autoIncrement: true
-    },
-    correo: {
-        type: DataTypes.STRING(45),
-        allowNull: false
-    },
-    numero: {
-        type: DataTypes.STRING(45),
-        allowNull: false
     },
     clientes_documento: {
         type: DataTypes.INTEGER,
@@ -29,12 +21,24 @@ Encargo.init({
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+    },
+    fecha_inicio: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    fecha_fin: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    documento: {
+        type: DataTypes.STRING(100),
+        allowNull: true
     }
-}, {
+},  {
     sequelize,
-    modelName: 'Encargo',
-    tableName: 'encargos',
-    timestamps: false
+    modelName: 'PrestamoEspecial',
+    tableName: 'prestamosespeciales',
+    timestamps: false 
 });
 
-export default Encargo; 
+export default PrestamoEspecial;

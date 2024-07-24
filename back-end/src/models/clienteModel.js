@@ -2,9 +2,9 @@ import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import Rol from './rolModel.js';
 
-class Usuario extends Model {}
+class Cliente extends Model {}
 
-Usuario.init ({
+Cliente.init ({
     documento: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -44,6 +44,14 @@ Usuario.init ({
         type: DataTypes.STRING(45),
         allowNull: true 
     },
+    numero: {
+        type: DataTypes.STRING(20),
+        allowNull: true
+    },
+    foto: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+      },
     roles_idrol: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -57,9 +65,9 @@ Usuario.init ({
     }
 },  {
     sequelize,
-    modelName: 'Usuario',
-    tableName: 'usuarios',
+    modelName: 'Cliente',
+    tableName: 'clientes',
     timestamps: false
 });
 
-export default Usuario;
+export default Cliente;
