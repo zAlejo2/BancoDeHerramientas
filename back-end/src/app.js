@@ -3,6 +3,7 @@ import config from './config/config.js';
 import cors from 'cors';
 // import path from 'path';
 
+import areaRoutes from './routes/areaRouter.js';
 import adminRoutes from './routes/administradorRouter.js';
 import clientRoutes from './routes/clienteRouter.js';
 import roleRoutes from './routes/rolRouter.js';
@@ -16,6 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
+app.use('/api/areas', areaRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/api/users', clientRoutes); 
 app.use('/api/roles', roleRoutes); 

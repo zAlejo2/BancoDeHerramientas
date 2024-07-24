@@ -1,4 +1,3 @@
-import sequelize from '../db/connection.js'; // Importa la conexión
 import Administrador from './administradorModel.js';
 import AdminSesion from './adminsesionModel.js';
 import Cliente from './clienteModel.js';
@@ -191,6 +190,7 @@ Mora.belongsTo(Elemento, {
 });
 
 export {
+    Area,
     Administrador,
     AdminSesion,
     Cliente,
