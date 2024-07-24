@@ -1,7 +1,8 @@
 import express from 'express';
 import config from './config/config.js';
 import cors from 'cors';
-// import path from 'path';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 import areaRoutes from './routes/areaRouter.js';
 import adminRoutes from './routes/administradorRouter.js';
@@ -19,9 +20,14 @@ app.use(express.json());
 // Rutas
 app.use('/api/areas', areaRoutes);
 app.use('/api/admins', adminRoutes);
-app.use('/api/users', clientRoutes); 
+app.use('/api/clients', clientRoutes); 
 app.use('/api/roles', roleRoutes); 
 app.use('/api/elements',elementRoutes);
+
+// Configurar la carpeta 'uploads' como estática
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'src/uploads')));
 
 // Sincronización de modelos con la base de datos
 sequelize.sync()

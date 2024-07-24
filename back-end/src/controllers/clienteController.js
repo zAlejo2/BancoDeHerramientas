@@ -1,4 +1,5 @@
 import { Cliente } from '../models/index.js';
+import upload from '../middlewares/multer.js';
 
 // Obtener todos los Clientes
 const getAllClients = async (req, res) => {
@@ -27,18 +28,27 @@ const getClientById = async (req, res) => {
 // Crear un nuevo Cliente
 const createClient = async (req, res) => {
     try {
-        const userExisting = await Cliente.findByPk(req.body.documento);
+        // Manejar la carga de archivos
+        upload.single('foto')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ error: err.message });
+            }
 
-        if(!userExisting) { 
-            const user = await Cliente.create(req.body);
+            const userExisting = await Cliente.findByPk(req.body.documento);
+            if (userExisting) {
+                return res.status(400).json({ message: 'El Cliente ingresado ya existe' });
+            }
+
+            // Obtener el nombre del archivo de la imagen subida
+            const foto = req.file ? req.file.filename : null;
+
+            const user = await Cliente.create({ ...req.body, foto });
             res.status(201).json(user);
-        } else {
-            res.status(400).json({ message: 'El Cliente ingresado ya existe' });
-        }
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-}; 
+}
 
 // Actualizar un Cliente
 const updateClient = async (req, res) => {
