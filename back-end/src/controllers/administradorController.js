@@ -1,4 +1,5 @@
 import { Administrador } from '../models/index.js';
+import bcrypt from 'bcryptjs';
 
 // Obtener todos los Administradores
 const getAllAdmins = async (req, res) => {
@@ -30,8 +31,12 @@ const createAdmin = async (req, res) => {
         const adminExisting = await Administrador.findByPk(req.body.documento);
 
         if(!adminExisting) { 
-            const admin = await Administrador.create(req.body);
-            res.status(201).json(admin);
+            //Encriptación de contraseña
+            req.body.contrasena = bcrypt.hashSync(req.body.contrasena, 10);
+
+            const registro = await Administrador.create(req.body);
+                
+            res.status(201).json(registro);
         } else {
             res.status(400).json({ message: 'El Administrador ingresado ya existe' });
         }
