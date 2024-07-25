@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
-import Administrador from '../../../models/index.js';
-import createToken from '../../authController.js';
+import Administrador from '../../models/administradorModel.js';
+import { generarToken } from '../../helpers/tokenHelper.js';
 
-// login de administrador
+//Login de administrador
 export const loginAdmin = async (req, res) => {
-    const { documento, password } = req.body;
+    const { documento, contrasena } = req.body;
   
     try {
       const admin = await Administrador.findOne({ where: { documento } });
@@ -12,13 +12,18 @@ export const loginAdmin = async (req, res) => {
         return res.status(401).json({ message: 'Administrador no encontrado' });
       }
   
-      const isMatch = await bcrypt.compare(password, admin.password);
+      const isMatch = await bcrypt.compare(contrasena, admin.contrasena);
       if (!isMatch) {
         return res.status(401).json({ message: 'Contraseña incorrecta' });
       }
-  
-      const token = createToken({ id: admin.id, role: 'admin' });
-      res.json({ token });
+
+      //Llamado al Helper
+      const token = generarToken(admin);
+
+      res.send({
+        documento: admin.documento,
+        token
+      });
     } catch (error) {
       res.status(500).json({ message: 'Error en el login', error });
     }

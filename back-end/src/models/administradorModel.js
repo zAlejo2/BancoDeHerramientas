@@ -15,14 +15,14 @@ Administrador.init({
     allowNull: false
   },
   contrasena: {
-    type: DataTypes.STRING(45),
+    type: DataTypes.STRING(80),
     allowNull: false,
     validate: {
       // Validaciones personalizadas
-      is: {
-        args: passwordRegex,
-        msg: 'Mínimo 6 caracteres, mínimo un número, una letra y un caracter especial '
-      }
+      // is: {
+      //   args: passwordRegex,
+      //   msg: 'Mínimo 6 caracteres, mínimo un número, una letra y un caracter especial '
+      // }
     }
   },
   nombre: {
