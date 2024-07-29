@@ -1,4 +1,4 @@
-import { Cliente } from '../models/index.js';
+import { Cliente, Rol } from '../models/index.js';
 import upload from '../middlewares/multer.js';
 
 // Obtener todos los Clientes
@@ -37,6 +37,18 @@ const createClient = async (req, res) => {
             const userExisting = await Cliente.findByPk(req.body.documento);
             if (userExisting) {
                 return res.status(400).json({ message: 'El Cliente ingresado ya existe' });
+            }
+
+            const rolMissing = await req.body.roles_idrol;
+
+            if( rolMissing == '') {
+                return res.status(400).json({ message: 'El rol del cliente no puede estar vacío'});
+            }
+
+            const rolExist = await Rol.findByPk(req.body.roles_idrol);
+
+            if(!rolExist) {
+                return res.status(400).json({ message: 'El rol ingresado no existe' });
             }
 
             // Obtener el nombre del archivo de la imagen subida
