@@ -3,7 +3,7 @@ import { getAllAdmins, getAdminById, createAdmin, updateAdmin, deleteAdmin } fro
 import { loginAdmin } from '../controllers/auth/loginAdministrador.js';
 
 const router = Router();
-
+// TENER EN CUENTA EL MÉTODO PUTCH EN LUGAR DE PUT PORQUE SOLO ACTUALIZA UNA PARTE DEL RECURSO, NO EL RECURSO COMPLETO
 router.get('/:documento', getAdminById);
 router.get('/', getAllAdmins);
 router.post('/', createAdmin);

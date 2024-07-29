@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import config from '../config/config.js';
 
 export const generarToken = (admin) => {
     //Objeto para codificar
@@ -8,5 +9,5 @@ export const generarToken = (admin) => {
     }
 
     //Firmamos
-    return jwt.sign(adminForToken, 'Token-Auth', { expiresIn: '1h' });
+    return jwt.sign(adminForToken, config.jwt.secret, { expiresIn: '1h' });
 }
