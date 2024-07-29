@@ -9,7 +9,7 @@ Area.init({
         primaryKey: true,
         allowNull: false
     },
-    descripcion: {
+    nombre: {
         type: DataTypes.STRING(45),
         allowNull: false
     } 
