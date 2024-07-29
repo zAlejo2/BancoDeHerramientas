@@ -1,5 +1,6 @@
-import { Elemento } from '../models/index.js';
+import { Elemento, Area } from '../models/index.js';
 import { Sequelize } from 'sequelize';
+import upload from '../middlewares/multer.js';
 
 // Obtener todos los elementos
 const getAllElements = async (req, res) => {
@@ -51,18 +52,39 @@ const getElementByName = async (req, res) => {
 // Crear un nuevo elemento
 const createElement = async (req, res) => {
     try {
-        const elementExisting = await Elemento.findByPk(req.body.idelemento);
+        // Manejar la carga de archivos
+        upload.single('foto')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ error: err.message });
+            }
 
-        if(!elementExisting) { 
-            const element = await Elemento.create(req.body);
+            const elementExisting = await Elemento.findByPk(req.body.idelemento);
+            if (elementExisting) {
+                return res.status(400).json({ message: 'El Elemento ingresado ya existe' });
+            }
+
+            const areaMissing = await req.body.areas_idarea;
+
+            if( areaMissing == '') {
+                return res.status(400).json({ message: 'El area del elemento no puede estar vacía'});
+            }
+
+            const areaExist = await Area.findByPk(req.body.areas_idarea);
+
+            if(!areaExist) {
+                return res.status(400).json({ message: 'El area ingresada no existe' });
+            }
+
+            // Obtener el nombre del archivo de la imagen subida
+            const foto = req.file ? req.file.filename : null;
+
+            const element = await Elemento.create({ ...req.body, foto });
             res.status(201).json(element);
-        } else {
-            res.status(400).json({ message: 'El elemento ingresado ya existe' });
-        }
+        });
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
-};
+}
 
 // Actualizar un elemento
 const updateElement = async (req, res) => {
