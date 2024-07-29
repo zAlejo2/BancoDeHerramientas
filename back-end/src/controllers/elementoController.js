@@ -1,6 +1,6 @@
 import { Elemento, Area } from '../models/index.js';
 import { Sequelize } from 'sequelize';
-import upload from '../middlewares/multer.js';
+import upload from '../middlewares/multerElement.js';
 
 // Obtener todos los elementos
 const getAllElements = async (req, res) => {
