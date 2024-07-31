@@ -23,9 +23,9 @@ const login = async (req, res) => {
 
         } else {
 
-          let id = admin.documento;
-          let type = 'administrador';
-          let role = admin.tipo;
+          const id = admin.documento;
+          const type = 'administrador';
+          const role = admin.tipo;
 
           nuevaSesion(documento);
 
@@ -38,6 +38,7 @@ const login = async (req, res) => {
           });
 
         }
+
       } else if (client) {
 
         const isClientMatch = await bcrypt.compare(contrasena, client.contrasena);
@@ -55,8 +56,8 @@ const login = async (req, res) => {
             attributes: ['descripcion']
           });
 
-          let id = client.documento;
-          let type = 'cliente';
+          const id = client.documento;
+          const type = 'cliente';
           const role = obtenerDescripcion ? obtenerDescripcion.descripcion : null;
 
           const token = generarToken(id, type, role);
