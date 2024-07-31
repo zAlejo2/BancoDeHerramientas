@@ -4,6 +4,7 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+import loginRoute from './routes/loginRouter.js';
 import areaRoutes from './routes/areaRouter.js';
 import adminRoutes from './routes/administradorRouter.js';
 import clientRoutes from './routes/clienteRouter.js';
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 // Rutas
+app.use('/api', loginRoute);
 app.use('/api/areas', areaRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/api/clients', clientRoutes); 

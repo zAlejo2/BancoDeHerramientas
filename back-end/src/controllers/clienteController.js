@@ -1,5 +1,6 @@
 import { Cliente, Rol } from '../models/index.js';
 import upload from '../middlewares/multer.js';
+import bcrypt from 'bcryptjs';
 
 // Obtener todos los Clientes
 const getAllClients = async (req, res) => {
@@ -37,6 +38,10 @@ const createClient = async (req, res) => {
             const userExisting = await Cliente.findByPk(req.body.documento);
             if (userExisting) {
                 return res.status(400).json({ message: 'El Cliente ingresado ya existe' });
+            }
+
+            if (req.body.contrasena !== '') {
+                req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
             }
 
             const rolMissing = await req.body.roles_idrol;

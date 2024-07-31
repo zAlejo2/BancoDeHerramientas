@@ -6,7 +6,9 @@ const storage = multer.diskStorage({
         cb(null, 'src/uploads/'); 
     },
     filename: (req, file, cb) => {
-        const uniqueSuffix = req.body.descripcion;
+        // esto es para eliminar los espacios si el nombre del elementto tiene mas de una palabra, para que así se pueda guardar como una imagen
+        let nombreElemento = req.body.descripcion.replace(/\s+/g, '');
+        const uniqueSuffix = nombreElemento;
         cb(null, uniqueSuffix + path.extname(file.originalname)); 
     }
 });

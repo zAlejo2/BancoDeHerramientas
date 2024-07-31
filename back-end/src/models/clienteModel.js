@@ -19,7 +19,7 @@ Cliente.init ({
         allowNull: false 
     },
     contrasena: {
-        type: DataTypes.STRING(45),
+        type: DataTypes.STRING(80),
         allowNull: true
         // validate: {
         //     len: {
