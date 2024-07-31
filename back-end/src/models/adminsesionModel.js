@@ -13,7 +13,7 @@ AdminSesion.init({
   },
   login: {
     type: DataTypes.DATE,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+    // defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
   },
   logout: {
     type: DataTypes.DATE,

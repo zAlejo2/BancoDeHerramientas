@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 
 function generarToken(userId, userType, userRole) {
+    
     const payload = {
         id: userId,
         type: userType,
@@ -23,14 +24,3 @@ function generarToken(userId, userType, userRole) {
 }
 
 export default generarToken;
-
-// export const generarToken = (admin) => {
-//     //Objeto para codificar
-//     const adminForToken = {
-//         documento: admin.documento,
-//         nombre: admin.nombre
-//     }
-
-//     //Firmamos
-//     return jwt.sign(adminForToken, config.jwt.secret, { expiresIn: '1h' });
-// }
