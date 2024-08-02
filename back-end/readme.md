@@ -19,3 +19,19 @@ también agregué un campo tipo (tipo enum con valores: 'admin', 'contratista', 
 la tabla de administrador, y corregí algunos errores en los modelos y controladores
 
 RECORDAR IMOPRTARNTE COMO HACER BACKLOG O COPIA DEL PROYECTO!!!!
+
+TENER EN CUENTA EL MÉTODO PUTCH EN LUGAR DE PUT PORQUE SOLO ACTUALIZA UNA PARTE DEL RECURSO, NO EL RECURSO COMPLETO
+
+cuadrar lo de los tipos para que quede como los roles, dar acceso solo a uno
+
+tener en cuenta que si un instructor va ahacer un encargo debe indicar la zona del encargo
+ANTES DE TODO, para que solo le aparezcan los elementos disponibles en esa área
+
+TENER EN CUENTA que hacer cuando de edita la contraseña de un administrador o cliente,
+con el bcrypt y todo eso, en este momento no funciona
+
+Y que la imagen se actualiza cuando se intenta registrar un cliente que ya existe
+
+REVISAR si lo de CASCADA en los registros de la bd funciona
+
+El controlador de cliente, el de editar, no está funcionando, revisar, el de elemento editar tampoco funciona

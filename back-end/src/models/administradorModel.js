@@ -1,13 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
-import sequelize from '../db/connection.js'; // Importa la instancia de Sequelize
+import sequelize from '../db/connection.js';
 import Area from './areaModel.js';
 
 class Administrador extends Model {}
 
-// Expresión regular para validar la contraseña
-const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
-
-// Definición del modelo
 Administrador.init({
   documento: {
     type: DataTypes.INTEGER,
@@ -16,14 +12,7 @@ Administrador.init({
   },
   contrasena: {
     type: DataTypes.STRING(80),
-    allowNull: false,
-    validate: {
-      // Validaciones personalizadas
-      // is: {
-      //   args: passwordRegex,
-      //   msg: 'Mínimo 6 caracteres, mínimo un número, una letra y un caracter especial '
-      // }
-    }
+    allowNull: false
   },
   nombre: {
     type: DataTypes.STRING(50),
@@ -45,7 +34,7 @@ Administrador.init({
     onDelete: 'CASCADE'
 }
 }, {
-  sequelize,         // Instancia de Sequelize
+  sequelize,        
   modelName: 'Administrador',
   tableName: 'administradores',
   timestamps: false

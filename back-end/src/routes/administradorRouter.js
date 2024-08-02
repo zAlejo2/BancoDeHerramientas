@@ -1,14 +1,13 @@
 import { Router } from 'express';
 import { getAllAdmins, getAdminById, createAdmin, updateAdmin, deleteAdmin } from '../controllers/administradorController.js';
-// import { loginAdmin } from '../controllers/auth/loginAdministrador.js';
+import { authenticate, verifyType, verifyRole } from '../middlewares/auth/authMiddleware.js';
 
 const router = Router();
-// TENER EN CUENTA EL MÉTODO PUTCH EN LUGAR DE PUT PORQUE SOLO ACTUALIZA UNA PARTE DEL RECURSO, NO EL RECURSO COMPLETO
-router.get('/:documento', getAdminById);
-router.get('/', getAllAdmins);
-router.post('/', createAdmin);
-router.put('/:documento', updateAdmin);
-router.delete('/:documento', deleteAdmin);
-// router.post('/login', loginAdmin);
+
+router.get('/:documento', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getAdminById);
+router.get('/', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getAllAdmins);
+router.post('/', authenticate, verifyType(['administrador']), verifyRole(['admin']), createAdmin);
+router.put('/:documento', authenticate, verifyType(['administrador']), verifyRole(['admin']), updateAdmin);
+router.delete('/:documento', authenticate, verifyType(['administrador']), verifyRole(['admin']), deleteAdmin);
 
 export default router;

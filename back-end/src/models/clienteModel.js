@@ -21,16 +21,6 @@ Cliente.init ({
     contrasena: {
         type: DataTypes.STRING(80),
         allowNull: true
-        // validate: {
-        //     len: {
-        //       args: [6, 100],
-        //       msg: 'Mínimo 6 caracteres'
-        //     },
-        //     is: {
-        //       args: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$/,
-        //       msg: 'Mínimo 6 caracteres, mínimo 2 número, una letra y un caracter especial'
-        //     }
-        // }
     },
     fechaInicio: {
         type: DataTypes.DATEONLY,

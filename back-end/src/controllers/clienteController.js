@@ -1,5 +1,5 @@
 import { Cliente, Rol } from '../models/index.js';
-import upload from '../middlewares/multer.js';
+import upload from '../middlewares/fotoClienteMiddleware.js';
 import bcrypt from 'bcryptjs';
 
 // Obtener todos los Clientes

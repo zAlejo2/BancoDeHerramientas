@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
-import sequelize from '../db/connection.js'; // Importa la instancia de Sequelize
+import sequelize from '../db/connection.js'; 
 import Administrador from './administradorModel.js';
 
 class AdminSesion extends Model {}
@@ -12,8 +12,7 @@ AdminSesion.init({
     allowNull: false
   },
   login: {
-    type: DataTypes.DATE,
-    // defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+    type: DataTypes.DATE
   },
   logout: {
     type: DataTypes.DATE,
@@ -37,6 +36,3 @@ AdminSesion.init({
 });
 
 export default AdminSesion;
-
-// REOCORDAR tener en cuenta qué hacer si se borra algún registro de alguna tabla
-// con las llaves foráneas:     onDelete: 'CASCADE'    preguntar a jorge

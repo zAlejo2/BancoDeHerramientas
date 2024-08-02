@@ -3,7 +3,6 @@ import sequelize from '../db/connection.js';
 
 class Rol extends Model {}
 
-// Definición del modelo
 Rol.init({
   idrol: {
     type: DataTypes.INTEGER,
