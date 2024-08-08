@@ -27,7 +27,7 @@ cuadrar lo de los tipos para que quede como los roles, dar acceso solo a uno
 tener en cuenta que si un instructor va ahacer un encargo debe indicar la zona del encargo
 ANTES DE TODO, para que solo le aparezcan los elementos disponibles en esa área
 
-TENER EN CUENTA que hacer cuando de edita la contraseña de un administrador o cliente,
+TENER EN CUENTA que hacer cuando se edita la contraseña de un administrador o cliente,
 con el bcrypt y todo eso, en este momento no funciona
 
 Y que la imagen se actualiza cuando se intenta registrar un cliente que ya existe
@@ -35,3 +35,15 @@ Y que la imagen se actualiza cuando se intenta registrar un cliente que ya exist
 REVISAR si lo de CASCADA en los registros de la bd funciona
 
 El controlador de cliente, el de editar, no está funcionando, revisar, el de elemento editar tampoco funciona
+
+HAY un lugar en el que la contraseña no me la está poniendo obligatoria y debería, pero no me acuerdo donde, así que se debe 
+
+Código de elementos manual
+
+Lo de las baja tipo daño y traspasos y que tenga ID, elemento, archivo, observaciones
+
+Que se pueda pasar de prestamos a consumo
+
+Restringir consumo hasta cierto punto, que no se puedan consumir todas, Control de mínimos
+
+Observaciones para los elementos

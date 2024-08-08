@@ -1,11 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
-import { AppUi } from './router/AppRoutes.jsx'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles.css'
+import { MediosApp } from './MediosApp.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <AppUi />
+    <MediosApp />
   </React.StrictMode>,
 )

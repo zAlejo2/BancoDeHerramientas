@@ -5,7 +5,7 @@ import { authenticate, verifyType, verifyRole } from '../middlewares/auth/authMi
 const router = Router();
 
 router.get('/:idarea', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getAreaById);
-router.get('/', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']), getAllAreas);
-router.post('/', authenticate, verifyType(['administrador']), verifyRole(['admin']), createArea);
+router.get('/', /*authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']),*/ getAllAreas);
+router.post('/', /*authenticate, verifyType(['administrador']), verifyRole(['admin']), */ createArea);
 
 export default router;

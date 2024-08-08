@@ -5,8 +5,8 @@ import { authenticate, verifyType, verifyRole } from '../middlewares/auth/authMi
 const router = Router();
 
 router.get('/:idrol', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getRoleById);
-router.get('/', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getAllRoles);
-router.post('/', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), createRole);
+router.get('/', /*authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), */getAllRoles);
+router.post('/', /*authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), */createRole);
 router.put('/:idrol', authenticate, verifyType(['administrador']), verifyRole(['admin']), updateRole);
 router.delete('/:idrol', authenticate, verifyType(['administrador']), verifyRole(['admin']), deleteRole);
 
