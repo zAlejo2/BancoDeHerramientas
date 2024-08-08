@@ -6,10 +6,9 @@ class Elemento extends Model {}
 
 Elemento.init({
   idelemento: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(15),
     primaryKey: true,
     allowNull: false,
-    autoIncrement: true
   },
   descripcion: {
     type: DataTypes.STRING(45),
@@ -38,6 +37,14 @@ Elemento.init({
   foto: {
     type: DataTypes.STRING(100),
     allowNull: true
+  },
+  observaciones: {
+    type: DataTypes.STRING(200),
+    allowNull: true
+  },
+  minimo: {
+    type: DataTypes.INTEGER(5),
+    allowNull: false
   },
   areas_idarea: {
     type: DataTypes.INTEGER,

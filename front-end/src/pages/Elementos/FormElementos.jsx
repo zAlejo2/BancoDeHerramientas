@@ -8,7 +8,7 @@ import useGetData from "@/hooks/useGetData";
 import usePostDataImage from "../../hooks/usePostDataImage";
 
 export const FormElementos = () => {
-    const initialData = { descripcion: "", cantidad: "", disponibles: "", ubicacion: "", tipo: "", estado: "", areas_idarea: "", foto: "" };
+    const initialData = { idelemento: "", descripcion: "", cantidad: "", disponibles: "", ubicacion: "", tipo: "", estado: "", areas_idarea: "", foto: "", observaciones: "", minimo: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
     const urls = ["areas"];
@@ -19,13 +19,21 @@ export const FormElementos = () => {
         { 
             id: 1, 
             type: 'text', 
+            name: 'idelemento', 
+            placeholder: 'Ingrese el id del elemento', 
+            value: inputs.idelemento, 
+            required: true 
+        },
+        { 
+            id: 2, 
+            type: 'text', 
             name: 'descripcion', 
             placeholder: 'Ingrese la descripción del elemento', 
             value: inputs.descripcion, 
             required: true 
         },
         { 
-            id: 2, 
+            id: 3, 
             type: 'text', 
             name: 'cantidad', 
             placeholder: 'Ingrese la cantidad del elemento', 
@@ -33,7 +41,7 @@ export const FormElementos = () => {
             required: true 
         },
         { 
-            id: 3, 
+            id: 4, 
             type: 'text', 
             name: 'disponibles', 
             placeholder: 'Ingrese la disponibilidad de cada elemento', 
@@ -41,7 +49,7 @@ export const FormElementos = () => {
             required: true 
         },
         { 
-            id: 4, 
+            id: 5, 
             type: 'text', 
             name: 'ubicacion', 
             placeholder: 'Ingrese la ubicacion del elemento', 
@@ -49,11 +57,27 @@ export const FormElementos = () => {
             required: true 
         },
         {
-            id: 5,
+            id: 6,
             type: 'file',
             name: 'foto',
             placeholder: '',
             value: inputs.foto,
+            required: true
+        },
+        {
+            id: 7,
+            type: 'text',
+            name: 'observaciones',
+            placeholder: 'Ingrese las observaciones necesarias',
+            value: inputs.observaciones,
+            required: true
+        },
+        {
+            id: 8,
+            type: 'text',
+            name: 'minimo',
+            placeholder: 'Ingrese el mínimo de elementos permitido',
+            value: inputs.minimo,
             required: true
         },
     ];

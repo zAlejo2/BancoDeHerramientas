@@ -26,7 +26,7 @@ Dano.init({
         allowNull: true 
     },
     elementos_idelemento: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.STRING(15),
         allowNull: false,
         references: {  
           model: Elemento,

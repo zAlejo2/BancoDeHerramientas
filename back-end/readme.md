@@ -38,12 +38,12 @@ El controlador de cliente, el de editar, no está funcionando, revisar, el de el
 
 HAY un lugar en el que la contraseña no me la está poniendo obligatoria y debería, pero no me acuerdo donde, así que se debe 
 
-Código de elementos manual
+Código de elementos manual   ----
 
-Lo de las baja tipo daño y traspasos y que tenga ID, elemento, archivo, observaciones
+Lo de las baja tipo daño y traspasos y que tenga ID, elemento, archivo, observaciones ----
 
 Que se pueda pasar de prestamos a consumo
 
-Restringir consumo hasta cierto punto, que no se puedan consumir todas, Control de mínimos
+Restringir consumo hasta cierto punto, que no se puedan consumir todas, Control de mínimos (agregar campo "minimo" en la tabla de elementos) ----
 
-Observaciones para los elementos
+Observaciones para los elementos ----

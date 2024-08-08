@@ -3,6 +3,7 @@ import AdminSesion from './adminsesionModel.js';
 import Cliente from './clienteModel.js';
 import Rol from './rolModel.js';
 import Area from './areaModel.js';
+import Baja from './bajaModel.js'
 import Elemento from './elementoModel.js';
 import PrestamoCorriente from './prestamocorrienteModel.js';
 import PrestamoEspecial from './prestamoespecialModel.js';
@@ -63,6 +64,18 @@ Cliente.belongsTo(Rol, {
 Rol.hasMany(Cliente, {
     foreignKey: 'roles_idrol',
     as: 'clientes'
+});
+
+// Una Baja pertenece a un Elemento
+Baja.belongsTo(Elemento, {
+    foreignKey: 'elementos_idelemento',
+    as: 'elemento'
+});
+
+// Un Elemento puede tener muchas bajas
+Elemento.hasMany(Baja, {
+    foreignKey: 'elementos_idelemento',
+    as: 'bajas'
 });
 
 // Un Cliente puede tener muchos PrestamosCorrientes

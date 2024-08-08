@@ -7,7 +7,7 @@ class ElementoHasEncargo extends Model{}
 
 ElementoHasEncargo.init({
   elementos_idelemento: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING(15),
     primaryKey: true,
     references: {
         model: Elemento,
