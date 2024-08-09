@@ -10,4 +10,27 @@ const nuevaSesion = (documento) => AdminSesion.create({
     login: formattedDate
 });
 
-export default nuevaSesion;
+const terminarSesion = async (documento) => {
+    try {
+      // Encuentra la última sesión activa de este administrador
+      const sesion = await AdminSesion.findOne({
+        where: {
+          administradores_documento: documento,
+          logout: null // Asegúrate de que estamos actualizando la sesión que no se ha cerrado aún
+        },
+        order: [['login', 'DESC']] // Ordena por la más reciente
+      });
+  
+      if (sesion) {
+        // Actualiza el campo `logout` con la fecha y hora actuales
+        sesion.logout = formattedDate;
+        await sesion.save();
+      } else {
+        console.log('No se encontró una sesión activa para este administrador.');
+      }
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
+  };
+
+  export {nuevaSesion, terminarSesion}

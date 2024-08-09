@@ -1,5 +1,5 @@
 // routes.js
-import { useRoutes } from 'react-router-dom';
+import { useRoutes, Navigate } from 'react-router-dom';
 import {ProtectedRoute} from './ProtectedRoute';
 import {LoginRoute} from './LoginRoute';
 import { Login } from '../pages/login/LoginPage';
@@ -12,7 +12,7 @@ import ListaElementos from '@/pages/Prestamos/ListaElementos';
 import { FormAreas } from '@/pages/Areas/FormAreas';
 import { FormAdmin } from '@/pages/Administradores/FormAdmin';
 
-export const AppRoutes = () => {
+export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
         { 
             path: '/', 
@@ -33,67 +33,77 @@ export const AppRoutes = () => {
         {
             path: '/inicio',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <HomePage />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
         {
             path: '/elementos/formulario',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <FormElementos />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
         {
             path: '/roles/formulario',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <FormRoles />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
         {
             path: '/usuarios/formulario',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <FormClientes />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
         {
             path: '/prestamos/lista',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <ListaUsuarios />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
         {
             path: '/prestamos/lista2',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <ListaElementos />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
         {
             path: '/areas/formulario',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <FormAreas />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
         {
             path: '/administrador/formulario',
             element: (
-                // <ProtectedRoute>
+                <ProtectedRoute>
                     <FormAdmin />
-                // </ProtectedRoute>
+                </ProtectedRoute>
             ),
         },
+        {
+            path: '*',  
+            element: <Navigate to={tokenSession ? "/inicio" : "/login"} replace />
+        }
     ]);
 };
+
+export const routeLogin = () => {
+    return useRoutes([
+        
+    ]);
+}
 

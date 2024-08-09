@@ -24,7 +24,7 @@ const useLogin = (url, onSubmit, inputs) => {
                 setLoader(false);
                 setTokenSession(response.data.token);
                 //localStorage.setItem('authToken', response.data.token)
-                navigate("/admin", {
+                navigate("/inicio", {
                     replace: true,
                 });
             });

@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { Administrador, Cliente, Rol } from '../../models/index.js';
 import generarToken from '../../helpers/tokenHelper.js';
-import nuevaSesion from './adminsesionController.js';
+import {nuevaSesion} from './adminsesionController.js';
 
 //Login de administrador
 const login = async (req, res) => {

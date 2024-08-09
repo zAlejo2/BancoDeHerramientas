@@ -39,7 +39,7 @@ export const Login = () => {
     };
 
     const onSubmit = () => {
-        navigate("/admin", { replace: true });
+        navigate("/inicio", { replace: true });
     };
 
     const handleSubmit = useLogin("login", onSubmit, inputs);

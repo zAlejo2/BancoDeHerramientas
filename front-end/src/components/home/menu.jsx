@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { HomeIcon, BookIcon, PenToolIcon, ClipboardIcon, CircleAlertIcon, TriangleAlertIcon, UserIcon, FileTextIcon, SettingsIcon, LogOutIcon, XIcon, ChevronDownIcon, ClipboardList, List, HandCoins } from "lucide-react";
 import { MdOutlineConstruction } from "react-icons/md";
 import { Divider } from '@mui/material';
+import LogoutButton from '../forms/elements/cerrarSesionButton';
 
 export const Menu = ({ children }) => {
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
@@ -149,7 +150,7 @@ export const Menu = ({ children }) => {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-destructive">
                                     <LogOutIcon className="w-4 h-4 mr-2" />
-                                    <span>Cerrar sesión</span>
+                                    <LogoutButton>Cerrar Sesión</LogoutButton>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

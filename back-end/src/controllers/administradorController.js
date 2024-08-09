@@ -31,8 +31,9 @@ const createAdmin = async (req, res) => {
         const adminExisting = await Administrador.findByPk(req.body.documento);
 
         if(!adminExisting) { 
-            //Encriptación de contraseña
-            req.body.contrasena = bcrypt.hashSync(req.body.contrasena, 10);
+            if (req.body.contrasena !== '') {
+                req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
+            }
 
             const registro = await Administrador.create(req.body);
                 
