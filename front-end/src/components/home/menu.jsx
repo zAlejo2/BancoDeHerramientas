@@ -66,10 +66,6 @@ export const Menu = ({ children }) => {
         }
     ];
 
-    const logOut = () => {
-        localStorage.removeItem('authToken');
-        window.location.href = '/login';
-    }
 
     return (
         <div className={`flex min-h-screen ${darkMode ? "dark" : ""}`}>
@@ -154,9 +150,9 @@ export const Menu = ({ children }) => {
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-destructive">
-                                    <button onClick={() => logOut()}>
+                                    <LogoutButton>
                                     <LogOutIcon className="w-4 h-4 mr-2" />Cerrar Sesión
-                                    </button>
+                                    </LogoutButton>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

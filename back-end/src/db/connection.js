@@ -10,7 +10,7 @@ const sequelize = new Sequelize(
   {
     host: config.mysql.host,
     dialect: 'mysql',
-    timezone: '-05:00', //para que la hora de los registros en la bd que se guarde sea la de Colombia
+    //timezone: '-05:00', //para que la hora de los registros en la bd que se guarde sea la de Colombia
     logging: false // esto se puede habilitar para ver las consultas sql generadas por Sequelize
   }
 );

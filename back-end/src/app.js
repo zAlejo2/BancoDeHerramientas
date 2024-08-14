@@ -7,6 +7,7 @@ import sequelize from './db/connection.js';
 import config from './config/config.js';
 
 import loginRoute from './routes/auth/loginRouter.js';
+import logoutRoute from './routes/auth/logoutRouter.js';
 import areaRoutes from './routes/areaRouter.js';
 import adminRoutes from './routes/administradorRouter.js';
 import clientRoutes from './routes/clienteRouter.js';
@@ -21,6 +22,7 @@ app.use(express.json());
 
 // Rutas
 app.use('/api/login', loginRoute);
+app.use('/api', logoutRoute)
 app.use('/api/areas', areaRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/api/clients', clientRoutes); 
