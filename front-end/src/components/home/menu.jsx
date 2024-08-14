@@ -151,7 +151,7 @@ export const Menu = ({ children }) => {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-destructive">
                                     <LogoutButton>
-                                    <LogOutIcon className="w-4 h-4 mr-2" />Cerrar Sesión
+                                    <LogOutIcon className="w-4 h-4 mr-2" />
                                     </LogoutButton>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
