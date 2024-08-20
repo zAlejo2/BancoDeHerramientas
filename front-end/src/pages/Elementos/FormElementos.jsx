@@ -5,7 +5,7 @@ import { Forms } from "../../layout/Forms";
 import { Select } from "../../components/forms/elements/select";
 import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
-import usePostDataImage from "../../hooks/usePostDataImage";
+import useValidatedPostDataImage from "@/hooks/useValidatePostDataImage";
 
 export const FormElementos = () => {
     const initialData = { idelemento: "", descripcion: "", cantidad: "", disponibles: "", ubicacion: "", tipo: "", estado: "", areas_idarea: "", foto: "", observaciones: "", minimo: "" };
@@ -14,6 +14,44 @@ export const FormElementos = () => {
     const urls = ["areas"];
     const { data } = useGetData(urls);
     const areas = data.areas || [];
+
+    const handleFormReset = () => {
+        setInputs(initialData);
+    };
+
+    const onSubmit = () => {
+        handleFormReset();
+        navigate("/", { replace: true });
+    };
+
+    // Ahora que `onSubmit` ha sido definido, se puede usar en `useValidatedPostDataImage`
+    const formData = new FormData();
+    Object.keys(inputs).forEach(key => {
+        formData.append(key, inputs[key]);
+    });
+
+    const validations = {
+        idelemento: { required: true },
+        descripcion: { required: true },
+        cantidad: { required: true, pattern: /^\d+$/ }, // Validación numérica
+        disponibles: { required: true, pattern: /^\d+$/ }, // Validación numérica
+        ubicacion: { required: true },
+        tipo: { required: true },
+        estado: { required: true },
+        areas_idarea: { required: true },
+        foto: { required: true },
+        observaciones: { required: true },
+        minimo: { required: true, pattern: /^\d+$/ } // Validación numérica
+    };
+
+    const { handleSubmit, errors, handleChange } = useValidatedPostDataImage("elements", onSubmit, formData, validations);
+
+    const handleInputChange = (event) => {
+        const { name, value, files } = event.target;
+        const newValue = files ? files[0] : value;
+        setInputs({ ...inputs, [name]: newValue });
+        handleChange(event); // Ejecutar la validación en el cambio
+    };
 
     const inputs1 = [
         { 
@@ -82,48 +120,22 @@ export const FormElementos = () => {
         },
     ];
 
-    const handleInputChange = (event) => {
-        const { name, value, files } = event.target;
-        if (name === 'foto') {
-            setInputs({ ...inputs, [name]: files[0] });
-        } else {
-            setInputs({ ...inputs, [name]: value });
-        }
-    };
-
-
-    const handleFormReset = () => {
-        setInputs(initialData);
-        setFile(null);
-    };
-
-    const onSubmit = () => {
-        handleFormReset();
-        navigate("/", { replace: true });
-    };
-
-    // Convert inputs to FormData
-    const formData = new FormData();
-    Object.keys(inputs).forEach(key => {
-        formData.append(key, inputs[key]);
-    });
-
-    const handleSubmit = usePostDataImage("elements", onSubmit, formData);
-    
     return (
         <Forms>
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Elementos</h1>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
                 {inputs1.map(input => (
-                    <Input
-                        key={input.id}
-                        type={input.type}
-                        name={input.name}
-                        placeholder={input.placeholder}
-                        required={input.required}
-                        value={input.type === 'file' ? undefined : input.value}
-                        handleInputChange={handleInputChange}
-                    />
+                    <div key={input.id}>
+                        <Input
+                            type={input.type}
+                            name={input.name}
+                            placeholder={input.placeholder}
+                            required={input.required}
+                            value={input.type === 'file' ? undefined : input.value}
+                            handleInputChange={handleInputChange}
+                        />
+                        {errors[input.name] && <p className="text-red-500">{errors[input.name]}</p>}
+                    </div>
                 ))}
                 <Select
                     label="Tipo de elemento"
@@ -131,14 +143,8 @@ export const FormElementos = () => {
                     value={inputs.tipo}
                     onChange={handleInputChange}
                     options={[
-                        {
-                            value: "Prestamo",
-                            label: "Prestamo",
-                        },
-                        {
-                            value: "Consumo",
-                            label: "Consumo",
-                        },
+                        { value: "Prestamo", label: "Prestamo" },
+                        { value: "Consumo", label: "Consumo" },
                     ]}                
                 />
                 <Select
@@ -147,14 +153,8 @@ export const FormElementos = () => {
                     value={inputs.estado}
                     onChange={handleInputChange}
                     options={[
-                        {
-                            value: "Disponible",
-                            label: "Disponible",
-                        },
-                        {
-                            value: "Agotado",
-                            label: "Agotado",
-                        },
+                        { value: "Disponible", label: "Disponible" },
+                        { value: "Agotado", label: "Agotado" },
                     ]}                
                 />
                 <Select
@@ -171,3 +171,4 @@ export const FormElementos = () => {
         </Forms>
     );
 };
+
