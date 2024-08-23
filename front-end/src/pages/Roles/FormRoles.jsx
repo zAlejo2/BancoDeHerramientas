@@ -10,7 +10,24 @@ export const FormRoles = () => {
     const initialData = { idrol: "", descripcion: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
-    const { validateInputs } = useValidation(inputs); // Aplica las validaciones
+    const validations = {
+        idrol: [
+            {
+                validate: value => value.trim() !== "",
+                message: "El ID del rol es obligatorio."
+            },
+            {
+                validate: value => /^[0-9]+$/.test(value),
+                message: "El ID del rol debe contener solo números."
+            }
+        ],
+        descripcion: [
+            {
+                validate: value => value.trim() !== "",
+                message: "La descripción del rol es obligatoria."
+            }
+        ]
+    };
 
     const inputs1 = [
         { 
@@ -45,7 +62,7 @@ export const FormRoles = () => {
         navigate("/", { replace: true });
     };
 
-    const handleSubmit = usePostData("roles", onSubmit, validateInputs()); // Utiliza la función validateInputs
+    const handleSubmit = usePostData("roles", onSubmit, inputs, validations); // Utiliza la función validateInputs
     
     return (
         <Forms>

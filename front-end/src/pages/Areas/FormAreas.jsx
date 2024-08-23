@@ -1,60 +1,85 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import usePostData from "../../hooks/usePostData";
 import { Input } from "../../components/forms/elements/input";
 import { Button } from "../../components/forms/elements/button";
 import { Forms } from "../../layout/Forms";
 import { useNavigate } from 'react-router-dom';
-import useValidation from "@/hooks/useValidation"; // Importa el hook de validación
 
 export const FormAreas = () => {
-    const initialData = { idarea: "", nombre: "" };
+    const initialData = { nombre: "", descripcion: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
-    const { validateInputs } = useValidation(inputs); // Aplica las validaciones
+
+    // Definición de validaciones
+    const validations = {
+        nombre: [
+            {
+                validate: value => value.trim() !== "",
+                message: "El nombre del área es obligatorio."
+            }
+        ],
+        descripcion: [
+            {
+                validate: value => value.trim() !== "",
+                message: "La descripción del área es obligatoria."
+            }
+        ]
+    };
+
+    // Función de manejo de cambio de entrada
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setInputs(prevInputs => ({ ...prevInputs, [name]: value }));
+    };
+
+    // Función de reseteo del formulario
+    const handleFormReset = useCallback(() => {
+        setInputs(initialData);
+    }, []);
+
+    // Función de envío de datos
+    const onSubmit = useCallback(() => {
+        handleFormReset();
+        navigate("/areas", { replace: true });
+    }, [handleFormReset, navigate]);
+
+    // Hook usePostData
+    const handleSubmit = usePostData("areas", onSubmit, inputs, validations);
 
     const inputs1 = [
         { 
             id: 1, 
-            type: 'number', 
-            name: 'idarea', 
-            placeholder: 'Ingrese el id del área', 
-            value: inputs.idarea, 
-            required: true 
-        },
-        { 
-            id: 2, 
             type: 'text', 
             name: 'nombre', 
             placeholder: 'Ingrese el nombre del área', 
             value: inputs.nombre, 
             required: true 
         },
+        { 
+            id: 2, 
+            type: 'text', 
+            name: 'descripcion', 
+            placeholder: 'Ingrese la descripción del área', 
+            value: inputs.descripcion, 
+            required: true 
+        }
     ];
 
-    const handleInputChange = (event) => {
-        const { name, value } = event.target;
-        setInputs({ ...inputs, [name]: value });
-    };
-
-    const handleFormReset = () => {
-        setInputs(initialData);
-    };
-
-    const onSubmit = () => {
-        handleFormReset();
-        navigate("/", { replace: true });
-    };
-
-    const handleSubmit = usePostData("areas", onSubmit, validateInputs()); // Utiliza la función validateInputs
-    
     return (
         <Forms>
-            <h1 className="text-center my-2 mb-8 text-xl font-semibold">Formulario Areas</h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario de Áreas</h1>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
                 {inputs1.map(input => (
-                    <Input key={input.id} type={input.type} name={input.name} placeholder={input.placeholder} required={input.required} value={input.value} handleInputChange={handleInputChange} />
+                    <Input
+                        key={input.id}
+                        type={input.type}
+                        name={input.name}
+                        placeholder={input.placeholder}
+                        required={input.required}
+                        value={input.value}
+                        handleInputChange={handleInputChange}
+                    />
                 ))}
-
                 <div className={inputs1.length % 2 === 0 ? "md:col-span-2" : "flex items-center justify-center mt-6"}>
                     <Button type={'submit'} name={'Enviar'} />
                 </div>

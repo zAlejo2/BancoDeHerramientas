@@ -25,7 +25,7 @@ const usePostData = (url, onSubmit, inputs, validations) => {
         }
         return true;
     };
-
+    console.log('cacorro')
     const aceptSubmit = async () => {
         try {
             await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);

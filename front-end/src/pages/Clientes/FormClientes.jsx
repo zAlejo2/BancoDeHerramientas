@@ -15,17 +15,40 @@ export const FormClientes = () => {
     const { data } = useGetData(urls);
     const roles = data.roles || [];
 
+    const handleFormReset = () => {
+        setInputs(initialData);
+    };
+
+    const onSubmit = () => {
+        handleFormReset();
+        navigate("/", { replace: true });
+    };
+
+    // Convert inputs to FormData
+    const formData = new FormData();
+    Object.keys(inputs).forEach(key => {
+        formData.append(key, inputs[key]);
+    });
+
     const validations = {
         documento: { required: true, pattern: /^\d+$/ },
         nombre: { required: true },
         correo: { required: true }, 
         fechaInicio: { required: true },
         fechaFin: { required: true },
-        estado: { required: true },
-        contrasena: { required: true },
-        foto: { required: true },
         observaciones: { required: true },
-        numero: { required: true, pattern: /^\d+$/ } // Validación numérica
+        contrasena: { required: true },
+        numero: { required: true, pattern: /^\d+$/ }, // Validación numérica
+        foto: { required: true },
+    };
+
+    const { handleSubmit, errors, handleChange } = useValidatedPostDataImage("clients", onSubmit, formData, validations);
+    
+    const handleInputChange = (event) => {
+        const { name, value, files } = event.target;
+        const newValue = files ? files[0] : value;
+        setInputs({ ...inputs, [name]: newValue });
+        handleChange(event); // Ejecutar la validación en el cambio
     };
 
     const inputs1 = [
@@ -103,40 +126,14 @@ export const FormClientes = () => {
         },
     ];
 
-    const handleInputChange = (event) => {
-        const { name, value, files } = event.target;
-        if (name === 'foto') {
-            setInputs({ ...inputs, [name]: files[0] });
-        } else {
-            setInputs({ ...inputs, [name]: value });
-        }
-    };
-
-    const handleFormReset = () => {
-        setInputs(initialData);
-        setFile(null);
-    };
-
-    const onSubmit = () => {
-        handleFormReset();
-        navigate("/", { replace: true });
-    };
-
-    // Convert inputs to FormData
-    const formData = new FormData();
-    Object.keys(inputs).forEach(key => {
-        formData.append(key, inputs[key]);
-    });
-
-    const handleSubmit = useValidatedPostDataImage("clients", onSubmit, formData, validations);
 
     return (
         <Forms>
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Clientes</h1>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
                 {inputs1.map(input => (
+                    <div key={input.id}>
                     <Input
-                        key={input.id}
                         type={input.type}
                         name={input.name}
                         placeholder={input.placeholder}
@@ -144,6 +141,8 @@ export const FormClientes = () => {
                         value={input.type === 'file' ? undefined : input.value}
                         handleInputChange={handleInputChange}
                     />
+                    {errors[input.name] && <p className="text-red-500">{errors[input.name]}</p>}
+                </div>
                 ))}
                 <Select
                     label="Tipo de Rol"

@@ -56,7 +56,7 @@ export const FormElementos = () => {
     const inputs1 = [
         { 
             id: 1, 
-            type: 'text', 
+            type: 'number', 
             name: 'idelemento', 
             placeholder: 'Ingrese el id del elemento', 
             value: inputs.idelemento, 

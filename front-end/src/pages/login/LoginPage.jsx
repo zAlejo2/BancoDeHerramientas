@@ -9,10 +9,31 @@ import useValidation from '@/hooks/useValidation'; // Importa el hook de validac
 
 export const Login = () => {
     const navigate = useNavigate();
-    const data = { documento: "", contrasena: "" };
-    const [inputs, setInputs] = useState(data);
+    const initialData = { documento: "", contrasena: "" };
+    const [inputs, setInputs] = useState(initialData);
     const [colorTheme, setColorTheme] = useState('white');
-    const { validateInputs } = useValidation(inputs); // Aplica las validaciones
+
+    // Define las validaciones
+    const validations = {
+        documento: [
+            {
+                validate: value => value.trim() !== "",
+                message: "El número de documento es obligatorio."
+            },
+            {
+                validate: value => /^[0-9]+$/.test(value),
+                message: "El número de documento debe contener solo números."
+            }
+        ],
+        contrasena: [
+            {
+                validate: value => value.trim() !== "",
+                message: "La contraseña es obligatoria."
+            }
+        ]
+    };
+
+    const { validateInputs } = useValidation(inputs, validations); // Aplica las validaciones
 
     const handleInputChange = (event) => {
         setInputs({
@@ -25,7 +46,8 @@ export const Login = () => {
         navigate("/inicio", { replace: true });
     };
 
-    const handleSubmit = useLogin("login", onSubmit, validateInputs()); // Utiliza la función validateInputs
+    // Usa la función validateInputs para validar los datos antes de enviar
+    const handleSubmit = useLogin("login", onSubmit, inputs, validations);
 
     const toggleColorTheme = () => {
         if (colorTheme === 'white') {
@@ -54,21 +76,28 @@ export const Login = () => {
               <h2 className="text-2xl font-bold mb-6">Inicio de sesión</h2>
               <form className="w-full max-w-sm" onSubmit={handleSubmit}>
                 <div className="mb-4">
-                  <Label htmlFor="username" className="block">
+                  <Label htmlFor="documento" className="block">
                     Número de Documento
                   </Label>
-                  <Input name="documento" placeholder="Documento" className="w-full mt-1" onChange={handleInputChange} />
+                  <Input 
+                    name="documento" 
+                    placeholder="Documento" 
+                    className="w-full mt-1" 
+                    onChange={handleInputChange} 
+                    value={inputs.documento}
+                  />
                 </div>
                 <div className="mb-6">
-                  <Label htmlFor="text" className="block">
+                  <Label htmlFor="contrasena" className="block">
                     Contraseña
                   </Label>
                   <Input
                     name="contrasena"
-                    type="text"
+                    type="password"
                     placeholder="Contraseña"
                     className="w-full mt-1"
                     onChange={handleInputChange}
+                    value={inputs.contrasena}
                   />
                 </div>
                 <Button type="submit" className="w-full py-2 rounded-full">Enviar</Button>
@@ -77,5 +106,5 @@ export const Login = () => {
             </div>
           </div>
         </div>
-      ); 
+    ); 
 };
