@@ -13,6 +13,7 @@ import adminRoutes from './routes/administradorRouter.js';
 import clientRoutes from './routes/clienteRouter.js';
 import roleRoutes from './routes/rolRouter.js';
 import elementRoutes from './routes/elementoRouter.js';
+import prestamoCorienteRoute from './routes/prestamoCorrienteRouter.js';
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/api/admins', adminRoutes);
 app.use('/api/clients', clientRoutes); 
 app.use('/api/roles', roleRoutes); 
 app.use('/api/elements',elementRoutes);
+app.use('/api/prestamos', prestamoCorienteRoute);
 
 // Configurar la carpeta 'uploads' como estática
 const __filename = fileURLToPath(import.meta.url);
