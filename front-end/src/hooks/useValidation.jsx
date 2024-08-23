@@ -1,119 +1,30 @@
-import { useState } from "react";
-import axiosInstance from '../helpers/axiosConfig';
-import Swal from "sweetalert2";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
 
-const useValidatedPostDataImage = (url, onSubmit, formData, validations) => {
+const useValidation = (inputs) => {
     const [errors, setErrors] = useState({});
-    const navigate = useNavigate();
 
-    const validateField = (name, value, rules) => {
-        let error = "";
-        if (rules.required && !value) {
-            error = "Este campo es obligatorio.";
-        } else if (rules.pattern && !rules.pattern.test(value)) {
-            error = "El formato del campo es incorrecto.";
-        }
-        return error;
-    };
+    const validateInputs = () => {
+        let tempErrors = {};
 
-    const validateForm = () => {
-        const newErrors = {};
-        Object.keys(formData).forEach(key => {
-            const value = formData.get(key);
-            const error = validateField(key, value, validations[key] || {});
-            if (error) {
-                newErrors[key] = error;
+        // Ejemplo de validaciones: Verificar si los campos están vacíos
+        for (const [key, value] of Object.entries(inputs)) {
+            if (!value) {
+                tempErrors[key] = `${key} es un campo requerido`;
             }
-        });
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleChange = (event) => {
-        const { name, value, files } = event.target;
-        const newValue = files ? files[0] : value;
-        formData.set(name, newValue);
-
-        const error = validateField(name, newValue, validations[name] || {});
-        setErrors(prevErrors => ({ ...prevErrors, [name]: error }));
-    };
-
-    const aceptSubmit = async () => {
-        try {
-            await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            Swal.fire({
-                title: "¡Bien!",
-                text: "La información ha sido guardada correctamente.",
-                icon: "success",
-                iconColor: "#212121",
-                showConfirmButton: false,
-                timer: 2500,
-                customClass: {
-                    container: 'swal2-container',
-                    popup: 'swal2-popup'
-                }
-            }).then(() => {
-                onSubmit();
-                navigate("/inicio", { replace: true });
-            });
-        } catch (error) {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: `Parece que hubo un error: por favor verifique los datos.`,
-                confirmButtonColor: "#6fc390",
-                customClass: {
-                    container: 'swal2-container',
-                    popup: 'swal2-popup'
-                }
-            });
-            console.log(error);
         }
-    };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (validateForm()) {
-            confirmSubmit();
-        } else {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validación fallida',
-                text: 'Por favor, corrija los errores en el formulario.',
-                confirmButtonColor: '#6fc390',
-            });
+        // Ejemplo de validación para un campo específico
+        if (inputs.documento && !/^\d+$/.test(inputs.documento)) {
+            tempErrors.documento = "El documento debe ser un número válido";
         }
+
+        setErrors(tempErrors);
+
+        // Retorna true si no hay errores
+        return Object.keys(tempErrors).length === 0;
     };
 
-    const confirmSubmit = () => {
-        Swal.fire({
-            title: '¿Estás seguro?',
-            text: "Confirma que la información sea correcta.",
-            icon: 'warning',
-            iconColor: '#212121',
-            showCancelButton: true,
-            confirmButtonColor: '#212121',
-            cancelButtonColor: '#81d4fa',
-            confirmButtonText: 'Sí, estoy seguro!',
-            cancelButtonText: 'Cancelar',
-            customClass: {
-                container: 'swal2-container',
-                popup: 'swal2-popup'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                aceptSubmit();
-            }
-        });
-    };
-
-    return { handleSubmit, errors, handleChange };
+    return { errors, validateInputs };
 };
 
-export default useValidatedPostDataImage;
+export default useValidation;

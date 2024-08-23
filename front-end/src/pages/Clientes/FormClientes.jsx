@@ -5,7 +5,7 @@ import { Forms } from "../../layout/Forms";
 import { Select } from "../../components/forms/elements/select";
 import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
-import usePostDataImage from "@/hooks/usePostDataImage";
+import useValidatedPostDataImage from "@/hooks/useValidatePostDataImage";
 
 export const FormClientes = () => {
     const initialData = { documento: "", nombre: "", correo: "", contrasena: "", fechaInicio: "", fechaFin: "", observaciones: "", numero: ""};
@@ -14,6 +14,19 @@ export const FormClientes = () => {
     const urls = ["roles"];
     const { data } = useGetData(urls);
     const roles = data.roles || [];
+
+    const validations = {
+        documento: { required: true, pattern: /^\d+$/ },
+        nombre: { required: true },
+        correo: { required: true }, 
+        fechaInicio: { required: true },
+        fechaFin: { required: true },
+        estado: { required: true },
+        contrasena: { required: true },
+        foto: { required: true },
+        observaciones: { required: true },
+        numero: { required: true, pattern: /^\d+$/ } // Validación numérica
+    };
 
     const inputs1 = [
         { 
@@ -115,7 +128,7 @@ export const FormClientes = () => {
         formData.append(key, inputs[key]);
     });
 
-    const handleSubmit = usePostDataImage("clients", onSubmit, formData);
+    const handleSubmit = useValidatedPostDataImage("clients", onSubmit, formData, validations);
 
     return (
         <Forms>
