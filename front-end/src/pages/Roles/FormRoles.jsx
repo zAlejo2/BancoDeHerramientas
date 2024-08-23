@@ -4,11 +4,13 @@ import { Input } from "../../components/forms/elements/input";
 import { Button } from "../../components/forms/elements/button";
 import { Forms } from "../../layout/Forms";
 import { useNavigate } from 'react-router-dom';
+import useValidation from "@/hooks/useValidation"; // Importa el hook de validación
 
 export const FormRoles = () => {
     const initialData = { idrol: "", descripcion: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
+    const { validateInputs } = useValidation(inputs); // Aplica las validaciones
 
     const inputs1 = [
         { 
@@ -43,7 +45,7 @@ export const FormRoles = () => {
         navigate("/", { replace: true });
     };
 
-    const handleSubmit = usePostData("roles", onSubmit, { ...inputs });
+    const handleSubmit = usePostData("roles", onSubmit, validateInputs()); // Utiliza la función validateInputs
     
     return (
         <Forms>

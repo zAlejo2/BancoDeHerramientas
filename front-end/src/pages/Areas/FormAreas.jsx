@@ -4,18 +4,20 @@ import { Input } from "../../components/forms/elements/input";
 import { Button } from "../../components/forms/elements/button";
 import { Forms } from "../../layout/Forms";
 import { useNavigate } from 'react-router-dom';
+import useValidation from "@/hooks/useValidation"; // Importa el hook de validación
 
 export const FormAreas = () => {
     const initialData = { idarea: "", nombre: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
+    const { validateInputs } = useValidation(inputs); // Aplica las validaciones
 
     const inputs1 = [
         { 
             id: 1, 
             type: 'number', 
             name: 'idarea', 
-            placeholder: 'Ingrese el id del area', 
+            placeholder: 'Ingrese el id del área', 
             value: inputs.idarea, 
             required: true 
         },
@@ -23,7 +25,7 @@ export const FormAreas = () => {
             id: 2, 
             type: 'text', 
             name: 'nombre', 
-            placeholder: 'Ingrese el nombre del area', 
+            placeholder: 'Ingrese el nombre del área', 
             value: inputs.nombre, 
             required: true 
         },
@@ -43,7 +45,7 @@ export const FormAreas = () => {
         navigate("/", { replace: true });
     };
 
-    const handleSubmit = usePostData("areas", onSubmit, { ...inputs });
+    const handleSubmit = usePostData("areas", onSubmit, validateInputs()); // Utiliza la función validateInputs
     
     return (
         <Forms>

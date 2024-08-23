@@ -15,6 +15,47 @@ export const FormAdmin = () => {
     const { data } = useGetData(urls);
     const areas = data.areas || [];
 
+    const validations = {
+        documento: [
+            {
+                validate: value => value.trim() !== "",
+                message: "El documento es obligatorio."
+            },
+            {
+                validate: value => /^[0-9]{6,10}$/.test(value),
+                message: "El documento debe tener entre 6 y 10 dígitos."
+            }
+        ],
+        contrasena: [
+            {
+                validate: value => value.trim() !== "",
+                message: "La contraseña es obligatoria."
+            },
+            {
+                validate: value => value.length >= 6,
+                message: "La contraseña debe tener al menos 6 caracteres."
+            }
+        ],
+        nombre: [
+            {
+                validate: value => value.trim() !== "",
+                message: "El nombre es obligatorio."
+            }
+        ],
+        tipo: [
+            {
+                validate: value => value.trim() !== "",
+                message: "El tipo es obligatorio."
+            }
+        ],
+        areas_idarea: [
+            {
+                validate: value => value.trim() !== "",
+                message: "El área es obligatoria."
+            }
+        ]
+    };
+
     const inputs1 = [
         { 
             id: 1, 
@@ -57,7 +98,7 @@ export const FormAdmin = () => {
         navigate("/admin", { replace: true });
     };
 
-    const handleSubmit = usePostData("admins", onSubmit, { ...inputs });
+    const handleSubmit = usePostData("admins", onSubmit, inputs, validations);
     
     return (
         <Forms>

@@ -2,8 +2,29 @@ import axiosInstance from '../helpers/axiosConfig';
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-const usePostData = (url, onSubmit, inputs) => {
-    const navigate = useNavigate(); 
+const usePostData = (url, onSubmit, inputs, validations) => {
+    const navigate = useNavigate();
+
+    const validateInputs = () => {
+        for (const [field, rules] of Object.entries(validations)) {
+            for (const rule of rules) {
+                if (!rule.validate(inputs[field])) {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error de validación",
+                        text: rule.message,
+                        confirmButtonColor: "#6fc390",
+                        customClass: {
+                            container: 'swal2-container',
+                            popup: 'swal2-popup'
+                        }
+                    });
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
 
     const aceptSubmit = async () => {
         try {
@@ -16,8 +37,8 @@ const usePostData = (url, onSubmit, inputs) => {
                 showConfirmButton: false,
                 timer: 2500,
                 customClass: {
-                    container: 'swal2-container', // Custom class for container
-                    popup: 'swal2-popup' // Custom class for popup
+                    container: 'swal2-container',
+                    popup: 'swal2-popup'
                 }
             }).then(() => {
                 onSubmit();
@@ -27,11 +48,11 @@ const usePostData = (url, onSubmit, inputs) => {
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
-                text: `Parece que hubo un error: por favor verifique los datos.`,
+                text: "Parece que hubo un error: por favor verifique los datos.",
                 confirmButtonColor: "#6fc390",
                 customClass: {
-                    container: 'swal2-container', // Custom class for container
-                    popup: 'swal2-popup' // Custom class for popup
+                    container: 'swal2-container',
+                    popup: 'swal2-popup'
                 }
             });
             console.log(error);
@@ -40,7 +61,9 @@ const usePostData = (url, onSubmit, inputs) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        confirmSubmit();
+        if (validateInputs()) {
+            confirmSubmit();
+        }
     };
 
     const confirmSubmit = () => {
@@ -55,8 +78,8 @@ const usePostData = (url, onSubmit, inputs) => {
             confirmButtonText: 'Sí, estoy seguro!',
             cancelButtonText: 'Cancelar',
             customClass: {
-                container: 'swal2-container', // Custom class for container
-                popup: 'swal2-popup' // Custom class for popup
+                container: 'swal2-container',
+                popup: 'swal2-popup'
             }
         }).then((result) => {
             if (result.isConfirmed) {

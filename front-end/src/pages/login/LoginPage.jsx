@@ -5,31 +5,14 @@ import useLogin from '../../hooks/useLogin';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import useValidation from '@/hooks/useValidation'; // Importa el hook de validación
 
 export const Login = () => {
     const navigate = useNavigate();
     const data = { documento: "", contrasena: "" };
     const [inputs, setInputs] = useState(data);
-    const [colorTheme, setColorTheme] = useState('white'); // Estado para el tema de color
-
-    const inputs1 = [
-        {
-            id: 1,
-            type: "number",
-            name: "documento",
-            placeholder: "Ingrese su documento",
-            value: inputs.documento,
-            required: true
-        },
-        {
-            id: 2,
-            type: "text",
-            name: "contrasena",
-            placeholder: "Contraseña",
-            value: inputs.contrasena,
-            required: true
-        }
-    ];
+    const [colorTheme, setColorTheme] = useState('white');
+    const { validateInputs } = useValidation(inputs); // Aplica las validaciones
 
     const handleInputChange = (event) => {
         setInputs({
@@ -42,9 +25,8 @@ export const Login = () => {
         navigate("/inicio", { replace: true });
     };
 
-    const handleSubmit = useLogin("login", onSubmit, inputs);
+    const handleSubmit = useLogin("login", onSubmit, validateInputs()); // Utiliza la función validateInputs
 
-    // Función para cambiar el tema de color
     const toggleColorTheme = () => {
         if (colorTheme === 'white') {
             setColorTheme('gray');
@@ -58,7 +40,6 @@ export const Login = () => {
     return (
         <div className={`flex items-center justify-center min-h-screen p-4 w-full ${colorTheme === 'white' ? 'bg-white' : colorTheme === 'gray' ? 'bg-gray-500' : 'bg-black'}`}>
           <div className={`flex flex-col md:flex-row rounded-lg shadow-lg overflow-hidden max-w-4xl w-full ${colorTheme === 'white' ? 'bg-white text-black' : colorTheme === 'gray' ? 'bg-gray-300 text-black' : 'bg-black text-white'}`}>
-            {/* Primera columna */}
             <div className={`flex flex-col justify-center items-center p-8 md:w-1/2 ${colorTheme === 'white' ? 'bg-gray-100' : colorTheme === 'gray' ? 'bg-gray-600' : 'bg-gray-800'}`}>
               <div className="flex items-center mb-4">
                 <div className={`h-8 w-8 rounded-full ${colorTheme === 'white' ? 'bg-gray-500' : colorTheme === 'gray' ? 'bg-gray-700' : 'bg-gray-300'}`} />
@@ -68,8 +49,6 @@ export const Login = () => {
                 Este es un software utilizado para la gestión de préstamos de elementos de los bancos de herramientas del Sena CIAA, solo es para usuarios ya registrados.
               </p>
             </div>
-    
-            {/* Segunda columna */}
             <div className="flex flex-col justify-center items-center p-8 md:w-1/2">
             <img src={Sena} alt="Descripción de la imagen" className="w-20 h-auto mb-4" />
               <h2 className="text-2xl font-bold mb-6">Inicio de sesión</h2>
