@@ -5,7 +5,7 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 
 const lendOut = async (req, res) => {
     try {
-        const { documento, elementos } = req.body;
+        const { documento, elementos } = req.body; 
 
         const cliente = await Cliente.findOne({ where: { documento } });
         if (!cliente) {
@@ -24,6 +24,10 @@ const lendOut = async (req, res) => {
 
         for (let elemento of elementos) {
             const { idelemento, cantidad, observaciones } = elemento;
+
+            if (cantidad <= 0) {
+                return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor a éste`});
+            }
 
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento, estado: 'disponible' } });
             if (!elementoEncontrado) {
