@@ -32,13 +32,11 @@ ElementoHasPrestamoCorriente.init({
   },
   fecha_entrega: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      allowNull: false
   },
   fecha_devolucion: {
       type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      allowNull: true
   },
   observaciones: {
       type: DataTypes.STRING(45),

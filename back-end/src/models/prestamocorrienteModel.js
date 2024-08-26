@@ -21,6 +21,10 @@ PrestamoCorriente.init({
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
+    },
+    estado: {
+        type: DataTypes.ENUM('actual', 'finalizado'),
+        allowNull: false
     }
 },  {
     sequelize,

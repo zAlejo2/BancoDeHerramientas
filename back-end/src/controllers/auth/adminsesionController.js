@@ -36,4 +36,4 @@ const terminarSesion = async (documento) => {
     }
 };
 
-export { nuevaSesion, terminarSesion };
+export { nuevaSesion, terminarSesion, ajustarHora };

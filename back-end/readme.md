@@ -22,28 +22,34 @@ RECORDAR IMOPRTARNTE COMO HACER BACKLOG O COPIA DEL PROYECTO!!!!
 
 TENER EN CUENTA EL MÉTODO PUTCH EN LUGAR DE PUT PORQUE SOLO ACTUALIZA UNA PARTE DEL RECURSO, NO EL RECURSO COMPLETO
 
-cuadrar lo de los tipos para que quede como los roles, dar acceso solo a uno
+cuadrar lo de los tipos para que quede como los roles, dar acceso solo a uno ----
 
 tener en cuenta que si un instructor va ahacer un encargo debe indicar la zona del encargo
-ANTES DE TODO, para que solo le aparezcan los elementos disponibles en esa área
+ANTES DE TODO, para que solo le aparezcan los elementos disponibles en esa área !!!
 
 TENER EN CUENTA que hacer cuando se edita la contraseña de un administrador o cliente,
-con el bcrypt y todo eso, en este momento no funciona
+con el bcrypt y todo eso, en este momento no funciona !!!
 
-Y que la imagen se actualiza cuando se intenta registrar un cliente que ya existe
+Y que la imagen se actualiza cuando se intenta registrar un cliente que ya existe!!!
 
-REVISAR si lo de CASCADA en los registros de la bd funciona
+REVISAR si lo de CASCADA en los registros de la bd funciona!!!
 
-El controlador de cliente, el de editar, no está funcionando, revisar, el de elemento editar tampoco funciona
+El controlador de cliente, el de editar, no está funcionando, revisar, el de elemento editar tampoco funciona!!!
 
-HAY un lugar en el que la contraseña no me la está poniendo obligatoria y debería, pero no me acuerdo donde, así que se debe 
+HAY un lugar en el que la contraseña no me la está poniendo obligatoria y debería, pero no me acuerdo donde, así que se debe!!!
 
 Código de elementos manual   ----
 
 Lo de las baja tipo daño y traspasos y que tenga ID, elemento, archivo, observaciones ----
 
-Que se pueda pasar de prestamos a consumo
+Que se pueda pasar de prestamos a consumo!!!!
 
 Restringir consumo hasta cierto punto, que no se puedan consumir todas, Control de mínimos (agregar campo "minimo" en la tabla de elementos) ----
 
 Observaciones para los elementos ----
+
+PENSAR COMO MANEJAR QUE LOS PRESTAMOS QUEDEN GUARDADOS, EL REGISTRO, COMO MANAJAR CUANDO LA CANNTIDAD 
+DE PRESTAMO ES 0, CUANDO YA TODOS LOS ELEMENTOS SEAN DEVUELTOS, ETC !!!!!!!
+
+AGREGAR CAMPO DE ESTADO A LA TABLA DE PRESTAMO PARA MARCARLO COMO FINALIZADO, PARA NO PONER LA TABLA DE HISTORIAL. Error al actualizar la cantidad, se está sumando en lugar de actualizarse
+
