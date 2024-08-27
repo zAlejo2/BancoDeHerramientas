@@ -11,6 +11,7 @@ import { ListaUsuarios } from '@/pages/Prestamos/Listausuarios';
 import ListaElementos from '@/pages/Prestamos/ListaElementos';
 import { FormAreas } from '@/pages/Areas/FormAreas';
 import { FormAdmin } from '@/pages/Administradores/FormAdmin';
+import Prestamos from '@/pages/Prestamos/Prestamos';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -93,6 +94,12 @@ export const AppRoutes = ({tokenSession}) => {
                     <FormAdmin />
                 </ProtectedRoute>
             ),
+        },
+        {
+            path: '/prestamos/:documento',
+            element: (
+                <Prestamos></Prestamos>
+            )
         },
         {
             path: '*',  

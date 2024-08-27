@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, LogOutIcon, XIcon } from "lucide-react";
 import useGetData from "@/hooks/useGetData"; // Adjust path as needed
+import SearchBar from "@/components/forms/elements/searchBar.jsx";
 
 export const HomePage = () => {
   const [search, setSearch] = useState("");
@@ -27,19 +28,7 @@ export const HomePage = () => {
         ))}
       </section>
       <section className="mt-6">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-semibold">Últimos Préstamos</h3>
-          <div className="flex items-center space-x-2">
-            <Input
-              type="text"
-              placeholder="Búsqueda"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="bg-background border-input text-foreground"
-            />
-            <Button>Buscar</Button>
-          </div>
-        </div>
+        <SearchBar></SearchBar>
         <Card className="border-input">
           <Table>
             <TableHeader>

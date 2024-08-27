@@ -27,6 +27,7 @@ const headCells = [
   // { id: 'seleccion', numeric: false, disablePadding: false, label: '' },
   { id: 'documento', numeric: false, disablePadding: false, label: 'Documento' },
   { id: 'nombre', numeric: false, disablePadding: false, label: 'Nombre' },
+  { id: 'rol', numeric: false, disablePadding: false, label: 'Rol' }, 
   { id: 'acciones', numeric: false, disablePadding: false, label: 'Acciones' },
 ];
 
@@ -194,7 +195,8 @@ export const ListaUsuarios = () => {
                                  {row.documento}
                                 </TableCell>
                                 <TableCell>{row.nombre}</TableCell>
-                                {/* <TableCell>{row.estado ? <ToggleOnIcon color='primary' /> : <ToggleOffIcon sx={{ fontSize: 30 }} color='primary' />}</TableCell>                                 */}
+                                {/* <TableCell>{row.estado ? <ToggleOnIcon color='primary' /> : <ToggleOffIcon sx={{ fontSize: 30 }} color='primary' />}</TableCell> */}
+                                <TableCell>{row.roles_idrol}</TableCell>
                                 <TableCell padding="checkbox">
                                   <IconButton onClick={(event) => handleEditClick(event, row)}>
                                     <EditIcon />
