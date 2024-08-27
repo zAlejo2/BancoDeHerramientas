@@ -3,7 +3,7 @@ import { terminarSesion } from '../../controllers/auth/adminsesionController.js'
 
 const router = Router();
 
-router.post('/logout', async (req, res) => {
+router.post('/', async (req, res) => {
     const { documento } = req.body;
 
     try {

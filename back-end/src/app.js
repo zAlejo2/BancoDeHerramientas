@@ -23,7 +23,7 @@ app.use(express.json());
 
 // Rutas
 app.use('/api/login', loginRoute);
-app.use('/api', logoutRoute)
+app.use('/api/logout', logoutRoute)
 app.use('/api/areas', areaRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/api/clients', clientRoutes); 
