@@ -200,6 +200,6 @@ const getLoans = async (req, res) => {
     } catch (error) {
       res.status(500).json({ error: 'Error fetching data' });
     }
-  }
+};
 
 export { lendOut, returnItem, updateLoan, getLoans };

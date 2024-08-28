@@ -98,7 +98,9 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/prestamos/:documento',
             element: (
-                <Prestamos></Prestamos>
+                <ProtectedRoute>
+                    <Prestamos/>
+                </ProtectedRoute>
             )
         },
         {

@@ -1,7 +1,6 @@
-import { Router } from "express";
-import { lendOut, updateLoan, getLoans } from "../controllers/prestamoController.js";
-import { authenticate, verifyType, verifyRole } from "../middlewares/auth/authMiddleware.js";
-import PrestamoCorriente from "../models/prestamocorrienteModel.js";
+import { Router } from 'express';
+import { lendOut, updateLoan, getLoans } from '../controllers/prestamoController.js';
+import { authenticate, verifyType, verifyRole } from '../middlewares/auth/authMiddleware.js';
 
 const router = Router();
 
