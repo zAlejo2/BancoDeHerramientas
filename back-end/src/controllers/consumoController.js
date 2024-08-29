@@ -5,34 +5,51 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 
 const createConsumption = async (req, res) => {
     try {
-        const { documento, elementos } = req.body;
-        const cliente = await Cliente.findOne({ where: {documento}});
+        const { documento } = req.body;
+        const cliente = await Cliente.findOne({ where: { documento } });
+
         if (!cliente) {
-            return res.status(404).json({ mensaje: 'Cliente no encontrado'});
+            return res.status(404).json({ mensaje: 'Cliente no encontrado' });
         }
+
         const consumo = await Consumo.create({
             clientes_documento: cliente.documento
         });
+
+        res.status(201).json({ mensaje: 'Consumo creado con éxito', consumo });
+    } catch (error) {
+        res.status(500).json({ mensaje: 'Error al crear consumo: ', error });
+    }
+};
+
+const addElementsToConsumption = async (req, res) => {
+    try {
+        const { idconsumo, elementos } = req.body;
+
+        const consumo = await Consumo.findOne({ where: { idconsumo } });
+        if (!consumo) {
+            return res.status(404).json({ mensaje: 'Consumo no encontrado' });
+        }
 
         for (let elemento of elementos) {
             const { idelemento, cantidad, observaciones } = elemento;
 
             if (cantidad <= 0) {
-                return res.status(400).json({ mensaje: 'La cantidad de consumo debe ser mayor a 0'});
+                return res.status(400).json({ mensaje: 'La cantidad de consumo debe ser mayor a 0' });
             }
 
-            const elementoEncontrado = await Elemento.findOne({ where: { idelemento, estado: 'disponible' }});
-            if(!elementoEncontrado) {
-                return res.status(404).json({ mensaje: `Elemento con  el ID ${idelemento} no encontrado o agotado, revise inventrio`});
+            const elementoEncontrado = await Elemento.findOne({ where: { idelemento, estado: 'disponible' } });
+            if (!elementoEncontrado) {
+                return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado o agotado, revise inventario` });
             }
 
-            if(elementoEncontrado.disponibles < cantidad) {
-                return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el consumo`});
+            if (elementoEncontrado.disponibles < cantidad) {
+                return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el consumo` });
             }
 
             await ElementoHasConsumo.create({
                 elementos_idelemento: idelemento,
-                consumos_idconsumo: consumo.idconsumo,
+                consumos_idconsumo: idconsumo,
                 cantidad,
                 observaciones,
                 fecha: obtenerHoraActual()
@@ -47,11 +64,12 @@ const createConsumption = async (req, res) => {
             );
         }
 
-        res.status(201).json({ mensaje: 'Consumo registrado con éxito', consumo});
+        res.status(201).json({ mensaje: 'Elementos agregados al consumo con éxito' });
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al rgistrar consumo: ', error});
+        res.status(500).json({ mensaje: 'Error al agregar elementos al consumo: ', error });
     }
 };
+
 
 const updateConsumption = async (req, res) => {
     try {
@@ -80,4 +98,28 @@ const deleteConsumption = async (req,res) => {
     }
 };
 
-export { createConsumption,  deleteConsumption};
+const getAllConsumtions = async (req, res) => {
+    try {
+        const consumos = await ElementoHasConsumo.findAll(/*{group: ['consumos_idconsumo']}*/);
+        res.json(consumos);
+    } catch(error) {
+        res.status(500).json({ mesaje: 'Error al obtener los consumos: ', error });
+    }
+};
+
+const getConsumptionById = async (req, res) => {
+    const {idconsumo} = req.params;
+    try {
+        const consumo = await ElementoHasConsumo.findAll({ where: { consumos_idconsumo: idconsumo }});
+        if(consumo) {
+            res.json(consumo);
+        } else {
+            res.status(404).json({ mensaje: `No existe consumo con el id ${req.params.idconsumo}`})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ mensaje: 'Error al obtener el consumo: ', error});
+    }
+};
+
+export { createConsumption, addElementsToConsumption, getAllConsumtions, getConsumptionById, deleteConsumption};
