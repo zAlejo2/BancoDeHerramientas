@@ -22,11 +22,14 @@ const createConsumption = async (req, res) => {
     }
 };
 
-const addElementsToConsumption = async (req, res) => {
+const addOrUpdate = async (req, res) => {
     try {
-        const { idconsumo, elementos } = req.body;
+        // TENER EN CUENTA EL CONTROL DE MINIMOS Y QUE EL ELEMENTO SE ENCUENTRE DIPONIBLE PARA QUE FUNCIONE, ACTUALMENTE FALTA ESO
+        const { idconsumo } = req.params;
+        const { elementos } = req.body;
 
         const consumo = await Consumo.findOne({ where: { idconsumo } });
+
         if (!consumo) {
             return res.status(404).json({ mensaje: 'Consumo no encontrado' });
         }
@@ -34,59 +37,74 @@ const addElementsToConsumption = async (req, res) => {
         for (let elemento of elementos) {
             const { idelemento, cantidad, observaciones } = elemento;
 
-            if (cantidad <= 0) {
-                return res.status(400).json({ mensaje: 'La cantidad de consumo debe ser mayor a 0' });
-            }
-
-            const elementoEncontrado = await Elemento.findOne({ where: { idelemento, estado: 'disponible' } });
-            if (!elementoEncontrado) {
-                return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado o agotado, revise inventario` });
-            }
-
-            if (elementoEncontrado.disponibles < cantidad) {
-                return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el consumo` });
-            }
-
-            await ElementoHasConsumo.create({
-                elementos_idelemento: idelemento,
-                consumos_idconsumo: idconsumo,
-                cantidad,
-                observaciones,
-                fecha: obtenerHoraActual()
+            const elementoEnConsumo = await ElementoHasConsumo.findOne({
+                where: {
+                    elementos_idelemento: idelemento,
+                    consumos_idconsumo: idconsumo
+                }
             });
 
-            await Elemento.update(
-                {
-                    disponibles: elementoEncontrado.disponibles - cantidad,
-                    estado: elementoEncontrado.disponibles - cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
-                },
-                { where: { idelemento } }
-            );
+            if (cantidad <= 0) {
+                return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor que éste`});
+            }
+
+            const elementoEncontrado = await Elemento.findOne({ where: { idelemento }});
+            if (!elementoEncontrado) {
+                return res.status(404).json({ mensaje: `Elemento con ID ${idelemento} no encontrado` });
+            }
+
+            if(elementoEnConsumo) {
+
+                const diferencia = elementoEnConsumo.cantidad - cantidad;
+
+                await ElementoHasConsumo.update(
+                    { cantidad: cantidad, observaciones: observaciones},
+                    { where: { elementos_idelemento: idelemento, consumos_idconsumo: idconsumo } }
+                );
+
+                await Elemento.update(
+                    {
+                        disponibles: elementoEncontrado.disponibles + diferencia,
+                        estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                    },
+                    { where: { idelemento } }
+                ); 
+
+            } else {
+
+                if (elementoEncontrado.disponibles < cantidad) {
+                    return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el consumo` });
+                }
+
+                await ElementoHasConsumo.create({
+                    elementos_idelemento: idelemento,
+                    consumos_idconsumo: idconsumo,
+                    cantidad,
+                    observaciones,
+                    fecha: obtenerHoraActual()
+                });
+
+                await Elemento.update(
+                    {
+                        disponibles: elementoEncontrado.disponibles - cantidad,
+                        estado: elementoEncontrado.disponibles - cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                    },
+                    { where: { idelemento } }
+                );
+            }
         }
 
-        res.status(201).json({ mensaje: 'Elementos agregados al consumo con éxito' });
+        return res.status(201).json({ mensaje: 'Elementos agregados al consumo y actualizados con éxito' });
+
     } catch (error) {
         res.status(500).json({ mensaje: 'Error al agregar elementos al consumo: ', error });
     }
 };
 
-
-const updateConsumption = async (req, res) => {
-    try {
-        // const updated = 
-    } catch (error) {}
-}
-
-const changeToLoan = async (req, res) => {
-    try {
-
-    } catch (error) {}
-};
-
 const deleteConsumption = async (req,res) => {
     try {
         const deleted = await Consumo.destroy ({
-            where: { idconsumo: req.params.idconsumo }
+            where: { idconsumo: req.body.idconsumo }
         });
         if(deleted) {
             res.status(201).json({ mensaje: 'Consumo eliminado correctamente'});
@@ -122,4 +140,4 @@ const getConsumptionById = async (req, res) => {
     }
 };
 
-export { createConsumption, addElementsToConsumption, getAllConsumtions, getConsumptionById, deleteConsumption};
+export { createConsumption, getAllConsumtions, getConsumptionById, addOrUpdate, deleteConsumption};
