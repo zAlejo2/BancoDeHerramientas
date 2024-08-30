@@ -7,6 +7,7 @@ import { HomeIcon, BookIcon, PenToolIcon, ClipboardIcon, CircleAlertIcon, Triang
 import { MdOutlineConstruction } from "react-icons/md";
 import { Divider } from '@mui/material';
 import LogoutButton from '../forms/elements/cerrarSesionButton';
+import { LuArrowDownLeftFromCircle } from "react-icons/lu";
 
 export const Menu = ({ children }) => {
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
@@ -61,6 +62,14 @@ export const Menu = ({ children }) => {
             to: "/admin", 
             subMenu: [
                 { name: "Formulario", to: "/administrador/formulario" }, 
+                // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
+            name: "Consumos", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Formulario", to: "/consumos" }, 
                 // { name: "Encargos", to: "/admin/encargos" }
             ]
         }
@@ -168,7 +177,7 @@ export const Menu = ({ children }) => {
 function Icon({ name, ...props }) {
     const icons = {
         "Inicio": <HomeIcon {...props} />,
-        "Consumos": <PenToolIcon {...props} />,
+        "Consumos": <LuArrowDownLeftFromCircle {...props} />,
         "Encargos": <ClipboardIcon {...props} />,
         "Areas": <CircleAlertIcon {...props} />,
         "Clientes": <UserIcon {...props} />,

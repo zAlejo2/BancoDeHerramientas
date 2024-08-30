@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, LogOutIcon, XIcon } from "lucide-react";
+import { LuArrowDownLeftFromCircle } from "react-icons/lu";
 import useGetData from "@/hooks/useGetData"; // Adjust path as needed
 import SearchBar from "@/components/forms/elements/searchBar.jsx";
 
@@ -70,7 +71,7 @@ function Icon({ name, ...props }) {
   const icons = {
     "Inicio": <HomeIcon {...props} />,
     "Préstamos": <BookIcon {...props} />,
-    "Consumos": <PenToolIcon {...props} />,
+    "Consumos": <LuArrowDownLeftFromCircle {...props} />,
     "Encargos": <ClipboardIcon {...props} />,
     "Moras": <CircleAlertIcon {...props} />,
     "Daños": <TriangleAlertIcon {...props} />,

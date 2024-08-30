@@ -2,7 +2,7 @@ import axiosInstance from '../helpers/axiosConfig';
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-const usePostData = (url, onSubmit, inputs, validations) => {
+const usePostData = (url, onSubmit, inputs, validations, ruta) => {
     const navigate = useNavigate();
 
     const validateInputs = () => {
@@ -41,7 +41,7 @@ const usePostData = (url, onSubmit, inputs, validations) => {
                 }
             }).then(() => {
                 onSubmit();
-                navigate("/inicio", { replace: true });
+                navigate(ruta, { replace: true });
             });
         } catch (error) {
             Swal.fire({
