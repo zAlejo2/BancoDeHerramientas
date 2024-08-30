@@ -50,10 +50,21 @@ const addOrUpdate = async (req, res) => {
 
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento }});
             if (!elementoEncontrado) {
-                return res.status(404).json({ mensaje: `Elemento con ID ${idelemento} no encontrado` });
+                return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado en el inventario` });
+            }
+
+            const dispoTotal = elementoEncontrado.disponibles - elementoEncontrado.minimo;
+
+            const elementoDisponible = await Elemento.findOne({ where: { idelemento, estado: 'disponible' }});
+            if (!elementoEncontrado) {
+                return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado o agotado, revise inventario` });
             }
 
             if(elementoEnConsumo) {
+                const dispoTotalUpdate = dispoTotal + elementoEnConsumo.cantidad;
+                if((dispoTotalUpdate < cantidad) && (cantidad > elementoEnConsumo.cantidad)) {
+                    return res.status(400).json({ mensaje: `No hay más elementos disponibles con el id ${idelemento} para consumir`}) 
+                } 
 
                 const diferencia = elementoEnConsumo.cantidad - cantidad;
 
@@ -72,8 +83,12 @@ const addOrUpdate = async (req, res) => {
 
             } else {
 
-                if (elementoEncontrado.disponibles < cantidad) {
-                    return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el consumo` });
+                if(!elementoDisponible) {
+                    return res.status(400).json({ mensaje: `El elemento con el id ${idelemento} se encuentra agotado`})
+                }
+
+                if (dispoTotal < cantidad) {
+                    return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el consumo, revise mínimos en el inventario` });
                 }
 
                 await ElementoHasConsumo.create({
@@ -97,7 +112,7 @@ const addOrUpdate = async (req, res) => {
         return res.status(201).json({ mensaje: 'Elementos agregados al consumo y actualizados con éxito' });
 
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al agregar elementos al consumo: ', error });
+        res.status(500).json({ mensaje: 'Error al agregar y actualizar elementos al consumo: ', error });
     }
 };
 
