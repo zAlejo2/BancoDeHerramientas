@@ -5,6 +5,7 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 
 const createConsumption = async (req, res) => {
     try {
+        
         const { documento } = req.body;
         const cliente = await Cliente.findOne({ where: { documento } });
 
@@ -24,7 +25,7 @@ const createConsumption = async (req, res) => {
 
 const addOrUpdate = async (req, res) => {
     try {
-        // TENER EN CUENTA EL CONTROL DE MINIMOS Y QUE EL ELEMENTO SE ENCUENTRE DIPONIBLE PARA QUE FUNCIONE, ACTUALMENTE FALTA ESO
+
         const { idconsumo } = req.params;
         const { elementos } = req.body;
 
@@ -61,7 +62,9 @@ const addOrUpdate = async (req, res) => {
             }
 
             if(elementoEnConsumo) {
+
                 const dispoTotalUpdate = dispoTotal + elementoEnConsumo.cantidad;
+
                 if((dispoTotalUpdate < cantidad) && (cantidad > elementoEnConsumo.cantidad)) {
                     return res.status(400).json({ mensaje: `No hay más elementos disponibles con el id ${idelemento} para consumir`}) 
                 } 
