@@ -6,8 +6,8 @@ const router = Router();
 
 router.post('/', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), createConsumption);
 router.post('/addElements/:idconsumo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), addOrUpdate);
-router.get('/:idconsumo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getConsumptionById);
+// router.get('/:idconsumo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getConsumptionById);
 router.get('/', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), getAllConsumtions);
-router.delete('/', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), deleteConsumption);
+router.delete('/:idconsumo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), deleteConsumption);
 
 export default router;

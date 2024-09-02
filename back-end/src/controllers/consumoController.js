@@ -5,7 +5,7 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 
 const createConsumption = async (req, res) => {
     try {
-        
+
         const { documento } = req.body;
         const cliente = await Cliente.findOne({ where: { documento } });
 
@@ -17,7 +17,10 @@ const createConsumption = async (req, res) => {
             clientes_documento: cliente.documento
         });
 
-        res.status(201).json({ mensaje: 'Consumo creado con éxito', consumo });
+        const idconsumo = consumo.idconsumo;
+
+        return res.status(201).json({ idconsumo });
+
     } catch (error) {
         res.status(500).json({ mensaje: 'Error al crear consumo: ', error });
     }
@@ -33,6 +36,35 @@ const addOrUpdate = async (req, res) => {
 
         if (!consumo) {
             return res.status(404).json({ mensaje: 'Consumo no encontrado' });
+        }
+        
+        const elementosExistentes = await ElementoHasConsumo.findAll({
+            where: { consumos_idconsumo: idconsumo }
+        });
+
+        const idsDelBody = elementos.map((elemento) => elemento.idelemento);
+
+        for (let elementoExistente of elementosExistentes) {
+            if (!idsDelBody.includes(elementoExistente.elementos_idelemento)) {
+                const cantidadEliminar = elementoExistente.cantidad;
+
+                const elemento = await Elemento.findOne({ where: { idelemento: elementoExistente.elementos_idelemento } });
+                
+                await Elemento.update(
+                    {
+                        disponibles: elemento.disponibles + cantidadEliminar,
+                        estado: elemento.disponibles + cantidadEliminar <= elemento.minimo ? 'agotado' : 'disponible'
+                    },
+                    { where: { idelemento: elementoExistente.elementos_idelemento } }
+                );
+
+                await ElementoHasConsumo.destroy({
+                    where: {
+                        consumos_idconsumo: idconsumo,
+                        elementos_idelemento: elementoExistente.elementos_idelemento
+                    }
+                });
+            }
         }
 
         for (let elemento of elementos) {
@@ -122,7 +154,7 @@ const addOrUpdate = async (req, res) => {
 const deleteConsumption = async (req,res) => {
     try {
         const deleted = await Consumo.destroy ({
-            where: { idconsumo: req.body.idconsumo }
+            where: { idconsumo: req.params.idconsumo }
         });
         if(deleted) {
             res.status(201).json({ mensaje: 'Consumo eliminado correctamente'});
