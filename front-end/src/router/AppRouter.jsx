@@ -114,7 +114,7 @@ export const AppRoutes = ({tokenSession}) => {
             )
         },
         {
-            path: '/consumos/elementos',
+            path: '/consumos/elementos/:idconsumo',
             element: (
                 <ProtectedRoute>
                     <FormAgregarEditar/>

@@ -25,9 +25,12 @@ const usePostData = (url, onSubmit, inputs, validations, ruta) => {
         }
         return true;
     };
+
     const aceptSubmit = async () => {
         try {
-            await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);
+            const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);
+            onSubmit(response.data);
+            
             Swal.fire({
                 title: "¡Bien!",
                 text: "La información ha sido guardada correctamente.",

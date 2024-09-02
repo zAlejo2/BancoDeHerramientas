@@ -1,106 +1,174 @@
-import React, { useState } from 'react';
-import '../../assets/styles.css'; 
+import React, { useState } from "react";
+import useSearchElements from "../../hooks/useSearchElements";
+import usePostData from "../../hooks/usePostData";
+import useDeleteData from "../../hooks/useDeleteData";
+import { useParams } from "react-router-dom";
+import '../../assets/formAgregarEditarStyles.css'; // Importa el archivo CSS
 
-const FormAgregarEditar = () => {
-  const [busqueda, setBusqueda] = useState('');
-  const [cantidad, setCantidad] = useState('');
-  const [observaciones, setObservaciones] = useState('');
-  const [fecha, setFecha] = useState('');
-  const [consumos, setConsumos] = useState([]);
+export const FormAgregarEditar = () => {
+    const { idconsumo } = useParams();
+    const [searchTerm, setSearchTerm] = useState("");
+    const [selectedItems, setSelectedItems] = useState([]);
+    const { deleteData, data, isLoading, error } = useDeleteData(`consumos/${idconsumo}`, '/consumos');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (busqueda && cantidad && fecha) {
-      const nuevoConsumo = {
-        id: Date.now(),
-        busqueda,
-        cantidad: parseFloat(cantidad),
-        observaciones,
-        fecha,
-      };
-      setConsumos([...consumos, nuevoConsumo]);
-      setBusqueda('');
-      setCantidad('');
-      setObservaciones('');
-      setFecha('');
-    } else {
-      alert('Por favor, complete los campos requeridos.');
-    }
-  };
+    const handleDelete = () => {
+        deleteData();
+    };
 
-  return (
-    <div className="form-container">
-      <h2>Agregar Consumo</h2>
-      <form onSubmit={handleSubmit} className="form-content">
-        <div className="form-group">
-          <label htmlFor="busqueda">Buscar Consumo:</label>
-          <input
-            type="text"
-            id="busqueda"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            required
-            placeholder="Ingrese el nombre del consumo"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="cantidad">Cantidad:</label>
-          <input
-            type="number"
-            id="cantidad"
-            value={cantidad}
-            onChange={(e) => setCantidad(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="observaciones">Observaciones:</label>
-          <input
-            type="text"
-            id="observaciones"
-            value={observaciones}
-            onChange={(e) => setObservaciones(e.target.value)}
-            placeholder="Opcional"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="fecha">Fecha:</label>
-          <input
-            type="date"
-            id="fecha"
-            value={fecha}
-            onChange={(e) => setFecha(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Agregar a la Tabla</button>
-      </form>
+    const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
 
-      <div className="table-container">
-        <h3>Tabla de Consumos</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Nombre del Consumo</th>
-              <th>Cantidad</th>
-              <th>Observaciones</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody>
-            {consumos.map((consumo) => (
-              <tr key={consumo.id}>
-                <td>{consumo.busqueda}</td>
-                <td>{consumo.cantidad}</td>
-                <td>{consumo.observaciones}</td>
-                <td>{consumo.fecha}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handleAddItem = (item) => {
+        const itemExists = selectedItems.some(selectedItem => selectedItem.idelemento === item.idelemento);
+        
+        if (itemExists) {
+            console.log("El elemento ya está en la lista.");
+            return; // No hacer nada si el elemento ya está en la lista
+        }
+    
+        console.log("Elemento agregado:", item);
+        setSelectedItems((prevItems) => [
+            ...prevItems,
+            { ...item, cantidad: 1, observaciones: "", checked: false }
+        ]);
+    };    
+
+    const handleQuantityChange = (idelemento, quantity) => {
+        setSelectedItems((prevItems) =>
+            prevItems.map((item) =>
+                item.idelemento === idelemento
+                    ? { ...item, cantidad: quantity }
+                    : item
+            )
+        );
+    };
+
+    const handleObservationsChange = (idelemento, observations) => {
+        setSelectedItems((prevItems) =>
+            prevItems.map((item) =>
+                item.idelemento === idelemento
+                    ? { ...item, observaciones: observations }
+                    : item
+            )
+        );
+    };
+
+    const handleDeleteSelected = () => {
+        setSelectedItems((prevItems) =>
+            prevItems.filter((item) => !item.checked)
+        );
+    };
+
+    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones }) => ({
+        idelemento,
+        cantidad,
+        observaciones
+    }));
+
+    const handleSave = usePostData(`consumos/addElements/${idconsumo}`, () => {}, { elementos }, {},`/consumos/elementos/${idconsumo}`);
+
+
+    return (
+        <div className="form-container">
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario de Consumo</h1>
+            <div className="container">
+                <div className="search-results-container">
+                    <label htmlFor="search" className="block text-neutral-500">
+                        Busca el elemento que deseas agregar al consumo
+                    </label>
+                    <input
+                        type="text"
+                        id="search"
+                        name="search"
+                        placeholder="Nombre del elemento"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="input-field"
+                    />
+                    {searchLoading && <p>Cargando...</p>}
+                    {searchError && <p>Error: {searchError}</p>}
+                    <div className="search-results">
+                        {Array.isArray(searchResults) && searchResults.map((item) => (
+                            <div
+                                key={item.idelemento}
+                                className="search-result-item"
+                                onClick={() => handleAddItem(item)}
+                            >
+                                <span className="search-result-text">{item.descripcion}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="table-container">
+                    <table className="min-w-full divide-y divide-gray-200">
+                        <thead>
+                            <tr>
+                                <th>Elemento</th>
+                                <th>Cantidad</th>
+                                <th>Observaciones</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {selectedItems.map((item) => (
+                                <tr key={item.idelemento}>
+                                    <td>{item.descripcion}</td>
+                                    <td>
+                                        <input className="input"
+                                            type="number"
+                                            value={item.cantidad}
+                                            onChange={(e) =>
+                                                handleQuantityChange(item.idelemento, e.target.value)
+                                            }
+                                        />
+                                    </td>
+                                    <td>
+                                        <input className="input"
+                                            type="text"
+                                            value={item.observaciones}
+                                            onChange={(e) =>
+                                                handleObservationsChange(item.idelemento, e.target.value)
+                                            }
+                                        />
+                                    </td>
+                                    <td>
+                                        <button 
+                                            type="button"
+                                            className="delete-button"
+                                            onClick={() =>
+                                                setSelectedItems((prevItems) =>
+                                                    prevItems.filter((i) => i.idelemento !== item.idelemento)
+                                                )
+                                            }
+                                        >
+                                            Eliminar
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="mt-4 flex justify-center">
+                    <button
+                        type="button"
+                        className="consume-button"
+                        onClick={handleSave} // Cambia handleConsume a handleSave
+                    >
+                        Guardar Consumo
+                    </button>
+                    <button
+                        type="button"
+                        className="consume-button"
+                        onClick={handleDelete} disabled={isLoading}>
+                        {isLoading ? 'Eliminando...' : 'Eliminar Consumo'}                    
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 };
-
-export {FormAgregarEditar};

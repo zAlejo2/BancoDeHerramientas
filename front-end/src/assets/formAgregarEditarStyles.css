@@ -1,0 +1,130 @@
+/* formAgregarEditarStyles.css */
+
+/* Contenedor principal para todo el formulario */
+.form-container {
+    padding: 5px;
+    background-color: #ffffff;
+}
+
+/* Contenedor general */
+.container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Contenedor para la barra de búsqueda y los resultados */
+.search-results-container {
+    margin-bottom: 20px; /* Espacio entre la búsqueda y la tabla */
+}
+
+.input-field {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    margin-top: 5px;
+}
+
+.search-results {
+    max-height: 135px; /* Ajusta la altura máxima según tus necesidades */
+    overflow-y: auto; /* Agrega una barra de desplazamiento vertical si es necesario */
+    margin-top: 10px; /* Espacio entre la búsqueda y los resultados */
+    border: 1px solid black;
+    font-size: 14px;
+    border-radius: 2px;
+}
+
+.search-result-item {
+    display: flex;
+    align-items: center;
+    padding: 6px; /* Relleno para mejorar la apariencia */
+    border-bottom: 1px solid #3e3d3d; /* Línea divisoria opcional */
+}
+
+.search-result-text {
+    white-space: nowrap; /* Mantiene el texto en una sola línea */
+    overflow: hidden; /* Oculta el texto que se desborda */
+    text-overflow: ellipsis; /* Muestra "..." al final del texto si se desborda */
+    flex-grow: 1; /* Permite que el texto ocupe el espacio disponible */
+    cursor: pointer;
+}
+
+.add-button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background-color: #0056b3;
+}
+
+/* Contenedor para la tabla */
+.table-container {
+    border-radius: 0px; /* Bordes redondeados opcionales */
+    background-color: #fff; /* Fondo blanco para la tabla */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra opcional para la tabla */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 4px;
+    text-align: center;
+    border: 1px solid black;
+}
+
+th {
+    background-color: #000000;
+    color: white;
+}
+
+.delete-button, .delete-selected-button, .consume-button {
+    padding: 2px 4px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.delete-button {
+    background-color: #000000;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #000000;
+}
+
+.delete-selected-button {
+    background-color: #000000;
+    color: white;
+}
+
+.delete-selected-button:hover {
+    background-color: #000000;
+}
+
+.consume-button {
+    background-color: #000000;
+    color: white;
+    width: 150px;
+    height: 50px;
+    margin-right: 40px;
+}
+
+.consume-button:hover {
+    background-color: #000000;
+}
+
+.input {
+    height: 100%;
+    width: 100%;
+    border: none;
+    color: #000000;
+}

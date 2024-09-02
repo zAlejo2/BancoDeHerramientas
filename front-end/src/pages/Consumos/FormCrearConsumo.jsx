@@ -31,14 +31,36 @@ export const FormCrearConsumo = () => {
         setInputs(initialData);
     }, []);
 
-    // Función de envío de datos
-    const onSubmit = useCallback(() => {
-        handleFormReset();
-        navigate("/consumos/elementos", { replace: true });
-    }, [handleFormReset, navigate]);
+    // // Función de envío de datos
+    // const onSubmit = useCallback(() => {
+    //     handleFormReset();
+    //     navigate(`/consumos/elementos/${idconsumo}`, { replace: true });
+    // }, [handleFormReset, navigate]);
 
+    // const idconsumo = (data) => {
+    //     const idconsumo = data.idconsumo;
+
+    //     if (idconsumo) {
+    //         return idconsumo;
+    //     } else {
+    //         console.error("ID del consumo no encontrado en la respuesta.");
+    //     }
+
+    //     handleFormReset();
+    // }
     // Hook usePostData
-    const handleSubmit = usePostData("consumos", onSubmit, inputs, validations, "/consumos/elementos");
+    const handleSubmit = usePostData("consumos", (data) => {
+        const idconsumo = data.idconsumo;
+        console.log(idconsumo)
+        if (idconsumo) {
+            console.log(idconsumo)
+            navigate(`/consumos/elementos/${idconsumo}`, { replace: true });
+        } else {
+            console.error("ID del consumo no encontrado en la respuesta.");
+        }
+
+        handleFormReset();
+    }, inputs, validations);
 
     const inputs1 = [
         { 
