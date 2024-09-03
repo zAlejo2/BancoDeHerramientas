@@ -6,7 +6,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, LogOutIcon, XIcon } from "lucide-react";
 import { LuArrowDownLeftFromCircle } from "react-icons/lu";
 import useGetData from "@/hooks/useGetData"; // Adjust path as needed
-import SearchBar from "@/components/forms/elements/searchBar.jsx";
+import InputPrestamo from '../Prestamos/InputPrestamo.jsx'
 
 export const HomePage = () => {
   const [search, setSearch] = useState("");
@@ -29,7 +29,7 @@ export const HomePage = () => {
         ))}
       </section>
       <section className="mt-6">
-        <SearchBar></SearchBar>
+        <InputPrestamo/>
         <Card className="border-input">
           <Table>
             <TableHeader>

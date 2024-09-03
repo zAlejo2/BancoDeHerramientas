@@ -31,23 +31,6 @@ export const FormCrearConsumo = () => {
         setInputs(initialData);
     }, []);
 
-    // // Función de envío de datos
-    // const onSubmit = useCallback(() => {
-    //     handleFormReset();
-    //     navigate(`/consumos/elementos/${idconsumo}`, { replace: true });
-    // }, [handleFormReset, navigate]);
-
-    // const idconsumo = (data) => {
-    //     const idconsumo = data.idconsumo;
-
-    //     if (idconsumo) {
-    //         return idconsumo;
-    //     } else {
-    //         console.error("ID del consumo no encontrado en la respuesta.");
-    //     }
-
-    //     handleFormReset();
-    // }
     // Hook usePostData
     const handleSubmit = usePostData("consumos", (data) => {
         const idconsumo = data.idconsumo;

@@ -13,7 +13,8 @@ import { FormAreas } from '@/pages/Areas/FormAreas';
 import { FormAdmin } from '@/pages/Administradores/FormAdmin';
 import Prestamos from '@/pages/Prestamos/Prestamos';
 import { FormCrearConsumo } from '../pages/Consumos/FormCrearConsumo.jsx';
-import { FormAgregarEditar } from '../pages/Consumos/FormAgregegarEditar.jsx';
+import { FormAgregarEditarConsumo } from '../pages/Consumos/FormAgregegarEditar.jsx';
+import { FormAgregarEditarPrestamo } from '../pages/Prestamos/FormAgregarEditar';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -117,7 +118,15 @@ export const AppRoutes = ({tokenSession}) => {
             path: '/consumos/elementos/:idconsumo',
             element: (
                 <ProtectedRoute>
-                    <FormAgregarEditar/>
+                    <FormAgregarEditarConsumo/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/prestamos/elementos/:idprestamo',
+            element: (
+                <ProtectedRoute>
+                    <FormAgregarEditarPrestamo/>
                 </ProtectedRoute>
             )
         },

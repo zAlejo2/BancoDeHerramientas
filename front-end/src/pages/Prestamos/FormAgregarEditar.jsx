@@ -1,15 +1,20 @@
 import React, { useState } from "react";
 import useSearchElements from "../../hooks/useSearchElements";
-import usePostData from "../../hooks/usePostData";
+import usePostData from "../../hooks/usePostData.jsx";
+import useGetData from "../../hooks/useGetData.jsx";
 import useDeleteData from "../../hooks/useDeleteData";
 import { useParams } from "react-router-dom";
-import '../../assets/formAgregarEditarStyles.css'; // Importa el archivo CSS
+import '../../assets/formAgregarEditarStyles.css'; 
+import axiosInstance from "../../helpers/axiosConfig.js";
 
-export const FormAgregarEditarConsumo = () => {
-    const { idconsumo } = useParams();
+export const FormAgregarEditarPrestamo = () => {
+    const { idprestamo } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
-    const { deleteData, data, isLoading, error } = useDeleteData(`consumos/${idconsumo}`, '/consumos');
+    const { deleteData, data, isLoading, error } = useDeleteData(`prestamos/${idprestamo}`, '/inicio');
+
+    // const elementosEnPrestamo = axiosInstance.get(`${import.meta.env.VITE_API_URL}/prestamos/${idprestamo}/elementos`);
+    // console.log(elementosEnPrestamo)
 
     const handleDelete = () => {
         deleteData();
@@ -56,28 +61,21 @@ export const FormAgregarEditarConsumo = () => {
         );
     };
 
-    const handleDeleteSelected = () => {
-        setSelectedItems((prevItems) =>
-            prevItems.filter((item) => !item.checked)
-        );
-    };
-
     const elementos = selectedItems.map(({ idelemento, cantidad, observaciones }) => ({
         idelemento,
         cantidad,
         observaciones
     }));
 
-    const handleSave = usePostData(`consumos/addElements/${idconsumo}`, () => {}, { elementos }, {},`/consumos/elementos/${idconsumo}`);
-
+    const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},`/prestamos/elementos/${idprestamo}`);
 
     return (
         <div className="form-container">
-            <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario de Consumo</h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario de Prestamo</h1>
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
-                        Busca el elemento que deseas agregar al consumo
+                        Busca el elemento que deseas agregar al préstamo
                     </label>
                     <input
                         type="text"
@@ -110,6 +108,8 @@ export const FormAgregarEditarConsumo = () => {
                                 <th>Elemento</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
+                                <th>Fecha En</th>
+                                <th>Fecha Dev</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -135,6 +135,8 @@ export const FormAgregarEditarConsumo = () => {
                                             }
                                         />
                                     </td>
+                                    <td>{item.fecha_entrega}</td>
+                                    <td>{item.fecha_devolucion}</td>
                                     <td>
                                         <button 
                                             type="button"
@@ -159,16 +161,16 @@ export const FormAgregarEditarConsumo = () => {
                         className="consume-button"
                         onClick={handleSave} // Cambia handleConsume a handleSave
                     >
-                        Guardar Consumo
+                        Guardar Prestamo
                     </button>
                     <button
                         type="button"
                         className="consume-button"
                         onClick={handleDelete} disabled={isLoading}>
-                        {isLoading ? 'Eliminando...' : 'Eliminar Consumo'}                    
+                        {isLoading ? 'Eliminando...' : 'Eliminar Prestamo'}                    
                     </button>
                 </div>
             </div>
         </div>
-    );
+    );
 };
