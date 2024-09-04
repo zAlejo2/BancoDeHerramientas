@@ -1,6 +1,27 @@
-import { format } from 'date-fns';
+import { format, parseISO, isValid, addHours } from 'date-fns';
 import { es } from 'date-fns/locale'; 
 import { AdminSesion } from '../../models/index.js';
+
+const formatFecha = (fecha, ajusteHoras = 0) => {
+    if (!fecha) return null;
+
+    try {
+        const isoFecha = new Date(fecha).toISOString();
+
+        const parsedDate = parseISO(isoFecha);
+
+        if (!isValid(parsedDate)) {
+            throw new Error('Fecha inválida');
+        }
+
+        const adjustedDate = addHours(parsedDate, ajusteHoras);
+
+        return format(adjustedDate, 'MM/dd/yyyy h:mm a');
+    } catch (error) {
+        console.error('Error al formatear la fecha:', error);
+        return null;
+    }
+};
 
 const ajustarHora = (date) => {
   const offset = -5; // Esto es para cuadrar las horas manualmente porque en la bd se están guardando las hroas con un desface de 5 horas
@@ -36,4 +57,4 @@ const terminarSesion = async (documento) => {
     }
 };
 
-export { nuevaSesion, terminarSesion, ajustarHora };
+export { nuevaSesion, terminarSesion, ajustarHora, formatFecha };

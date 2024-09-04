@@ -1,5 +1,5 @@
 import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento } from '../models/index.js';
-import { ajustarHora } from './auth/adminsesionController.js';
+import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
@@ -35,19 +35,31 @@ const createLoan = async (req, res) => {
 const findLoanElements = async (req, res) => {
     const { idprestamo } = req.params;
 
-    const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual' } });
-    if (loanExisting) {
-        let idprestamo = loanExisting.idprestamo;
-        const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo }});
-        const elementosEnPrestamo = loanElements.map(async loanElement => {
-            const { elementos_idelemento, cantidad, observaciones, fecha_entrega } = loanElement;
-            const elemento = await Elemento.findOne({ where: { idelemento: elementos_idelemento}});
-            return { elemento, cantidad, observaciones, fecha_entrega };
-        });
+    try {
+        const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual' } });
+        if (loanExisting) {
+            let idprestamo = loanExisting.idprestamo;
+            const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo }});
 
-        const elementos = await Promise.all(elementosEnPrestamo);
+            const elementosEnPrestamo = loanElements.map(async loanElement => {
+                const { elementos_idelemento, cantidad, observaciones, fecha_entrega, fecha_devolucion, estado } = loanElement;
 
-        return res.status(200).json({ idprestamo, elementos });
+                const fecha_entregaFormato = formatFecha(fecha_entrega, 5);
+                const fecha_devolucionFormato = formatFecha(fecha_devolucion, 5);
+
+                const elemento = await Elemento.findOne({ where: { idelemento: elementos_idelemento }});
+                return { elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado };
+            });
+
+            const elementos = await Promise.all(elementosEnPrestamo);
+
+            return res.status(200).json({ idprestamo, elementos });
+        } else {
+            return res.status(404).json({ mensaje: 'Préstamo no encontrado' });
+        }
+    } catch (error) {
+        console.error('Error al obtener elementos del préstamo:', error);
+        return res.status(500).json({ mensaje: 'Error al obtener los elementos del préstamo' });
     }
 };
 
