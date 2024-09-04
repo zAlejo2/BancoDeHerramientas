@@ -43,7 +43,7 @@ ElementoHasPrestamoCorriente.init({
       allowNull: true
   },
   estado: {
-      type: DataTypes.ENUM('actual', 'finalizado'),
+      type: DataTypes.ENUM('actual', 'finalizado', 'reportado'),
       allowNull: false
   }
 }, {
