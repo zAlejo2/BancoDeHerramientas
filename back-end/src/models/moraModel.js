@@ -22,7 +22,7 @@ Mora.init({
         defaultValue: Sequelize.literal('CURRENT_TIMESTAMP') 
     },
     observaciones: {
-        type: DataTypes.STRING(45),
+        type: DataTypes.STRING(200),
         allowNull: true 
     },
     tiempoMora: {

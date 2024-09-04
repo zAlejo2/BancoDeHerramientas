@@ -16,7 +16,7 @@ const formatFecha = (fecha, ajusteHoras = 0) => {
 
         const adjustedDate = addHours(parsedDate, ajusteHoras);
 
-        return format(adjustedDate, 'MM/dd/yyyy h:mm a');
+        return format(adjustedDate, 'MM/dd/yyyy h:mm:ss a');
     } catch (error) {
         console.error('Error al formatear la fecha:', error);
         return null;

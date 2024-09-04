@@ -31,7 +31,7 @@ ElementoHasEncargo.init({
       allowNull: false
   },
   observaciones: {
-      type: DataTypes.STRING(45),
+      type: DataTypes.STRING(200),
       allowNull: true
   },
   fecha_pedido: {

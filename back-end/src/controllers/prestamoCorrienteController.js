@@ -62,7 +62,7 @@ const findLoanElements = async (req, res) => {
         return res.status(500).json({ mensaje: 'Error al obtener los elementos del préstamo' });
     }
 };
-
+// TENGO QUE VALIDAR SI SE HIZO CAMBIO O NO EN EL ELEMENTO PARA QUE NO HAYA PROBLEMAS CON LA HORA Y FECHA
 const addOrUpdate = async (req, res) => {
     try {
 
@@ -107,17 +107,6 @@ const addOrUpdate = async (req, res) => {
         for (let elemento of elementos) {
             const { idelemento, cantidad, observaciones } = elemento;
 
-            const elementoEnPrestamo = await ElementoHasPrestamoCorriente.findOne({
-                where: {
-                    elementos_idelemento: idelemento,
-                    prestamoscorrientes_idprestamo: idprestamo
-                }
-            });
-
-            if (cantidad <= 0) {
-                return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor que éste`});
-            }
-
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento }});
             if (!elementoEncontrado) {
                 return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado en el inventario` });
@@ -125,42 +114,63 @@ const addOrUpdate = async (req, res) => {
 
             const dispoTotal = elementoEncontrado.disponibles - elementoEncontrado.minimo;
 
-            const elementoDisponible = await Elemento.findOne({ where: { idelemento, estado: 'disponible' }});
-            if (!elementoEncontrado) {
-                return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado o agotado, revise inventario` });
+            if (cantidad <= 0) {
+                return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor que éste`});
             }
 
-            if(elementoEnPrestamo) {
+            const elementoEnPrestamo = await ElementoHasPrestamoCorriente.findOne({
+                where: {
+                    elementos_idelemento: idelemento,
+                    prestamoscorrientes_idprestamo: idprestamo
+                }
+            });
 
+            if(elementoEnPrestamo) {
                 const dispoTotalUpdate = dispoTotal + elementoEnPrestamo.cantidad;
+                console.log(dispoTotalUpdate)
 
                 if((dispoTotalUpdate < cantidad) && (cantidad > elementoEnPrestamo.cantidad)) {
-                    return res.status(400).json({ mensaje: `No hay más elementos disponibles con el id ${idelemento} para consumir`}) 
+                    return res.status(400).json({ mensaje: `La cantidad solicitada del elemento con el id ${idelemento} supera la cantidad disponible de éste`}) 
                 } 
 
                 const diferencia = elementoEnPrestamo.cantidad - cantidad;
 
-                await ElementoHasPrestamoCorriente.update(
-                    { cantidad: cantidad, observaciones: observaciones},
-                    { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
-                );
+                const elementoReq = req.body.elementos.find(e => e.idelemento === elementoEnPrestamo.dataValues.elementos_idelemento);
 
-                await Elemento.update(
-                    {
-                        disponibles: elementoEncontrado.disponibles + diferencia,
-                        estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
-                    },
-                    { where: { idelemento } }
-                ); 
+                if (elementoReq) {
+                    const isSameCantidad = Number(elementoReq.cantidad) === Number(elementoEnPrestamo.dataValues.cantidad);
+                    console.log(elementoEnPrestamo.dataValues.cantidad, elementoReq.cantidad, isSameCantidad);
+                    
+                    if (!isSameCantidad) {
+                        console.log('La cantidad ha cambiado.');
+                        await ElementoHasPrestamoCorriente.update(
+                            { cantidad: cantidad, observaciones: observaciones, fecha_entrega: obtenerHoraActual() },
+                            { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
+                        );
+        
+                        await Elemento.update(
+                            {
+                                disponibles: elementoEncontrado.disponibles + diferencia,
+                                estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                            },
+                            { where: { idelemento } }
+                        ); 
+        
+                    } else {
+                        console.log('La cantidad no ha cambiado.');
+                    }
+                } else {
+                    console.log('No se encontró el elemento correspondiente en el request.');
+                }
 
             } else {
-
-                if(!elementoDisponible) {
-                    return res.status(400).json({ mensaje: `El elemento con el id ${idelemento} se encuentra agotado`})
+                const elementoDisponible = await Elemento.findOne({ where: { idelemento, estado: 'disponible' }});
+                if (!elementoDisponible) {
+                    return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} agotado` });
                 }
 
                 if (dispoTotal < cantidad) {
-                    return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el consumo, revise mínimos en el inventario` });
+                    return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el préstamo, revise mínimos en el inventario` });
                 }
 
                 await ElementoHasPrestamoCorriente.create({
@@ -207,7 +217,8 @@ const deleteLoan = async (req, res) => {
 
 const returnItem = async (req, res) => {
     try {
-        const { idprestamo, idelemento, cantidad } = req.body;
+        const { elementos } = req.body;
+        const { idprestamo } = req.params;
 
         const prestamo = await PrestamoCorriente.findByPk(idprestamo);
         if (!prestamo) {

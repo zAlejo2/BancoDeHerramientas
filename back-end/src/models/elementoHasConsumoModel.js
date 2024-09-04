@@ -36,7 +36,7 @@ ElementoHasConsumo.init({
       defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
   },
   observaciones: {
-      type: DataTypes.STRING(100),
+      type: DataTypes.STRING(200),
       allowNull: true
   }
 }, {
