@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { FaCheck } from "react-icons/fa6";
+import { IoClose } from "react-icons/io5";
 import useSearchElements from "../../hooks/useSearchElements";
 import usePostData from "../../hooks/usePostData.jsx";
 import useDeleteData from "../../hooks/useDeleteData";
 import { useParams } from "react-router-dom";
 import '../../assets/formAgregarEditarStyles.css'; 
 import axiosInstance from "../../helpers/axiosConfig.js";
+import { MdMargin } from "react-icons/md";
 
 export const FormAgregarEditarPrestamo = () => {
     const { idprestamo } = useParams();
@@ -27,12 +30,14 @@ export const FormAgregarEditarPrestamo = () => {
                 const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/prestamos/${idprestamo}/elementos`, { documento: idprestamo });
                 const { idprestamo: idprestamo2, elementos } = response.data;
                 // Asegúrate de usar 'idprestamo2' después de esta línea
-                setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entrega }) => ({
+                setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado }) => ({
                     idelemento: elemento.idelemento,
                     descripcion: elemento.descripcion,
                     cantidad,
                     observaciones,
-                    fecha_entrega
+                    fecha_entregaFormato,
+                    fecha_devolucionFormato,
+                    estado
                 })));
             } catch (error) {
                 console.error('Error al obtener el préstamo existente:', error);
@@ -130,7 +135,9 @@ export const FormAgregarEditarPrestamo = () => {
                                 <th>Elemento</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
-                                <th>Fecha Entrega</th>
+                                <th>Entrega</th>
+                                <th>Devolución</th>
+                                <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -156,8 +163,10 @@ export const FormAgregarEditarPrestamo = () => {
                                             }
                                         />
                                     </td>
-                                    <td>{item.fecha_entrega}</td>
-                                    <td>
+                                    <td>{item.fecha_entregaFormato}</td>
+                                    <td>{item.fecha_devolucionFormato}</td>
+                                    <td>{item.estado}</td>
+                                    <td>                                        
                                         <button 
                                             type="button"
                                             className="delete-button"
@@ -166,8 +175,21 @@ export const FormAgregarEditarPrestamo = () => {
                                                     prevItems.filter((i) => i.idelemento !== item.idelemento)
                                                 )
                                             }
+                                            style={{margin: '5px'}}
                                         >
-                                            Eliminar
+                                            <FaCheck/>
+                                        </button>
+                                        <button 
+                                            type="button"
+                                            className="delete-button"
+                                            onClick={() =>
+                                                setSelectedItems((prevItems) =>
+                                                    prevItems.filter((i) => i.idelemento !== item.idelemento)
+                                                )
+                                            }
+                                            style={{margin: '5px'}}
+                                        >
+                                            <IoClose/>
                                         </button>
                                     </td>
                                 </tr>
