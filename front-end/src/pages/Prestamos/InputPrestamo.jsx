@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import usePostData from "../../hooks/usePostData.jsx";
+import usePostDataNoalert from "../../hooks/usePostDataNoalert.jsx";
 
 const InputPrestamo = () => {
     const [documento, setDocumento] = useState("");
@@ -30,7 +30,7 @@ const InputPrestamo = () => {
         }
     };
 
-    const handleSubmit = usePostData(
+    const handleSubmit = usePostDataNoalert(
         "prestamos",
         onSubmit,     
         { documento }, 

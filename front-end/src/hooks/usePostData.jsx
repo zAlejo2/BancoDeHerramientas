@@ -30,22 +30,9 @@ const usePostData = (url, onSubmit, inputs, validations, ruta) => {
         try {
             const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);
             onSubmit(response.data);
-            
-            Swal.fire({
-                title: "¡Bien!",
-                text: "La información ha sido guardada correctamente.",
-                icon: "success",
-                iconColor: "#007BFF",
-                showConfirmButton: false,
-                timer: 2500,
-                customClass: {
-                    container: 'swal2-container',
-                    popup: 'swal2-popup'
-                }
-            }).then(() => {
-                onSubmit();
-                navigate(ruta, { replace: true });
-            });
+            onSubmit();
+            navigate(ruta, { replace: true });
+
         } catch (error) {
             Swal.fire({
                 icon: "error",

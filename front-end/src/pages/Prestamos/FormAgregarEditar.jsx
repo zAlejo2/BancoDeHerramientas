@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import useSearchElements from "../../hooks/useSearchElements";
 import usePostData from "../../hooks/usePostData.jsx";
-import useGetData from "../../hooks/useGetData.jsx";
 import useDeleteData from "../../hooks/useDeleteData";
 import { useParams } from "react-router-dom";
 import '../../assets/formAgregarEditarStyles.css'; 
@@ -11,14 +10,38 @@ export const FormAgregarEditarPrestamo = () => {
     const { idprestamo } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
-    const { deleteData, data, isLoading, error } = useDeleteData(`prestamos/${idprestamo}`, '/inicio');
+    const { deleteData, isLoading, error } = useDeleteData(`prestamos/${idprestamo}`, '/inicio');
 
-    // const elementosEnPrestamo = axiosInstance.get(`${import.meta.env.VITE_API_URL}/prestamos/${idprestamo}/elementos`);
-    // console.log(elementosEnPrestamo)
-
-    const handleDelete = () => {
-        deleteData();
+    const handleDelete = async () => {
+        try {
+            await deleteData();  // Llama a la función deleteData que ya tienes configurada.
+            console.log("Préstamo eliminado con éxito.");
+        } catch (error) {
+            console.error("Error al eliminar el préstamo:", error);
+        }
     };
+    
+    useEffect(() => {
+        const fetchExistingLoan = async () => {
+            try {
+                const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/prestamos/${idprestamo}/elementos`, { documento: idprestamo });
+                const { idprestamo: idprestamo2, elementos } = response.data;
+                // Asegúrate de usar 'idprestamo2' después de esta línea
+                setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entrega }) => ({
+                    idelemento: elemento.idelemento,
+                    descripcion: elemento.descripcion,
+                    cantidad,
+                    observaciones,
+                    fecha_entrega
+                })));
+            } catch (error) {
+                console.error('Error al obtener el préstamo existente:', error);
+            }
+        };
+    
+        fetchExistingLoan();
+    }, [idprestamo]);
+    
 
     const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
 
@@ -31,10 +54,9 @@ export const FormAgregarEditarPrestamo = () => {
         
         if (itemExists) {
             console.log("El elemento ya está en la lista.");
-            return; // No hacer nada si el elemento ya está en la lista
+            return;
         }
     
-        console.log("Elemento agregado:", item);
         setSelectedItems((prevItems) => [
             ...prevItems,
             { ...item, cantidad: 1, observaciones: "", checked: false }
@@ -67,7 +89,7 @@ export const FormAgregarEditarPrestamo = () => {
         observaciones
     }));
 
-    const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},`/prestamos/elementos/${idprestamo}`);
+    const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},'/inicio');
 
     return (
         <div className="form-container">
@@ -108,8 +130,7 @@ export const FormAgregarEditarPrestamo = () => {
                                 <th>Elemento</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
-                                <th>Fecha En</th>
-                                <th>Fecha Dev</th>
+                                <th>Fecha Entrega</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -136,7 +157,6 @@ export const FormAgregarEditarPrestamo = () => {
                                         />
                                     </td>
                                     <td>{item.fecha_entrega}</td>
-                                    <td>{item.fecha_devolucion}</td>
                                     <td>
                                         <button 
                                             type="button"
