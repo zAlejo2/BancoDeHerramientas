@@ -5,7 +5,6 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 
 const createLoan = async (req, res) => {
     try {
-
         const { documento } = req.body;
         const cliente = await Cliente.findOne({ where: { documento } });
 
@@ -16,7 +15,7 @@ const createLoan = async (req, res) => {
         const loanExisting = await PrestamoCorriente.findOne({ where: { clientes_documento: documento, estado: 'actual' } });
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
-            return res.status(201).json({ idprestamo });
+            return res.status(200).json({ idprestamo})
         }
 
         const prestamo = await PrestamoCorriente.create({
@@ -26,10 +25,29 @@ const createLoan = async (req, res) => {
 
         let idprestamo = prestamo.idprestamo;
 
-        return res.status(201).json({ idprestamo });
+        return res.status(200).json({ idprestamo, elementos: [] });
 
     } catch (error) {
         res.status(500).json({ mensaje: 'Error al crear consumo: ', error });
+    }
+};
+
+const findLoanElements = async (req, res) => {
+    const { idprestamo } = req.params;
+
+    const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual' } });
+    if (loanExisting) {
+        let idprestamo = loanExisting.idprestamo;
+        const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo }});
+        const elementosEnPrestamo = loanElements.map(async loanElement => {
+            const { elementos_idelemento, cantidad, observaciones, fecha_entrega } = loanElement;
+            const elemento = await Elemento.findOne({ where: { idelemento: elementos_idelemento}});
+            return { elemento, cantidad, observaciones, fecha_entrega };
+        });
+
+        const elementos = await Promise.all(elementosEnPrestamo);
+
+        return res.status(200).json({ idprestamo, elementos });
     }
 };
 
@@ -160,18 +178,6 @@ const addOrUpdate = async (req, res) => {
     }
 };
 
-const getLoanElements = async (req, res) => {
-    const { idprestamo } = req.params;
-
-    const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo, estado: 'actual' } });
-    if (!loanExisting) {
-        return res.status(404).json({ mensaje: 'Prestamo no encontrado' });
-    }
-
-    const elementos =  await ElementoHasPrestamoCorriente.findAll({ where: {prestamoscorrientes_idprestamo: idprestamo}});
-    return res.status(201).json({elementos});
-};
-
 const deleteLoan = async (req, res) => {
     try {
         const deleted = await PrestamoCorriente.destroy ({
@@ -252,4 +258,4 @@ const getLoans = async (req, res) => {
     }
 };
 
-export { createLoan, addOrUpdate, deleteLoan, returnItem, getLoans, getLoanElements };
+export { createLoan, findLoanElements, addOrUpdate, deleteLoan, returnItem, getLoans };
