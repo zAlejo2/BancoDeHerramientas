@@ -15,6 +15,7 @@ import ElementoHasPrestamoEspecial from './elementoHasPrestamoespecialModel.js';
 import ElementoHasPrestamoCorriente from './elementoHasPrestamocorrienteModel.js';
 import ElementoHasConsumo from './elementoHasConsumoModel.js';
 import ElementoHasEncargo from './elementoHasEncargoModel.js';
+import Historial from './historialModel.js';
 
 // Definición de relaciones
 
@@ -246,5 +247,6 @@ export {
     ElementoHasPrestamoEspecial,
     ElementoHasPrestamoCorriente,
     ElementoHasConsumo,
-    ElementoHasEncargo
+    ElementoHasEncargo,
+    Historial
 };

@@ -62,7 +62,7 @@ const findLoanElements = async (req, res) => {
         return res.status(500).json({ mensaje: 'Error al obtener los elementos del préstamo' });
     }
 };
-// TENGO QUE VALIDAR SI SE HIZO CAMBIO O NO EN EL ELEMENTO PARA QUE NO HAYA PROBLEMAS CON LA HORA Y FECHA
+
 const addOrUpdate = async (req, res) => {
     try {
 
@@ -127,8 +127,6 @@ const addOrUpdate = async (req, res) => {
 
             if(elementoEnPrestamo) {
                 const dispoTotalUpdate = dispoTotal + elementoEnPrestamo.cantidad;
-                console.log(dispoTotalUpdate)
-
                 if((dispoTotalUpdate < cantidad) && (cantidad > elementoEnPrestamo.cantidad)) {
                     return res.status(400).json({ mensaje: `La cantidad solicitada del elemento con el id ${idelemento} supera la cantidad disponible de éste`}) 
                 } 
@@ -160,7 +158,7 @@ const addOrUpdate = async (req, res) => {
                         console.log('La cantidad no ha cambiado.');
                     }
                 } else {
-                    console.log('No se encontró el elemento correspondiente en el request.');
+                    console.log('No se encontró el elemento para editar');
                 }
 
             } else {

@@ -11,7 +11,7 @@ Baja.init ({
         autoIncrement: true
     },
     elementos_idelemento: {
-        type: DataTypes.STRING(15),
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {  
           model: Elemento,

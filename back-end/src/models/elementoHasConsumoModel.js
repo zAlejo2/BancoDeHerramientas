@@ -7,7 +7,7 @@ class ElementoHasConsumo extends Model{}
 
 ElementoHasConsumo.init({
   elementos_idelemento: {
-      type: DataTypes.STRING(15),
+      type: DataTypes.INTEGER,
       primaryKey: true,
       references: {
           model: Elemento,

@@ -7,7 +7,7 @@ class ElementoHasPrestamoCorriente extends Model{}
 
 ElementoHasPrestamoCorriente.init({
   elementos_idelemento: {
-    type: DataTypes.STRING(15),
+    type: DataTypes.INTEGER,
     primaryKey: true,
     references: {
         model: Elemento,

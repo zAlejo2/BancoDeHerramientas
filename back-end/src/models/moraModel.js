@@ -30,7 +30,7 @@ Mora.init({
         allowNull: false 
     },
     elementos_idelemento: {
-        type: DataTypes.STRING(15),
+        type: DataTypes.INTEGER,
         references: {  
           model: Elemento,
           key: 'idelemento',

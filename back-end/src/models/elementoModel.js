@@ -6,7 +6,7 @@ class Elemento extends Model {}
 
 Elemento.init({
   idelemento: {
-    type: DataTypes.STRING(15),
+    type: DataTypes.INTEGER,
     primaryKey: true,
     allowNull: false,
   },

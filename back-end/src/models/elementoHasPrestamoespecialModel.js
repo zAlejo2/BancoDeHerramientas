@@ -7,7 +7,7 @@ class ElementoHasPrestamoEspecial extends Model{}
 
 ElementoHasPrestamoEspecial.init({
   elementos_idelemento: {
-    type: DataTypes.STRING(15),
+    type: DataTypes.INTEGER,
     primaryKey: true,
     references: {
         model: Elemento,
