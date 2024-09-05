@@ -88,14 +88,23 @@ export const FormAgregarEditarPrestamo = () => {
         );
     };
 
-    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones }) => ({
+    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones, estado }) => ({
         idelemento,
         cantidad,
-        observaciones
+        observaciones,
+        estado
     }));
 
     const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},'/inicio');
 
+    const handleMarkAsFinalized = (idelemento) => {
+        setSelectedItems((prevItems) =>
+            prevItems.filter((item) =>
+                item.idelemento !== idelemento || item.estado !== 'finalizado' // Filtra los elementos "finalizados"
+            )
+        );
+    };    
+    
     return (
         <div className="form-container">
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario de Prestamo</h1>
@@ -152,15 +161,17 @@ export const FormAgregarEditarPrestamo = () => {
                                             onChange={(e) =>
                                                 handleQuantityChange(item.idelemento, e.target.value)
                                             }
+                                            disabled={item.estado === 'finalizado'}
                                         />
                                     </td>
                                     <td>
-                                        <input className="input"
+                                        <textarea className="input"
                                             type="text"
                                             value={item.observaciones}
                                             onChange={(e) =>
                                                 handleObservationsChange(item.idelemento, e.target.value)
                                             }
+                                            disabled={item.estado === 'finalizado'}
                                         />
                                     </td>
                                     <td>{item.fecha_entregaFormato}</td>
@@ -170,11 +181,16 @@ export const FormAgregarEditarPrestamo = () => {
                                         <button 
                                             type="button"
                                             className="delete-button"
-                                            onClick={() =>
+                                            onClick={() => {
                                                 setSelectedItems((prevItems) =>
-                                                    prevItems.filter((i) => i.idelemento !== item.idelemento)
-                                                )
-                                            }
+                                                    prevItems.map((item) =>
+                                                        item.idelemento === item.idelemento && item.fecha_entregaFormato
+                                                            ? { ...item, estado: 'finalizado' } 
+                                                            : item
+                                                    )
+                                                );
+                                                handleMarkAsFinalized(item.idelemento); 
+                                            }}
                                             style={{margin: '5px'}}
                                         >
                                             <FaCheck/>
