@@ -105,7 +105,7 @@ const addOrUpdate = async (req, res) => {
         }
 
         for (let elemento of elementos) {
-            const { idelemento, cantidad, observaciones } = elemento;
+            const { idelemento, cantidad, observaciones, estado } = elemento;
 
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento }});
             if (!elementoEncontrado) {
@@ -125,7 +125,30 @@ const addOrUpdate = async (req, res) => {
                 }
             });
 
-            if(elementoEnPrestamo) {
+            if (elementoEnPrestamo && estado == 'finalizado') {
+
+                if (elementoEnPrestamo.estado == 'actual') {
+
+                    if (cantidad === elementoEnPrestamo.cantidad && observaciones === elementoEnPrestamo.observaciones) {
+                        await ElementoHasPrestamoCorriente.update(
+                            { estado: 'finalizado', fecha_devolucion: obtenerHoraActual() },
+                            { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
+                        );
+                        await Elemento.update(
+                            { 
+                                disponibles: elementoEncontrado.disponibles + cantidad,
+                                estado: elementoEncontrado.disponibles + cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                            },
+                            { where: { idelemento } }
+                        );
+                    } else {
+                        return res.status(400).json({ mensaje: 'Primero debes guardar los cambios en la cantidad y observaciones del préstamo antes de finalizarlo' });
+                    }
+
+                }
+
+            } else if (elementoEnPrestamo) {
+
                 const dispoTotalUpdate = dispoTotal + elementoEnPrestamo.cantidad;
                 if((dispoTotalUpdate < cantidad) && (cantidad > elementoEnPrestamo.cantidad)) {
                     return res.status(400).json({ mensaje: `La cantidad solicitada del elemento con el id ${idelemento} supera la cantidad disponible de éste`}) 
@@ -186,9 +209,19 @@ const addOrUpdate = async (req, res) => {
                     { where: { idelemento } }
                 );
             }
-        }
 
-        return res.status(201).json({ mensaje: 'Elementos agregados al prestamo y actualizados con éxito' });
+        }
+        
+        const elementosDelPrestamo = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo }});
+        const estadosDeElementos = elementosDelPrestamo.map((elemento) => elemento.estado);
+        if(!estadosDeElementos.includes('actual')) {
+            await PrestamoCorriente.update(
+                { estado: 'finalizado'},
+                { where: {idprestamo}}
+            )
+            console.log('estado de prestamo finalizado')
+        }
+        return res.status(200).json({ mensaje: 'Elementos agregados al prestamo y actualizados con éxito' })
 
     } catch (error) {
         console.log(error)
@@ -208,45 +241,6 @@ const deleteLoan = async (req, res) => {
         }
     } catch (error) {
         res.status(500).json({ mensaje: 'Error al eliminar el registro de Consumo' });
-    }
-};
-
-const returnItem = async (idprestamo, idelemento, cantidad) => {
-    try {
-        const elemento = await Elemento.findOne({
-            where: { idelemento }
-        })
-
-        const elementoPrestamo = await ElementoHasPrestamoCorriente.findOne({
-            where: {
-                elementos_idelemento: idelemento,
-                prestamoscorrientes_idprestamo: idprestamo
-            }
-        });
-
-        if (elementoPrestamo) {
-            if (cantidad === elementoPrestamo.cantidad) {
-                await ElementoHasPrestamoCorriente.update(
-                    { estado: 'finalizado', fecha_devolucion: obtenerHoraActual() },
-                    { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
-                );
-                await Elemento.update(
-                    { 
-                        disponibles: elemento.disponibles + cantidad,
-                        estado: elemento.disponibles + cantidad <= elemento.minimo ? 'agotado' : 'disponible'
-                    },
-                    { where: { idelemento } }
-                );
-                console.log('Elemento devuelto con éxito')
-            } else {
-                console.log('Primero debes guardar los cambios del préstamo antes de hacer la devolución')
-            }
-        } else {
-            console.log('No puedes devolver el elemento si aún no lo has prestado');
-        }
-    } catch (error) {
-        console.log(error)
-        console.log( 'Error al devolver el elemento', error );
     }
 };
 
