@@ -55,18 +55,28 @@ export const FormAgregarEditarPrestamo = () => {
     };
 
     const handleAddItem = (item) => {
-        const itemExists = selectedItems.some(selectedItem => selectedItem.idelemento === item.idelemento);
-        
-        if (itemExists) {
-            console.log("El elemento ya está en la lista.");
-            return;
-        }
+        setSelectedItems((prevItems) => {
+            // Verifica si el elemento ya existe en la lista
+            const itemExists = prevItems.find((selectedItem) => selectedItem.idelemento === item.idelemento);
     
-        setSelectedItems((prevItems) => [
-            ...prevItems,
-            { ...item, cantidad: 1, observaciones: "", checked: false }
-        ]);
-    };    
+            if (itemExists) {
+                // Si el elemento ya está en la lista, incrementa la cantidad actual en 1
+                return prevItems.map((selectedItem) =>
+                    selectedItem.idelemento === item.idelemento
+                        ? { ...selectedItem, cantidad: parseInt(selectedItem.cantidad, 10) + 1 }
+                        : selectedItem
+                );
+            }
+    
+            // Si el elemento no está en la lista, lo agrega con cantidad 1
+            return [
+                ...prevItems,
+                { ...item, cantidad: 1, observaciones: "", checked: false }
+            ];
+        });
+    };
+    
+        
 
     const handleQuantityChange = (idelemento, quantity) => {
         setSelectedItems((prevItems) =>
@@ -97,13 +107,32 @@ export const FormAgregarEditarPrestamo = () => {
 
     const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},'/inicio');
 
-    const handleMarkAsFinalized = (idelemento) => {
-        setSelectedItems((prevItems) =>
-            prevItems.filter((item) =>
-                item.idelemento !== idelemento || item.estado !== 'finalizado' // Filtra los elementos "finalizados"
-            )
-        );
-    };    
+    const handleReturnItem = async (item) => {
+        // Verificar si el elemento no tiene fecha de devolución
+        if (!item.fecha_devolucionFormato) {
+            try {
+                setSelectedItems((prevItems) =>
+                    prevItems.map((selectedItem) =>
+                        selectedItem.idelemento === item.idelemento
+                            ? {
+                                ...selectedItem,
+                                estado: selectedItem.estado === 'actual' ? 'finalizado' : 'actual' // Alternar estado
+                              }
+                            : selectedItem
+                    )
+                );
+    
+                console.log("Estado del elemento alternado.");
+            } catch (error) {
+                console.error("Error al alternar el estado del elemento:", error);
+            }
+        } else {
+            // Si el elemento tiene una fecha de devolución, no se puede cambiar el estado
+            console.log("El elemento tiene fecha de devolución, no se puede cambiar el estado.");
+        }
+    };
+    
+              
     
     return (
         <div className="form-container">
@@ -144,8 +173,8 @@ export const FormAgregarEditarPrestamo = () => {
                                 <th>Elemento</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
-                                <th>Entrega</th>
-                                <th>Devolución</th>
+                                <th>F Entrega</th>
+                                <th>F Devolución</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -155,14 +184,15 @@ export const FormAgregarEditarPrestamo = () => {
                                 <tr key={item.idelemento}>
                                     <td>{item.descripcion}</td>
                                     <td>
-                                        <input className="input"
+                                    <input className="input"
                                             type="number"
                                             value={item.cantidad}
                                             onChange={(e) =>
                                                 handleQuantityChange(item.idelemento, e.target.value)
                                             }
                                             disabled={item.estado === 'finalizado'}
-                                        />
+                                            min="1"
+                                        />               
                                     </td>
                                     <td>
                                         <textarea className="input"
@@ -177,23 +207,15 @@ export const FormAgregarEditarPrestamo = () => {
                                     <td>{item.fecha_entregaFormato}</td>
                                     <td>{item.fecha_devolucionFormato}</td>
                                     <td>{item.estado}</td>
-                                    <td>                                        
-                                        <button 
+                                    <td>
+                                        <button
                                             type="button"
                                             className="delete-button"
-                                            onClick={() => {
-                                                setSelectedItems((prevItems) =>
-                                                    prevItems.map((item) =>
-                                                        item.idelemento === item.idelemento && item.fecha_entregaFormato
-                                                            ? { ...item, estado: 'finalizado' } 
-                                                            : item
-                                                    )
-                                                );
-                                                handleMarkAsFinalized(item.idelemento); 
-                                            }}
-                                            style={{margin: '5px'}}
+                                            onClick={() => {handleReturnItem(item)}}
+                                            style={{ margin: '5px' }}
+                                            disabled={item.estado == 'disponible' || item.estado == 'agotado'} 
                                         >
-                                            <FaCheck/>
+                                            <FaCheck />
                                         </button>
                                         <button 
                                             type="button"
@@ -204,6 +226,8 @@ export const FormAgregarEditarPrestamo = () => {
                                                 )
                                             }
                                             style={{margin: '5px'}}
+                                            disabled={item.estado == 'finalizado'} 
+
                                         >
                                             <IoClose/>
                                         </button>
@@ -232,3 +256,28 @@ export const FormAgregarEditarPrestamo = () => {
         </div>
     );
 };
+
+// ESTA ES LA FUNCIÓN ES LA QUE SOLO ME LO PONE EN FINALIZADO, NADA MAS
+// const handleReturnItem = async (item) => {
+//     if (item.fecha_entregaFormato) {
+//         try {
+//             // Aquí puedes hacer la llamada a tu API para devolver el elemento si es necesario
+//             // await axiosInstance.post(`/devolver/${idprestamo}`, { idelemento: item.idelemento, cantidad: item.cantidad });
+
+//             // Actualiza el estado del elemento a 'finalizado' en el front-end
+//             setSelectedItems((prevItems) =>
+//                 prevItems.map((selectedItem) =>
+//                     selectedItem.idelemento === item.idelemento
+//                         ? { ...selectedItem, estado: 'finalizado' }
+//                         : selectedItem
+//                 )
+//             );
+
+//             console.log("Elemento marcado como finalizado.");
+//         } catch (error) {
+//             console.error("Error al devolver el elemento:", error);
+//         }
+//     } else {
+//         console.log("El elemento no tiene fecha de entrega.");
+//     }
+// };
