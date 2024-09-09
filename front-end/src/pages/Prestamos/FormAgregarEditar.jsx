@@ -28,12 +28,13 @@ export const FormAgregarEditarPrestamo = () => {
         const fetchExistingLoan = async () => {
             try {
                 const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/prestamos/${idprestamo}/elementos`, { documento: idprestamo });
-                const { idprestamo: idprestamo2, elementos } = response.data;
-                // Asegúrate de usar 'idprestamo2' después de esta línea
+                const { elementos } = response.data;
+
                 setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado }) => ({
                     idelemento: elemento.idelemento,
                     descripcion: elemento.descripcion,
                     cantidad,
+                    cantidadd: 0,
                     observaciones,
                     fecha_entregaFormato,
                     fecha_devolucionFormato,
@@ -46,7 +47,6 @@ export const FormAgregarEditarPrestamo = () => {
     
         fetchExistingLoan();
     }, [idprestamo]);
-    
 
     const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
 
@@ -71,21 +71,33 @@ export const FormAgregarEditarPrestamo = () => {
             // Si el elemento no está en la lista, lo agrega con cantidad 1
             return [
                 ...prevItems,
-                { ...item, cantidad: 1, observaciones: "", checked: false }
+                { ...item, cantidad: 1, cantidadd: 0, observaciones: "", checked: false }
             ];
         });
     };
-    
-        
-
+      
     const handleQuantityChange = (idelemento, quantity) => {
-        setSelectedItems((prevItems) =>
-            prevItems.map((item) =>
+        setSelectedItems((prevItems) => {
+            const updatedItems = prevItems.map((item) =>
                 item.idelemento === idelemento
                     ? { ...item, cantidad: quantity }
                     : item
-            )
-        );
+            );
+            updateLoanStatus(updatedItems);
+            return updatedItems;
+        });
+    };
+
+    const handleQuantityDevChange = (idelemento, quantity) => {
+        setSelectedItems((prevItems) => {
+            const updatedItems = prevItems.map((item) =>
+                item.idelemento === idelemento
+                    ? { ...item, cantidadd: quantity}
+                    : item
+            );
+            updateLoanStatus(updatedItems);
+            return updatedItems;
+        });
     };
 
     const handleObservationsChange = (idelemento, observations) => {
@@ -98,41 +110,40 @@ export const FormAgregarEditarPrestamo = () => {
         );
     };
 
-    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones, estado }) => ({
+    const updateLoanStatus = (items) => {
+        setSelectedItems((prevItems) =>
+            prevItems.map((item) => {
+                const updatedItem = items.find((updated) => updated.idelemento === item.idelemento);
+                if (updatedItem) {
+                    console.log(updatedItem.cantidad, updatedItem.cantidadd)
+                    if (updatedItem.cantidad == updatedItem.cantidadd) {
+                        return { ...updatedItem, estado: 'finalizado' };
+                    } else {
+                        return { ...updatedItem, estado: 'actual' };
+                    }
+                }
+                return item;
+            })
+        );
+    };
+
+    const elementos = selectedItems.map(({ idelemento, cantidad, cantidadd, observaciones, estado }) => ({
         idelemento,
         cantidad,
+        cantidadd,
         observaciones,
         estado
     }));
 
     const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},'/inicio');
 
-    const handleReturnItem = async (item) => {
-        // Verificar si el elemento no tiene fecha de devolución
-        if (!item.fecha_devolucionFormato) {
-            try {
-                setSelectedItems((prevItems) =>
-                    prevItems.map((selectedItem) =>
-                        selectedItem.idelemento === item.idelemento
-                            ? {
-                                ...selectedItem,
-                                estado: selectedItem.estado === 'actual' ? 'finalizado' : 'actual' // Alternar estado
-                              }
-                            : selectedItem
-                    )
-                );
-    
-                console.log("Estado del elemento alternado.");
-            } catch (error) {
-                console.error("Error al alternar el estado del elemento:", error);
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            if (searchResults.length > 0) {
+                handleAddItem(searchResults[0]); // Agregar el primer elemento de la búsqueda
             }
-        } else {
-            // Si el elemento tiene una fecha de devolución, no se puede cambiar el estado
-            console.log("El elemento tiene fecha de devolución, no se puede cambiar el estado.");
         }
-    };
-    
-              
+    };        
     
     return (
         <div className="form-container">
@@ -146,9 +157,10 @@ export const FormAgregarEditarPrestamo = () => {
                         type="text"
                         id="search"
                         name="search"
-                        placeholder="Nombre del elemento"
+                        placeholder="Nombre o ID del elemento"
                         value={searchTerm}
                         onChange={handleSearchChange}
+                        onKeyDown={handleKeyPress}
                         className="input-field"
                     />
                     {searchLoading && <p>Cargando...</p>}
@@ -171,10 +183,11 @@ export const FormAgregarEditarPrestamo = () => {
                         <thead>
                             <tr>
                                 <th>Elemento</th>
-                                <th>Cantidad</th>
+                                <th>Cantidad P</th>
+                                <th>Cantidad D</th>
                                 <th>Observaciones</th>
-                                <th>F Entrega</th>
-                                <th>F Devolución</th>
+                                <th>Fecha P</th>
+                                <th>Fecha D</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -190,7 +203,17 @@ export const FormAgregarEditarPrestamo = () => {
                                             onChange={(e) =>
                                                 handleQuantityChange(item.idelemento, e.target.value)
                                             }
-                                            disabled={item.estado === 'finalizado'}
+                                            min="1"
+                                        />               
+                                    </td>
+                                    <td>
+                                    <input className="input"
+                                            type="number"
+                                            value={item.cantidadd}
+                                            onChange={(e) =>
+                                                handleQuantityDevChange(item.idelemento, e.target.value)
+                                            }
+                                            disabled={item.estado == 'disponible'} 
                                             min="1"
                                         />               
                                     </td>
@@ -201,22 +224,12 @@ export const FormAgregarEditarPrestamo = () => {
                                             onChange={(e) =>
                                                 handleObservationsChange(item.idelemento, e.target.value)
                                             }
-                                            disabled={item.estado === 'finalizado'}
                                         />
                                     </td>
                                     <td>{item.fecha_entregaFormato}</td>
                                     <td>{item.fecha_devolucionFormato}</td>
                                     <td>{item.estado}</td>
                                     <td>
-                                        <button
-                                            type="button"
-                                            className="delete-button"
-                                            onClick={() => {handleReturnItem(item)}}
-                                            style={{ margin: '5px' }}
-                                            disabled={item.estado == 'disponible' || item.estado == 'agotado'} 
-                                        >
-                                            <FaCheck />
-                                        </button>
                                         <button 
                                             type="button"
                                             className="delete-button"
@@ -249,7 +262,7 @@ export const FormAgregarEditarPrestamo = () => {
                         type="button"
                         className="consume-button"
                         onClick={handleDelete} disabled={isLoading}>
-                        {isLoading ? 'Eliminando...' : 'Eliminar Prestamo'}                    
+                        {isLoading ? 'Eliminando...' : 'Eliminar Prestamo'}
                     </button>
                 </div>
             </div>
