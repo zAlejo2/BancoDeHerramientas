@@ -29,16 +29,26 @@ const getElementById = async (req, res) => {
 // Obtener un elemento por su nombre
 const getElementByName = async (req, res) => {
     try {
-        const descripcion = req.params.descripcion.toLowerCase();
+        const searchParam = req.params.descripcion.toLowerCase();
 
-        const elements = await Elemento.findAll({ 
-            where: Sequelize.where(
-                Sequelize.fn('LOWER', Sequelize.col('descripcion')),
-                'LIKE',
-                `%${descripcion}%`
-            )
+        // Verifica si el parámetro es un número (posible id)
+        const isId = !isNaN(searchParam);
+
+        const elements = await Elemento.findAll({
+            where: {
+                [Sequelize.Op.or]: [
+                    // Si el parámetro es un id, busca por idelemento
+                    isId ? { idelemento: searchParam } : null,
+                    // Siempre busca por la descripción
+                    Sequelize.where(
+                        Sequelize.fn('LOWER', Sequelize.col('descripcion')),
+                        'LIKE',
+                        `%${searchParam}%`
+                    )
+                ].filter(Boolean)
+            }
         });
-        
+
         if (elements.length > 0) {
             res.json(elements);
         } else {
@@ -48,6 +58,7 @@ const getElementByName = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
 
 // Crear un nuevo elemento
 const createElement = async (req, res) => {

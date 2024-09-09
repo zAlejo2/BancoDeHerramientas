@@ -39,7 +39,7 @@ const findLoanElements = async (req, res) => {
         const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual' } });
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
-            const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo }});
+            const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo, estado: 'actual' }});
 
             const elementosEnPrestamo = loanElements.map(async loanElement => {
                 const { elementos_idelemento, cantidad, observaciones, fecha_entrega, fecha_devolucion, estado } = loanElement;
@@ -87,35 +87,38 @@ const addOrUpdate = async (req, res) => {
 
                 const elemento = await Elemento.findOne({ where: { idelemento: elementoExistente.elementos_idelemento } });
                 
-                await Elemento.update(
-                    {
-                        disponibles: elemento.disponibles + cantidadEliminar,
-                        estado: elemento.disponibles + cantidadEliminar <= elemento.minimo ? 'agotado' : 'disponible'
-                    },
-                    { where: { idelemento: elementoExistente.elementos_idelemento } }
-                );
-
-                await ElementoHasPrestamoCorriente.destroy({
-                    where: {
-                        prestamoscorrientes_idprestamo: idprestamo,
-                        elementos_idelemento: elementoExistente.elementos_idelemento
-                    }
-                });
+                if (elementoExistente.estado == 'actual') {
+                    await Elemento.update(
+                        {
+                            disponibles: elemento.disponibles + cantidadEliminar,
+                            estado: elemento.disponibles + cantidadEliminar <= elemento.minimo ? 'agotado' : 'disponible'
+                        },
+                        { where: { idelemento: elementoExistente.elementos_idelemento } }
+                    );
+    
+                    await ElementoHasPrestamoCorriente.destroy({
+                        where: {
+                            prestamoscorrientes_idprestamo: idprestamo,
+                            elementos_idelemento: elementoExistente.elementos_idelemento,
+                        }
+                    });
+                }
             }
         }
 
         for (let elemento of elementos) {
-            const { idelemento, cantidad, observaciones, estado } = elemento;
+            const { idelemento, cantidad, cantidadd, observaciones, estado } = elemento;
 
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento }});
             if (!elementoEncontrado) {
                 return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado en el inventario` });
             }
-
             const dispoTotal = elementoEncontrado.disponibles - elementoEncontrado.minimo;
 
             if (cantidad <= 0) {
                 return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor que éste`});
+            } else if (cantidadd < 0 || cantidadd > cantidad) {
+                return res.status(400).json({ mensaje: `La cantidad de devolución no puede ser menor que 0 ni mayor que la cantidad prestada`})
             }
 
             const elementoEnPrestamo = await ElementoHasPrestamoCorriente.findOne({
@@ -124,48 +127,35 @@ const addOrUpdate = async (req, res) => {
                     prestamoscorrientes_idprestamo: idprestamo
                 }
             });
-
-            if (elementoEnPrestamo && estado == 'finalizado') {
-
-                if (elementoEnPrestamo.estado == 'actual') {
-
-                    if (cantidad === elementoEnPrestamo.cantidad && observaciones === elementoEnPrestamo.observaciones) {
-                        await ElementoHasPrestamoCorriente.update(
-                            { estado: 'finalizado', fecha_devolucion: obtenerHoraActual() },
-                            { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
-                        );
-                        await Elemento.update(
-                            { 
-                                disponibles: elementoEncontrado.disponibles + cantidad,
-                                estado: elementoEncontrado.disponibles + cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
-                            },
-                            { where: { idelemento } }
-                        );
-                    } else {
-                        return res.status(400).json({ mensaje: 'Primero debes guardar los cambios en la cantidad y observaciones del préstamo antes de finalizarlo' });
-                    }
-
-                }
-
-            } else if (elementoEnPrestamo) {
-
+            
+            if (elementoEnPrestamo) {
+                const cantidadNueva = cantidad - cantidadd;
+                const diferencia = elementoEnPrestamo.cantidad - cantidadNueva; console.log(diferencia)
                 const dispoTotalUpdate = dispoTotal + elementoEnPrestamo.cantidad;
                 if((dispoTotalUpdate < cantidad) && (cantidad > elementoEnPrestamo.cantidad)) {
                     return res.status(400).json({ mensaje: `La cantidad solicitada del elemento con el id ${idelemento} supera la cantidad disponible de éste`}) 
                 } 
-
-                const diferencia = elementoEnPrestamo.cantidad - cantidad;
-
                 const elementoReq = req.body.elementos.find(e => e.idelemento === elementoEnPrestamo.dataValues.elementos_idelemento);
-
-                if (elementoReq) {
-                    const isSameCantidad = Number(elementoReq.cantidad) === Number(elementoEnPrestamo.dataValues.cantidad);
-                    const isSameObservacion = elementoReq.observaciones === elementoEnPrestamo.dataValues.observaciones;
-                    
-                    if (!isSameCantidad || !isSameObservacion) {
-                        console.log('La cantidad ha cambiado.');
+                const isSameCantidad = Number(elementoReq.cantidad) === Number(elementoEnPrestamo.dataValues.cantidad);
+                
+                if (isSameCantidad) {
+                    if (estado == 'finalizado') {
+                        if (elementoEnPrestamo.estado == 'actual') {
+                            await ElementoHasPrestamoCorriente.update(
+                                { estado: 'finalizado', observaciones: observaciones, fecha_devolucion: obtenerHoraActual() },
+                                { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
+                            );
+                            await Elemento.update(
+                                { 
+                                    disponibles: elementoEncontrado.disponibles + cantidad,
+                                    estado: elementoEncontrado.disponibles + cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                                },
+                                { where: { idelemento } }
+                            );
+                        }
+                    } else {
                         await ElementoHasPrestamoCorriente.update(
-                            { cantidad: cantidad, observaciones: observaciones, fecha_entrega: obtenerHoraActual() },
+                            { cantidad: cantidadNueva, observaciones: observaciones },
                             { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
                         );
         
@@ -176,10 +166,23 @@ const addOrUpdate = async (req, res) => {
                             },
                             { where: { idelemento } }
                         ); 
-        
-                    } 
+                    }
                 } else {
-                    console.log('No se encontró el elemento para editar');
+                    if (estado == 'finalizado'){
+                        return res.status(400).json({ mensaje: 'Actualizaste la cantidad, guarda cambios' });
+                    }
+                    await ElementoHasPrestamoCorriente.update(
+                        { cantidad: cantidadNueva, observaciones: observaciones },
+                        { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: idprestamo } }
+                    );
+    
+                    await Elemento.update(
+                        {
+                            disponibles: elementoEncontrado.disponibles + diferencia,
+                            estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                        },
+                        { where: { idelemento } }
+                    ); 
                 }
 
             } else {
@@ -221,6 +224,7 @@ const addOrUpdate = async (req, res) => {
             )
             console.log('estado de prestamo finalizado')
         }
+
         return res.status(200).json({ mensaje: 'Elementos agregados al prestamo y actualizados con éxito' })
 
     } catch (error) {
