@@ -262,7 +262,7 @@ export const FormAgregarEditarPrestamo = () => {
                         type="button"
                         className="consume-button"
                         onClick={handleDelete} disabled={isLoading}>
-                        {isLoading ? 'Eliminando...' : 'Eliminar Prestamo'}
+                        {isLoading ? 'Cancelando...' : 'Cancelar Prestamo'}
                     </button>
                 </div>
             </div>

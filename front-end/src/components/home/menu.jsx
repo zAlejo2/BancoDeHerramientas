@@ -21,8 +21,8 @@ export const Menu = ({ children }) => {
             name: "Prestamos", 
             to: "/prestamos", 
             subMenu: [
-                { name: "Lista 1", to: "/prestamos/lista" }, 
-                { name: "Lista 2", to: "/prestamos/lista2" }, 
+                { name: "Elementos Prestados", to: "/prestamos/lista" }, 
+                // { name: "Lista 2", to: "/prestamos/lista2" }, 
             ]
         },
         { 
@@ -185,8 +185,8 @@ function Icon({ name, ...props }) {
         "Admin": <SettingsIcon {...props} />,
         "Elementos": <MdOutlineConstruction {...props} />,
         "Formulario": <ClipboardList {...props} />,
-        "Lista 1": <List {...props} />,
-        "Lista 2": <List {...props} />,
+        "Elementos Prestados": <List {...props} />,
+        // "Lista 2": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
     };
     return icons[name] || <XIcon {...props} />;
