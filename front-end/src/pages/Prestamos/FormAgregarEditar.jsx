@@ -240,7 +240,6 @@ export const FormAgregarEditarPrestamo = () => {
                                             }
                                             style={{margin: '5px'}}
                                             disabled={item.estado == 'finalizado'} 
-
                                         >
                                             <IoClose/>
                                         </button>
@@ -254,7 +253,7 @@ export const FormAgregarEditarPrestamo = () => {
                     <button
                         type="button"
                         className="consume-button"
-                        onClick={handleSave} // Cambia handleConsume a handleSave
+                        onClick={handleSave} 
                     >
                         Guardar Prestamo
                     </button>
@@ -269,28 +268,3 @@ export const FormAgregarEditarPrestamo = () => {
         </div>
     );
 };
-
-// ESTA ES LA FUNCIÓN ES LA QUE SOLO ME LO PONE EN FINALIZADO, NADA MAS
-// const handleReturnItem = async (item) => {
-//     if (item.fecha_entregaFormato) {
-//         try {
-//             // Aquí puedes hacer la llamada a tu API para devolver el elemento si es necesario
-//             // await axiosInstance.post(`/devolver/${idprestamo}`, { idelemento: item.idelemento, cantidad: item.cantidad });
-
-//             // Actualiza el estado del elemento a 'finalizado' en el front-end
-//             setSelectedItems((prevItems) =>
-//                 prevItems.map((selectedItem) =>
-//                     selectedItem.idelemento === item.idelemento
-//                         ? { ...selectedItem, estado: 'finalizado' }
-//                         : selectedItem
-//                 )
-//             );
-
-//             console.log("Elemento marcado como finalizado.");
-//         } catch (error) {
-//             console.error("Error al devolver el elemento:", error);
-//         }
-//     } else {
-//         console.log("El elemento no tiene fecha de entrega.");
-//     }
-// };

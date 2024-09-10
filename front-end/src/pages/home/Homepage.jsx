@@ -1,17 +1,43 @@
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, LogOutIcon, XIcon } from "lucide-react";
+import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, XIcon } from "lucide-react";
 import { LuArrowDownLeftFromCircle } from "react-icons/lu";
-import useGetData from "@/hooks/useGetData"; // Adjust path as needed
-import InputPrestamo from '../Prestamos/InputPrestamo.jsx'
+import useGetData from "@/hooks/useGetData";
+import InputPrestamo from '../Prestamos/InputPrestamo.jsx';
 
 export const HomePage = () => {
   const [search, setSearch] = useState("");
-  const { data, error, loading } = useGetData(["elements"]);
-  const elementos = data.elements || [];
+  const { data: prestamosData, error, loading } = useGetData(["prestamos/todosPrestamos"]);
+  const prestamos = prestamosData['prestamos/todosPrestamos'] || [];
+
+  // Función para obtener el préstamo con la fecha más actual
+  const getLatestPrestamos = () => {
+    if (prestamos.length === 0) return [];
+
+    // Encuentra la fecha más actual
+    const maxDate = prestamos.reduce((max, prestamo) => {
+      const fechaEntrega = new Date(prestamo.fecha_entrega || 0);
+      const fechaDevolucion = new Date(prestamo.fecha_devolucion || 0);
+      const maxDateForPrestamo = Math.max(fechaEntrega, fechaDevolucion);
+      return Math.max(max, maxDateForPrestamo);
+    }, 0);
+
+    // Filtra los préstamos que tienen la fecha máxima
+    return prestamos.filter(prestamo => {
+      const fechaEntrega = new Date(prestamo.fecha_entrega || 0);
+      const fechaDevolucion = new Date(prestamo.fecha_devolucion || 0);
+      const maxDateForPrestamo = Math.max(fechaEntrega, fechaDevolucion);
+      return maxDateForPrestamo === maxDate;
+    });
+  };
+
+  const countPrestamosByState = (state) => {
+    return prestamos.filter(prestamo => prestamo.estado === state).length;
+  };
+
+  const latestPrestamos = getLatestPrestamos();
 
   return (
     <>
@@ -19,7 +45,7 @@ export const HomePage = () => {
         {["Préstamos", "Encargos", "Mora", "Daños"].map((item, index) => (
           <Card key={index} className="bg-primary text-primary-foreground">
             <CardHeader className="flex justify-between">
-              <CardTitle>{Math.floor(Math.random() * 5000)}</CardTitle>
+              <CardTitle> {item === "Préstamos" ? countPrestamosByState("actual") : Math.floor(Math.random() * 5000)}</CardTitle>
               <Icon name={item} className="w-6 h-6" />
             </CardHeader>
             <CardContent>
@@ -32,14 +58,15 @@ export const HomePage = () => {
         <InputPrestamo/>
         <Card className="border-input">
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>#</TableHead>
-                <TableHead>Descripción</TableHead>
-                <TableHead>Cantidad</TableHead>
-                <TableHead>Ubicacion</TableHead>
-              </TableRow>
-            </TableHeader>
+          <TableHeader style={{ color: 'white', textAlign: 'center' }}>
+            <TableRow>
+              <TableHead style={{ textAlign: 'center' }}>Cedula</TableHead>
+              <TableHead style={{ textAlign: 'center' }}>Usuario</TableHead>
+              <TableHead style={{ textAlign: 'center' }}>Descripcion</TableHead>
+              <TableHead style={{ textAlign: 'center' }}>Estado</TableHead>
+            </TableRow>
+          </TableHeader>
+
             <TableBody>
               {loading ? (
                 <TableRow>
@@ -48,16 +75,20 @@ export const HomePage = () => {
               ) : error ? (
                 <TableRow>
                   <TableCell colSpan="4">Error al cargar datos</TableCell>
-                </TableRow>
-              ) : (
-                elementos.map((elemento, index) => (
-                  <TableRow key={elemento.id}>
-                    <TableCell>{index + 1}</TableCell>
-                    <TableCell>{elemento.descripcion}</TableCell>
-                    <TableCell>{elemento.cantidad}</TableCell>
-                    <TableCell>{elemento.ubicacion}</TableCell>
                   </TableRow>
-                ))
+                    ) : latestPrestamos.length > 0 ? (
+                      latestPrestamos.map((prestamo) => (
+                        <TableRow key={prestamo.PrestamoCorriente.documento}>
+                          <TableCell>{prestamo.PrestamoCorriente.Cliente.documento}</TableCell>
+                          <TableCell>{prestamo.PrestamoCorriente.Cliente.nombre}</TableCell>
+                          <TableCell>{prestamo.Elemento.descripcion}</TableCell>
+                          <TableCell>{prestamo.estado}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                <TableRow>
+                  <TableCell colSpan="4">No hay préstamos</TableCell>
+                </TableRow>
               )}
             </TableBody>
           </Table>

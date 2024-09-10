@@ -1,23 +1,64 @@
+import { useState, useEffect, useRef } from 'react';
 import useGetData from '../../hooks/useGetData';
 
 const PrestamosActivos = () => {
-  const { data, error, loading } = useGetData(['prestamos/todosPrestamos']);
+  const [searchTerm, setSearchTerm] = useState(""); // Estado del término de búsqueda
+  const [filteredPrestamos, setFilteredPrestamos] = useState([]); // Estado de préstamos filtrados
+  const inputRef = useRef(null); // Referencia al input para enfocarlo
+  const { data: prestamosData, error: prestamosError, loading: prestamosLoading } = useGetData(['prestamos/todosPrestamos']);
 
-  console.log(data); // Verifica la estructura de los datos aquí
+  // Enfocar el input cuando el componente se monta
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
-  if (loading) return <p>Cargando...</p>;
-  if (error) return <p>{error}</p>;
+  // Actualizar los préstamos filtrados cuando prestamosData o searchTerm cambien
+  useEffect(() => {
+    if (prestamosData && prestamosData['prestamos/todosPrestamos']) {
+      const prestamos = prestamosData['prestamos/todosPrestamos'].filter(prestamo => prestamo.estado === 'actual');
+      
+      if (searchTerm === "") {
+        setFilteredPrestamos(prestamos); // Si no hay término de búsqueda, mostrar todos
+      } else {
+        // Filtrar préstamos por el término de búsqueda
+        const prestamosFiltrados = prestamos.filter(prestamo => 
+          prestamo.Elemento.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          prestamo.elementos_idelemento.toString().includes(searchTerm)
+        );
+        setFilteredPrestamos(prestamosFiltrados);
+      }
+    }
+  }, [prestamosData, searchTerm]); // Actualizar cuando cambien los datos o el término de búsqueda
 
-  // Accede directamente a los préstamos que obtienes de la respuesta
-  const prestamos = data['prestamos/todosPrestamos'] || [];
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value); // Actualizar el término de búsqueda
+  };
 
-  // Filtra los préstamos activos
-  const prestamosActivos = prestamos.filter(prestamo => prestamo.estado === 'actual');
+  if (prestamosLoading) return <p>Cargando...</p>;
+  if (prestamosError) return <p>{prestamosError}</p>;
 
   return (
-    <div><br/>
-      <h1>Elementos Prestados</h1><br/>
-      <table>
+    <div style={{ textAlign: 'center' }}><br/>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h1 style={{ fontSize: '25px', fontWeight: 'bold', marginRight: '10px' }}>Elementos Prestados</h1>
+        <input
+          ref={inputRef}
+          type="text"
+          placeholder="Filtra por ID o descripción"
+          value={searchTerm}
+          onChange={handleSearchChange}
+          style={{
+            width: '250px',
+            padding: '7px',
+            border: '2px solid black',
+            borderRadius: '5px',
+          }}
+        />
+      </div>
+
+      <table style={{ margin: '0 auto' }}>
         <thead>
           <tr>
             <th>DOCUMENTO</th>
@@ -30,8 +71,8 @@ const PrestamosActivos = () => {
           </tr>
         </thead>
         <tbody>
-          {prestamosActivos.map((prestamo) => (
-            <tr key={prestamo.PrestamoCorriente.Cliente.documento}>
+          {filteredPrestamos.map((prestamo) => (
+            <tr key={prestamo.PrestamoCorriente.documento}>
               <td>{prestamo.PrestamoCorriente.Cliente.documento}</td>
               <td>{prestamo.PrestamoCorriente.Cliente.nombre}</td>
               <td>{prestamo.PrestamoCorriente.Cliente.roles_idrol}</td>
