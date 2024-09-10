@@ -7,7 +7,7 @@ import { HomePage } from '../pages/home/Homepage';
 import { FormElementos } from '@/pages/Elementos/FormElementos';
 import { FormRoles } from '@/pages/Roles/FormRoles';
 import { FormClientes } from '@/pages/Clientes/FormClientes';
-import { ListaUsuarios } from '@/pages/Prestamos/Listausuarios';
+import PrestamosActivos from '@/pages/Prestamos/PrestamosActivos';
 import ListaElementos from '@/pages/Prestamos/ListaElementos';
 import { FormAreas } from '@/pages/Areas/FormAreas';
 import { FormAdmin } from '@/pages/Administradores/FormAdmin';
@@ -69,7 +69,7 @@ export const AppRoutes = ({tokenSession}) => {
             path: '/prestamos/lista',
             element: (
                 <ProtectedRoute>
-                    <ListaUsuarios />
+                    <PrestamosActivos />
                 </ProtectedRoute>
             ),
         },
