@@ -281,9 +281,11 @@ const getAllLoanElements = async (req, res) => {
 
       const prestamosFormateados = prestamosTodos.map(prestamo => {
         const fechaEntrega = formatFecha(prestamo.fecha_entrega, 5);
+        const fechaDevolucion = formatFecha(prestamo.fecha_devolucion, 5);
         return {
           ...prestamo.dataValues,
-          fecha_entrega: fechaEntrega
+          fecha_entrega: fechaEntrega,
+          fecha_devolucion: fechaDevolucion,
         };
       });
   
