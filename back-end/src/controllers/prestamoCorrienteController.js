@@ -130,7 +130,7 @@ const addOrUpdate = async (req, res) => {
             
             if (elementoEnPrestamo) {
                 const cantidadNueva = cantidad - cantidadd;
-                const diferencia = elementoEnPrestamo.cantidad - cantidadNueva; console.log(diferencia)
+                const diferencia = elementoEnPrestamo.cantidad - cantidadNueva; 
                 const dispoTotalUpdate = dispoTotal + elementoEnPrestamo.cantidad;
                 if((dispoTotalUpdate < cantidad) && (cantidad > elementoEnPrestamo.cantidad)) {
                     return res.status(400).json({ mensaje: `La cantidad solicitada del elemento con el id ${idelemento} supera la cantidad disponible de éste`}) 
@@ -254,8 +254,44 @@ const getLoans = async (req, res) => {
       const prestamos = await PrestamoCorriente.findOne({ where: { clientes_documento: documento } });
       res.json(prestamos);
     } catch (error) {
-      res.status(500).json({ error: 'Error fetching data' });
+      return res.status(500).json({ error: 'Error fetching data' });
     }
 };
 
-export { createLoan, findLoanElements, addOrUpdate, deleteLoan, getLoans };
+const getAllLoanElements = async (req, res) => {
+    try {
+      const prestamosTodos = await ElementoHasPrestamoCorriente.findAll({
+        include: [
+          {
+            model: PrestamoCorriente,
+            include: [
+              {
+                model: Cliente,  
+                attributes: ['documento', 'roles_idrol', 'nombre']
+              }
+            ],
+            attributes: ['idprestamo', 'clientes_documento']  
+          },
+          {
+            model: Elemento,  
+            attributes: ['idelemento', 'descripcion']
+          }
+        ]
+      });
+
+      const prestamosFormateados = prestamosTodos.map(prestamo => {
+        const fechaEntrega = formatFecha(prestamo.fecha_entrega, 5);
+        return {
+          ...prestamo.dataValues,
+          fecha_entrega: fechaEntrega
+        };
+      });
+  
+      return res.status(200).json(prestamosFormateados); 
+    } catch (error) {
+      console.error('Error al obtener los préstamos:', error);
+      return res.status(500).json({ error: 'Error al obtener los préstamos' });
+    }
+};    
+
+export { createLoan, findLoanElements, addOrUpdate, deleteLoan, getLoans, getAllLoanElements };

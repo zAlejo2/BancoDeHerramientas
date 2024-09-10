@@ -230,6 +230,22 @@ Mora.belongsTo(Elemento, {
     foreignKey: 'elementos_idelemento',
     as: 'elemento' 
 });
+ElementoHasPrestamoCorriente.belongsTo(PrestamoCorriente, {
+    foreignKey: 'prestamoscorrientes_idprestamo',
+  });
+  
+  ElementoHasPrestamoCorriente.belongsTo(Elemento, {
+    foreignKey: 'elementos_idelemento',
+  });
+  
+  PrestamoCorriente.belongsTo(Cliente, {
+    foreignKey: 'clientes_documento',
+  });
+  
+  Cliente.hasMany(PrestamoCorriente, {
+    foreignKey: 'clientes_documento',
+  });
+  
 
 export {
     Area,
