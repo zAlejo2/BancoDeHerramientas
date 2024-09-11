@@ -14,6 +14,7 @@ import { FormAdmin } from '@/pages/Administradores/FormAdmin';
 import { FormCrearConsumo } from '../pages/Consumos/FormCrearConsumo.jsx';
 import { FormAgregarEditarConsumo } from '../pages/Consumos/FormAgregegarEditar.jsx';
 import { FormAgregarEditarPrestamo } from '../pages/Prestamos/FormAgregarEditar.jsx';
+import ElementosList from '@/pages/Elementos/ListaElementos';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -46,6 +47,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <FormElementos />
+                </ProtectedRoute>
+            ),
+        },
+        {
+            path: '/elementos/lista',
+            element: (
+                <ProtectedRoute>
+                    <ElementosList />
                 </ProtectedRoute>
             ),
         },

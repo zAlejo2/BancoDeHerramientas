@@ -30,7 +30,7 @@ export const Menu = ({ children }) => {
             to: "/elementos", 
             subMenu: [
                 { name: "Formulario", to: "/elementos/formulario" }, 
-                // { name: "Encargos", to: "/elementos/encargos" }
+                { name: "Lista", to: "/elementos/lista" }
             ]
         },
         { 
