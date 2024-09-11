@@ -233,31 +233,6 @@ const addOrUpdate = async (req, res) => {
     }
 };
 
-const deleteLoan = async (req, res) => {
-    try {
-        const deleted = await PrestamoCorriente.destroy ({
-            where: { idprestamo: req.params.idprestamo }
-        });
-        if(deleted) {
-            res.status(201).json({ mensaje: 'Consumo eliminado correctamente'});
-        } else {
-            res.status(404).json({ mensaje: 'Consumo no encontrado'});
-        }
-    } catch (error) {
-        res.status(500).json({ mensaje: 'Error al eliminar el registro de Consumo' });
-    }
-};
-
-const getLoans = async (req, res) => {
-    const { documento } = req.params;
-    try {
-      const prestamos = await PrestamoCorriente.findOne({ where: { clientes_documento: documento } });
-      res.json(prestamos);
-    } catch (error) {
-      return res.status(500).json({ error: 'Error fetching data' });
-    }
-};
-
 const getAllLoanElements = async (req, res) => {
     try {
       const prestamosTodos = await ElementoHasPrestamoCorriente.findAll({
@@ -296,4 +271,4 @@ const getAllLoanElements = async (req, res) => {
     }
 };    
 
-export { createLoan, findLoanElements, addOrUpdate, deleteLoan, getLoans, getAllLoanElements };
+export { createLoan, findLoanElements, addOrUpdate, getAllLoanElements };
