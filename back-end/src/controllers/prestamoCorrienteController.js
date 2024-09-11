@@ -1,6 +1,8 @@
 import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento, Historial } from '../models/index.js';
 import { ajustarHora, formatFecha, admin_id } from './auth/adminsesionController.js';
+import createRecord from './historialController.js';
 
+const adminId = await admin_id();
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 const createLoan = async (req, res) => {
@@ -22,12 +24,14 @@ const createLoan = async (req, res) => {
             clientes_documento: cliente.documento,
             estado: 'actual'
         });
-
+        
         let idprestamo = prestamo.idprestamo;
+        createRecord('prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, prestamo.estado, 'CREAR PRESTAMO');
 
         return res.status(200).json({ idprestamo, elementos: [] });
 
     } catch (error) {
+        console.log(error)
         res.status(500).json({ mensaje: 'Error al crear consumo: ', error });
     }
 };
@@ -102,6 +106,7 @@ const addOrUpdate = async (req, res) => {
                             elementos_idelemento: elementoExistente.elementos_idelemento,
                         }
                     });
+                    createRecord('prestamo', idprestamo, adminId, prestamo.clientes_documento, elemento.idelemento, cantidadEliminar, null, prestamo.estado, 'ELIMINAR ELEMENTO');
                 }
             }
         }
@@ -152,6 +157,7 @@ const addOrUpdate = async (req, res) => {
                                 },
                                 { where: { idelemento } }
                             );
+                            // createRecord('prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidad, null, prestamo.estado, 'ELIMINAR ELEMENTO');
                         }
                     } else {
                         await ElementoHasPrestamoCorriente.update(

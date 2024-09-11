@@ -23,11 +23,11 @@ Historial.init({
     },
     elemento_id: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     cantidad: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     observaciones: {
         type: DataTypes.STRING(300),
