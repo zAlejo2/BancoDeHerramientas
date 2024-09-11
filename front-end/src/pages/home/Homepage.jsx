@@ -49,7 +49,7 @@ export const HomePage = () => {
               <Icon name={item} className="w-6 h-6" />
             </CardHeader>
             <CardContent>
-              <CardDescription>{item}</CardDescription>
+              <CardDescription style={{ color: 'white' }}>{item}</CardDescription>
             </CardContent>
           </Card>
         ))}
@@ -58,12 +58,12 @@ export const HomePage = () => {
         <InputPrestamo/>
         <Card className="border-input">
           <Table>
-          <TableHeader style={{ color: 'white', textAlign: 'center' }}>
+          <TableHeader sx={{ color: 'white', textAlign: 'center' }}>
             <TableRow>
-              <TableHead style={{ textAlign: 'center' }}>Cedula</TableHead>
-              <TableHead style={{ textAlign: 'center' }}>Usuario</TableHead>
-              <TableHead style={{ textAlign: 'center' }}>Descripcion</TableHead>
-              <TableHead style={{ textAlign: 'center' }}>Estado</TableHead>
+              <TableHead className="text-white text-center">Cedula</TableHead>
+              <TableHead className="text-white text-center">Usuario</TableHead>
+              <TableHead className="text-white text-center">Descripcion</TableHead>
+              <TableHead className="text-white text-center">Estado</TableHead>
             </TableRow>
           </TableHeader>
 
