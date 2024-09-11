@@ -1,27 +1,24 @@
-import React, { useState, useEffect } from "react";
-import { FaCheck } from "react-icons/fa6";
+import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
+import { useParams } from "react-router-dom";
 import useSearchElements from "../../hooks/useSearchElements";
 import usePostData from "../../hooks/usePostData.jsx";
-import useDeleteData from "../../hooks/useDeleteData";
-import { useParams } from "react-router-dom";
-import '../../assets/formAgregarEditarStyles.css'; 
 import axiosInstance from "../../helpers/axiosConfig.js";
-import { MdMargin } from "react-icons/md";
+import '../../assets/formAgregarEditarStyles.css'; 
 
 export const FormAgregarEditarPrestamo = () => {
     const { idprestamo } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
-    const { deleteData, isLoading, error } = useDeleteData(`prestamos/${idprestamo}`, '/inicio');
 
-    const handleDelete = async () => {
-        try {
-            await deleteData();  // Llama a la función deleteData que ya tienes configurada.
-            console.log("Préstamo eliminado con éxito.");
-        } catch (error) {
-            console.error("Error al eliminar el préstamo:", error);
-        }
+    const handleReturnAll = () => {
+        setSelectedItems((prevItems) =>
+            prevItems.map((item) =>
+                item.fecha_entregaFormato // Solo para los elementos con fecha de entrega
+                    ? { ...item, cantidadd: item.cantidad, estado: 'finalizado' } // Actualiza `cantidadd` con el valor de `cantidad`
+                    : item
+            )
+        );
     };
     
     useEffect(() => {
@@ -228,7 +225,7 @@ export const FormAgregarEditarPrestamo = () => {
                                     </td>
                                     <td>{item.fecha_entregaFormato}</td>
                                     <td>{item.fecha_devolucionFormato}</td>
-                                    <td>{item.estado}</td>
+                                    <td>{item.fecha_entregaFormato ? item.estado : ''}</td>
                                     <td>
                                         <button 
                                             type="button"
@@ -260,8 +257,9 @@ export const FormAgregarEditarPrestamo = () => {
                     <button
                         type="button"
                         className="consume-button"
-                        onClick={handleDelete} disabled={isLoading}>
-                        {isLoading ? 'Cancelando...' : 'Cancelar Prestamo'}
+                        onClick={handleReturnAll} // Cambiar la función
+                    >
+                        Devolver Todo 
                     </button>
                 </div>
             </div>
