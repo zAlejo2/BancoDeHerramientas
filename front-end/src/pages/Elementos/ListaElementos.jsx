@@ -21,11 +21,12 @@ const ElementosList = () => {
     }
 
     // Filtrar los datos según el término de búsqueda
-    const filteredData = data.elements?.filter((item) =>
-        item.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.estado.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredData = data.elements?.filter((element) =>
+        element.idelemento.toString().includes(searchTerm.toLowerCase()) ||
+        element.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        element.ubicacion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        element.tipo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        element.estado.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Obtener los elementos de la página actual
@@ -91,6 +92,7 @@ const ElementosList = () => {
                             <th className="px-4 py-2 bg-black text-white">Estado</th>
                             <th className="px-4 py-2 bg-black text-white">Mínimo</th>
                             <th className="px-4 py-2 bg-black text-white">Área</th>
+                            <th className="px-4 py-2 bg-black text-white">Imagen</th>
                             <th className="px-4 py-2 bg-black text-white">Acciones</th>
                         </tr>
                     </thead>
@@ -106,6 +108,17 @@ const ElementosList = () => {
                                 <td className="px-4 py-2">{elemento.estado}</td>
                                 <td className="px-4 py-2">{elemento.minimo}</td>
                                 <td className="px-4 py-2">{elemento.areas_idarea}</td>
+                                <td className="px-4 py-2">
+                                    {elemento.foto ? (
+                                        <img
+                                            src={elemento.foto}
+                                            alt={`Imagen de ${elemento.descripcion}`}
+                                            className="h-16 w-16 object-cover"
+                                        />
+                                    ) : (
+                                        <span>No imagen</span>
+                                    )}
+                                </td>
                                 <td className="px-4 py-2">
                                     <button
                                         onClick={() => openModal(elemento)}
