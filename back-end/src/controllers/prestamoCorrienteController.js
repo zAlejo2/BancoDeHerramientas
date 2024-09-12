@@ -1,20 +1,21 @@
 import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento, Historial } from '../models/index.js';
 import { ajustarHora, formatFecha, admin_id } from './auth/adminsesionController.js';
-import createRecord from './historialController.js';
+import { createRecord } from './historialController.js';
 
-const adminId = await admin_id();
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 const createLoan = async (req, res) => {
     try {
+        const { area, id: adminId } = req.user;  // Extraemos el área y el adminId de req.user
         const { documento } = req.body;
+
         const cliente = await Cliente.findOne({ where: { documento } });
 
         if (!cliente) {
             return res.status(404).json({ mensaje: 'Cliente no encontrado' });
         }
 
-        const loanExisting = await PrestamoCorriente.findOne({ where: { clientes_documento: documento, estado: 'actual' } });
+        const loanExisting = await PrestamoCorriente.findOne({ where: { clientes_documento: documento, estado: 'actual', areas_idarea: area } });
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
             return res.status(200).json({ idprestamo})
@@ -22,17 +23,18 @@ const createLoan = async (req, res) => {
 
         const prestamo = await PrestamoCorriente.create({
             clientes_documento: cliente.documento,
-            estado: 'actual'
+            estado: 'actual',
+            areas_idarea: area
         });
         
         let idprestamo = prestamo.idprestamo;
-        createRecord('prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, prestamo.estado, 'CREAR PRESTAMO');
+        createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, 'actual', 'CREAR PRESTAMO');
 
         return res.status(200).json({ idprestamo, elementos: [] });
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({ mensaje: 'Error al crear consumo: ', error });
+        res.status(500).json({ mensaje: 'Error al crear préstamo: ', error });
     }
 };
 
@@ -50,7 +52,6 @@ const findLoanElements = async (req, res) => {
 
                 const fecha_entregaFormato = formatFecha(fecha_entrega, 5);
                 const fecha_devolucionFormato = formatFecha(fecha_devolucion, 5);
-
                 const elemento = await Elemento.findOne({ where: { idelemento: elementos_idelemento }});
                 return { elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado };
             });
@@ -72,6 +73,7 @@ const addOrUpdate = async (req, res) => {
 
         const { idprestamo } = req.params;
         const { elementos } = req.body;
+        const { area, id: adminId } = req.user;
 
         const prestamo = await PrestamoCorriente.findOne({ where: { idprestamo } });
 
@@ -106,7 +108,7 @@ const addOrUpdate = async (req, res) => {
                             elementos_idelemento: elementoExistente.elementos_idelemento,
                         }
                     });
-                    createRecord('prestamo', idprestamo, adminId, prestamo.clientes_documento, elemento.idelemento, cantidadEliminar, null, prestamo.estado, 'ELIMINAR ELEMENTO');
+                    createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elemento.idelemento, cantidadEliminar, elementoExistente.observaciones, 'finalizado', 'ELIMINAR ELEMENTO');
                 }
             }
         }
@@ -157,7 +159,13 @@ const addOrUpdate = async (req, res) => {
                                 },
                                 { where: { idelemento } }
                             );
-                            // createRecord('prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidad, null, prestamo.estado, 'ELIMINAR ELEMENTO');
+                            await ElementoHasPrestamoCorriente.destroy({
+                                where: {
+                                    prestamoscorrientes_idprestamo: idprestamo,
+                                    elementos_idelemento: idelemento,
+                                }
+                            });
+                            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidad, observaciones, 'finalizado', 'DEVOLVER ELEMENTO (total)');
                         }
                     } else {
                         await ElementoHasPrestamoCorriente.update(
@@ -171,7 +179,10 @@ const addOrUpdate = async (req, res) => {
                                 estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
                             },
                             { where: { idelemento } }
-                        ); 
+                        );
+                        if (cantidadd != 0) {
+                            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidadd, observaciones, 'actual', 'DEVOLVER ELEMENTO (parte)'); 
+                        }
                     }
                 } else {
                     if (estado == 'finalizado'){
@@ -189,6 +200,7 @@ const addOrUpdate = async (req, res) => {
                         },
                         { where: { idelemento } }
                     ); 
+                    createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidad, observaciones, 'actual', 'CAMBIAR CANTIDAD'); 
                 }
 
             } else {
@@ -217,6 +229,7 @@ const addOrUpdate = async (req, res) => {
                     },
                     { where: { idelemento } }
                 );
+                createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, idelemento, cantidad, observaciones, 'actual', 'PRESTAR ELEMENTO'); 
             }
 
         }
@@ -227,8 +240,16 @@ const addOrUpdate = async (req, res) => {
             await PrestamoCorriente.update(
                 { estado: 'finalizado'},
                 { where: {idprestamo}}
-            )
+            );
+            await PrestamoCorriente.destroy({
+                where: {
+                    idprestamo: idprestamo,
+                    clientes_documento: prestamo.clientes_documento,
+                    estado: 'finalizado'
+                }
+            });
             console.log('estado de prestamo finalizado')
+            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, 'finalizado', 'FINALIZAR PRESTAMO'); 
         }
 
         return res.status(200).json({ mensaje: 'Elementos agregados al prestamo y actualizados con éxito' })
@@ -241,7 +262,8 @@ const addOrUpdate = async (req, res) => {
 
 const getAllLoanElements = async (req, res) => {
     try {
-      const prestamosTodos = await ElementoHasPrestamoCorriente.findAll({
+        const { area, id: adminId } = req.user;
+        const prestamosTodos = await ElementoHasPrestamoCorriente.findAll({
         include: [
           {
             model: PrestamoCorriente,
@@ -254,7 +276,8 @@ const getAllLoanElements = async (req, res) => {
             attributes: ['idprestamo', 'clientes_documento']  
           },
           {
-            model: Elemento,  
+            model: Elemento,
+            where: { areas_idarea: area },  
             attributes: ['idelemento', 'descripcion']
           }
         ]

@@ -3,7 +3,7 @@ import { Administrador, Cliente, Rol } from '../../models/index.js';
 import generarToken from '../../helpers/tokenHelper.js';
 import {nuevaSesion} from './adminsesionController.js';
 
-//Login de administrador
+//Login 
 const login = async (req, res) => {
 
     const { documento, contrasena } = req.body;
@@ -26,10 +26,11 @@ const login = async (req, res) => {
           const id = admin.documento;
           const type = 'administrador';
           const role = admin.tipo;
+          const area = admin.areas_idarea;
 
           nuevaSesion(documento);
 
-          const token = generarToken(id, type, role);
+          const token = generarToken(id, type, role, area);
 
           res.send({
             documento: id,

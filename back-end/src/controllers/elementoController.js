@@ -5,7 +5,8 @@ import upload from '../middlewares/fotoElementoMiddleware.js';
 // Obtener todos los elementos
 const getAllElements = async (req, res) => {
     try {
-        const elements = await Elemento.findAll();
+        const area = req.area;
+        const elements = await Elemento.findAll({where: { areas_idarea: area}});
         res.json(elements);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -30,12 +31,14 @@ const getElementById = async (req, res) => {
 const getElementByName = async (req, res) => {
     try {
         const searchParam = req.params.descripcion.toLowerCase();
+        const area = req.area;
 
         // Verifica si el parámetro es un número (posible id)
         const isId = !isNaN(searchParam);
 
         const elements = await Elemento.findAll({
             where: {
+                areas_idarea: area,
                 [Sequelize.Op.or]: [
                     // Si el parámetro es un id, busca por idelemento
                     isId ? { idelemento: searchParam } : null,

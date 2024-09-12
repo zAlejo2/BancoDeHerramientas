@@ -45,6 +45,15 @@ const verifyRole = (rolesPermitidos) => {
   };
 };
 
-export {authenticate, verifyType, verifyRole};
+const verifyArea = (req, res, next) => {
+  const { area } = req.user; 
+  if (!area) {
+      return res.status(403).json({ message: 'No se ha podido verificar el área del usuario' });
+  }
+  req.area = area;
+  next();
+};
+
+export {authenticate, verifyType, verifyRole, verifyArea};
 
 

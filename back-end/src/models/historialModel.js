@@ -49,6 +49,10 @@ Historial.init({
     admin_id: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    area_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 }, {
     sequelize,

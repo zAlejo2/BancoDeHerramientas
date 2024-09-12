@@ -3,10 +3,11 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
-const createRecord = async (tipoEntidad, entidadId, adminId, clienteId, elementoId, Cantidad, Observaciones, Estado, Accion) => {
+const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, elementoId, Cantidad, Observaciones, Estado, Accion) => {
     try{
 
-        const historial = await Historial.create({
+        await Historial.create({
+            area_id: areaId,
             tipo_entidad: tipoEntidad, 
             entidad_id: entidadId,
             admin_id: adminId,
@@ -18,12 +19,21 @@ const createRecord = async (tipoEntidad, entidadId, adminId, clienteId, elemento
             accion: Accion,
             fecha_accion: obtenerHoraActual()
         });
-        console.log('creado')
-        // return json(historial)
+        console.log('historial creado')
     } catch(error) {
         console.log(error)
-        // return json(error)
     }      
 };
 
-export default createRecord;
+const getAllRecord = async (req, res) => {
+    try {
+        const area = req.area; 
+        const historial = await Historial.findAll({where: { area_id: area }})
+        return res.status(200).json({historial})
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ mensaje: 'error al obtener el historial', error})
+    }
+}
+
+export { getAllRecord, createRecord};

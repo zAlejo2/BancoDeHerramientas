@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import sequelize from '../db/connection.js';
 import Cliente from './clienteModel.js';
+import Area from './areaModel.js';
 
 class PrestamoEspecial extends Model {}
 
@@ -33,6 +34,17 @@ PrestamoEspecial.init({
     documento: {
         type: DataTypes.STRING(100),
         allowNull: true
+    },
+    areas_idarea: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: Area,
+          key: 'idarea',
+          allowNull: false
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
     }
 },  {
     sequelize,

@@ -55,6 +55,54 @@ Area.hasMany(Administrador, {
     as: 'administradores'
 });
 
+// Un Prestamo Corriente pertenece a un Area
+PrestamoCorriente.belongsTo(Area, {
+    foreignKey: 'areas_idarea',
+    as: 'area'
+});
+
+// Un Area puede tener muchos PrestamosCorrientes
+Area.hasMany(PrestamoCorriente, {
+    foreignKey: 'areas_idarea',
+    as: 'prestamoscorrientes'
+});
+
+// Un Prestamo Especial pertenece a un Area
+PrestamoEspecial.belongsTo(Area, {
+    foreignKey: 'areas_idarea',
+    as: 'area'
+});
+
+// Un Area puede tener muchos PrestamosEspeciales
+Area.hasMany(PrestamoEspecial, {
+    foreignKey: 'areas_idarea',
+    as: 'prestamosespeciales'
+});
+
+// Un Consumo pertenece a un Area
+Consumo.belongsTo(Area, {
+    foreignKey: 'areas_idarea',
+    as: 'area'
+});
+
+// Un Area puede tener muchos Consumos
+Area.hasMany(Consumo, {
+    foreignKey: 'areas_idarea',
+    as: 'consumos'
+});
+
+// Un Encargo pertenece a un Area
+Encargo.belongsTo(Area, {
+    foreignKey: 'areas_idarea',
+    as: 'area'
+});
+
+// Un Area puede tener muchos Encargos
+Area.hasMany(Encargo, {
+    foreignKey: 'areas_idarea',
+    as: 'encargos'
+});
+
 // Un Cliente pertenece a un Rol
 Cliente.belongsTo(Rol, {
     foreignKey: 'roles_idrol',
