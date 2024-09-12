@@ -19,6 +19,7 @@ const useUpdate = (baseUrl, redirectUrl) => {
                 icon: 'success',
                 title: 'Actualización exitosa',
                 text: `La información ha sido actualizado correctamente.`,
+                iconColor: 'black',
                 timer: 2000,
                 showConfirmButton: false,
             }).then(() => {

@@ -15,6 +15,9 @@ import { FormCrearConsumo } from '../pages/Consumos/FormCrearConsumo.jsx';
 import { FormAgregarEditarConsumo } from '../pages/Consumos/FormAgregegarEditar.jsx';
 import { FormAgregarEditarPrestamo } from '../pages/Prestamos/FormAgregarEditar.jsx';
 import ElementosList from '@/pages/Elementos/ListaElementos';
+import Clientes from '@/pages/Clientes/ListaClientes';
+import Admin from '@/pages/Administradores/ListaAdmin';
+import Roles from '@/pages/Roles/ListaRoles';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -67,10 +70,26 @@ export const AppRoutes = ({tokenSession}) => {
             ),
         },
         {
+            path: '/roles/lista',
+            element: (
+                <ProtectedRoute>
+                    <Roles />
+                </ProtectedRoute>
+            ),
+        },
+        {
             path: '/usuarios/formulario',
             element: (
                 <ProtectedRoute>
                     <FormClientes />
+                </ProtectedRoute>
+            ),
+        },
+        {
+            path: '/usuarios/lista',
+            element: (
+                <ProtectedRoute>
+                    <Clientes />
                 </ProtectedRoute>
             ),
         },
@@ -103,6 +122,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <FormAdmin />
+                </ProtectedRoute>
+            ),
+        },
+        {
+            path: '/administrador/lista',
+            element: (
+                <ProtectedRoute>
+                    <Admin />
                 </ProtectedRoute>
             ),
         },

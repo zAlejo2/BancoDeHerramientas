@@ -46,7 +46,7 @@ export const Menu = ({ children }) => {
             to: "/clientes", 
             subMenu: [
                 { name: "Formulario", to: "/usuarios/formulario" }, 
-                // { name: "Encargos", to: "/usuarios/encargos" }
+                { name: "Lista", to: "/usuarios/lista" }
             ]
         },
         { 
@@ -54,7 +54,7 @@ export const Menu = ({ children }) => {
             to: "/roles", 
             subMenu: [
                 { name: "Formulario", to: "/roles/formulario" }, 
-                // { name: "Encargos", to: "/roles/encargos" }
+                { name: "Lista", to: "/roles/lista" }
             ]
         },
         { 
@@ -62,9 +62,10 @@ export const Menu = ({ children }) => {
             to: "/admin", 
             subMenu: [
                 { name: "Formulario", to: "/administrador/formulario" }, 
-                // { name: "Encargos", to: "/admin/encargos" }
+                { name: "Lista", to: "/administrador/lista" }
             ]
         },
+        
         { 
             name: "Consumos", 
             to: "/consumos", 
