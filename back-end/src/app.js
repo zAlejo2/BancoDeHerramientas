@@ -9,6 +9,7 @@ import config from './config/config.js';
 import loginRoute from './routes/auth/loginRouter.js';
 import logoutRoute from './routes/auth/logoutRouter.js';
 import areaRoutes from './routes/areaRouter.js';
+import historialRoute from './routes/historialRouter.js'
 import adminRoutes from './routes/administradorRouter.js';
 import clientRoutes from './routes/clienteRouter.js';
 import roleRoutes from './routes/rolRouter.js';
@@ -24,7 +25,8 @@ app.use(express.json());
 
 // Rutas
 app.use('/api/login', loginRoute);
-app.use('/api/logout', logoutRoute)
+app.use('/api/logout', logoutRoute);
+app.use('/api/historial', historialRoute);
 app.use('/api/areas', areaRoutes);
 app.use('/api/admins', adminRoutes);
 app.use('/api/clients', clientRoutes); 

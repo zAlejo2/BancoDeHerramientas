@@ -58,27 +58,4 @@ const terminarSesion = async (documento) => {
     }
 };
 
-// obtener el id del último admin que inició seseión para la tabla de historial
-const admin_id = async () => {
-    try {
-      const lastAdminSesion = await AdminSesion.findOne({
-        where: {
-          logout: {
-            [Op.is]: null 
-          }
-        },
-        order: [['login', 'DESC']] 
-      });
-  
-      if (lastAdminSesion) {
-        return lastAdminSesion.administradores_documento; 
-      } else {
-        return null; 
-      }
-    } catch (error) {
-      console.error('Error fetching last admin ID:', error);
-      return null;
-    }
-};
-
-export { nuevaSesion, terminarSesion, ajustarHora, formatFecha, admin_id };
+export { nuevaSesion, terminarSesion, ajustarHora, formatFecha };

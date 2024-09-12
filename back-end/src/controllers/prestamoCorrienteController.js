@@ -1,5 +1,5 @@
 import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento, Historial } from '../models/index.js';
-import { ajustarHora, formatFecha, admin_id } from './auth/adminsesionController.js';
+import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());

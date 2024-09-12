@@ -28,8 +28,16 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
 const getAllRecord = async (req, res) => {
     try {
         const area = req.area; 
-        const historial = await Historial.findAll({where: { area_id: area }})
-        return res.status(200).json({historial})
+        const historiales = await Historial.findAll({where: { area_id: area }});
+        const historialFormateado = historiales.map(historial => {
+            const fechaAccion = formatFecha(historial.fecha_accion, 5);
+            return {
+              ...historial.dataValues,
+              fecha_accion: fechaAccion,
+            };
+          });
+      
+          res.json(historialFormateado); 
     } catch (error) {
         console.log(error)
         return res.status(500).json({ mensaje: 'error al obtener el historial', error})
