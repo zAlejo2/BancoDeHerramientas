@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, XIcon } from "lucide-react";
 import { LuArrowDownLeftFromCircle } from "react-icons/lu";
@@ -60,10 +59,10 @@ export const HomePage = () => {
           <Table>
           <TableHeader sx={{ color: 'white', textAlign: 'center' }}>
             <TableRow>
-              <TableHead className="text-white text-center">Cedula</TableHead>
-              <TableHead className="text-white text-center">Usuario</TableHead>
-              <TableHead className="text-white text-center">Descripcion</TableHead>
-              <TableHead className="text-white text-center">Estado</TableHead>
+              <TableHead className="text-white text-center">DOCUMENTO</TableHead>
+              <TableHead className="text-white text-center">USUARIO</TableHead>
+              <TableHead className="text-white text-center">DESCRIPCION</TableHead>
+              <TableHead className="text-white text-center">ESTADO</TableHead>
             </TableRow>
           </TableHeader>
 

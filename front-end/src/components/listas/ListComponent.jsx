@@ -6,7 +6,7 @@ const ListComponent = ({
     renderRow, // Función para renderizar cada fila
     searchKeys, // Llaves para realizar la búsqueda
     itemsPerPage = 10, // Opcional: número de elementos por página
-    title = "Lista", // Título por defecto
+    title, // Título por defecto
 }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);

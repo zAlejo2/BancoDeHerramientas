@@ -81,6 +81,7 @@ const Clientes = () => {
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['documento', 'nombre', 'correo', 'fechaInicio', 'fechaFin', 'numero', 'observaciones']}
+                title="Lista Clientes"
             />
 
             {isModalOpen && (

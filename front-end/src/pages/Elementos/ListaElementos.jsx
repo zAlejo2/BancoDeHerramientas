@@ -83,6 +83,7 @@ const Elementos = () => {
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['idelemento', 'descripcion', 'ubicacion', 'tipo', 'estado']}
+                title="Lista Elementos"
             />
 
             {isModalOpen && (

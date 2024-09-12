@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import useGetData from '../../hooks/useGetData';
+import { TableCell, TableRow } from "@/components/ui/table";
+
 
 const PrestamosActivos = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Estado del término de búsqueda
@@ -71,7 +73,7 @@ const PrestamosActivos = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredPrestamos.map((prestamo) => (
+          {filteredPrestamos.length > 0 ? (filteredPrestamos.map((prestamo) => (
             <tr key={prestamo.PrestamoCorriente.documento}>
               <td>{prestamo.PrestamoCorriente.Cliente.documento}</td>
               <td>{prestamo.PrestamoCorriente.Cliente.nombre}</td>
@@ -81,7 +83,12 @@ const PrestamosActivos = () => {
               <td>{prestamo.cantidad}</td>
               <td>{prestamo.fecha_entrega}</td>
             </tr>
-          ))}
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan="7">No hay préstamos</TableCell>
+          </TableRow>
+        )}
         </tbody>
       </table>
     </div>
