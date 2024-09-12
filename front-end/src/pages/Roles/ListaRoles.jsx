@@ -43,7 +43,7 @@ const Roles = () => {
     };
 
     const handleUpdate = async () => {
-        await updateEntity(selectedRol.documento, selectedRol);
+        await updateEntity(selectedRol.idrol, selectedRol);
         closeModal();
     };
 
@@ -59,6 +59,7 @@ const Roles = () => {
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['idrol', 'descripcion']}
+                title="Lista Roles"
             />
 
             {isModalOpen && (

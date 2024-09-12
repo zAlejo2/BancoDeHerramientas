@@ -14,7 +14,6 @@ const useUpdate = (baseUrl, redirectUrl) => {
 
         try {
             const response = await axiosInstance.put(`${baseUrl}/${id}`, updatedData);
-            
             Swal.fire({
                 icon: 'success',
                 title: 'Actualización exitosa',
@@ -23,7 +22,10 @@ const useUpdate = (baseUrl, redirectUrl) => {
                 timer: 2000,
                 showConfirmButton: false,
             }).then(() => {
-                navigate(redirectUrl); // Redirige después de la actualización
+                console.log('SweetAlert mostrada');
+                setTimeout(() => {
+                    navigate(redirectUrl);
+                }, 2000);           
             });
 
             return response.data;

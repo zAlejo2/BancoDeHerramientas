@@ -70,6 +70,7 @@ const Admin = () => {
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['documento', 'nombre', 'tipo', 'areas_idarea']}
+                title="Lista Administradores"
             />
 
             {isModalOpen && (
