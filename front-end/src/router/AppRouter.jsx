@@ -18,6 +18,7 @@ import ElementosList from '@/pages/Elementos/ListaElementos';
 import Clientes from '@/pages/Clientes/ListaClientes';
 import Admin from '@/pages/Administradores/ListaAdmin';
 import Roles from '@/pages/Roles/ListaRoles';
+import HistorialPrestamos from '@/pages/Prestamos/HistorialPrestamos';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -154,6 +155,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <FormAgregarEditarPrestamo/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/prestamos/historial',
+            element: (
+                <ProtectedRoute>
+                    <HistorialPrestamos/>
                 </ProtectedRoute>
             )
         },

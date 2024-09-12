@@ -21,8 +21,8 @@ export const Menu = ({ children }) => {
             name: "Prestamos", 
             to: "/prestamos", 
             subMenu: [
-                { name: "Elementos Prestados", to: "/prestamos/lista" }, 
-                // { name: "Lista 2", to: "/prestamos/lista2" }, 
+                { name: "Elementos Prestados", to: "/prestamos/lista" },
+                { name: "Historial Prestamos", to: "/prestamos/historial" } 
             ]
         },
         { 
