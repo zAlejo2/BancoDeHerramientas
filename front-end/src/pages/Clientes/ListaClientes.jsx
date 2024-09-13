@@ -6,11 +6,11 @@ import ModalComponent from '@/components/listas/Modal';
 
 const Clientes = () => {
     const { data } = useGetData(['clients']);
-    const { updateEntity } = useUpdate('/clients', '/');
+    const { updateEntity } = useUpdate('/clients', '/usuarios/lista');
     const [selectedClient, setSelectedClient] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const columns = ['Documento', 'Nombre', 'Correo', 'Fecha inicio', 'Fecha fin', 'Observaciones', 'Telefono', 'Rol', 'Imagen', 'Acciones'];
+    const columns = ['Documento', 'Nombre', 'Correo', 'Fecha inicio', 'Fecha fin', 'Observaciones', 'Telefono', 'Grupo', 'Foto', ''];
 
     const renderRow = (cliente) => (
         <tr key={cliente.documento} className="border-b">
@@ -25,8 +25,8 @@ const Clientes = () => {
             <td className="px-4 py-2">
                 {cliente.foto ? (
                     <img
-                        src={cliente.foto}
-                        alt={`Imagen de ${cliente.nombre}`}
+                        src={`${import.meta.env.VITE_IMAGENES_URL}/${cliente.foto}`}
+                        alt={`Foto de ${cliente.foto}`}
                         className="h-16 w-16 object-cover"
                     />
                 ) : (
@@ -35,7 +35,7 @@ const Clientes = () => {
             </td>
             <td className="px-4 py-2">
                 <button onClick={() => openModal(cliente)} className="bg-black text-white px-4 py-2 rounded-md">
-                    Modificar
+                    Ver
                 </button>
             </td>
         </tr>
@@ -72,6 +72,7 @@ const Clientes = () => {
         { label: 'Fecha Fin', name: 'fechaFin', type: 'date' },
         { label: 'Observaciones', name: 'observaciones' },
         { label: 'Telefono', name: 'numero' },
+        { label: 'Foto', name: 'foto', type: 'file' },
     ];
 
     return (

@@ -6,11 +6,11 @@ import ModalComponent from '@/components/listas/Modal';
 
 const Roles = () => {
     const { data } = useGetData(['roles']);
-    const { updateEntity } = useUpdate('/roles', '/');
+    const { updateEntity } = useUpdate('/roles', '/roles/lista');
     const [selectedRol, setSelectedRol] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const columns = ['idrol', 'descripcion', 'Acciones'];
+    const columns = ['Codigo Grupo', 'Descripcion', 'Acciones'];
 
     const renderRow = (rol) => (
         <tr key={rol.idrol} className="border-b">
@@ -59,7 +59,7 @@ const Roles = () => {
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['idrol', 'descripcion']}
-                title="Lista Roles"
+                title="Lista Grupos"
             />
 
             {isModalOpen && (

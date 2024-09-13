@@ -16,10 +16,10 @@ const ModalComponent = ({
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
-            <div className="bg-white p-8 rounded-lg w-1/2">
+            <div className="bg-white p-8 rounded-lg w-2/3">
                 <h2 className="text-xl font-bold mb-4">{title}</h2>
                 <form onSubmit={onSubmit}>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 gap-3">
                         {fields.map(({ label, name, type, readOnly, options }, index) => (
                             <div key={index}>
                                 <label className="block mb-1">{label}</label>

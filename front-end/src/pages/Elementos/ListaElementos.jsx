@@ -6,11 +6,11 @@ import ModalComponent from '@/components/listas/Modal';
 
 const Elementos = () => {
     const { data } = useGetData(['elements']);
-    const { updateEntity } = useUpdate('/elements', '/');
+    const { updateEntity } = useUpdate('/elements', '/elementos/lista');
     const [selectedElement, setSelectedElement] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const columns = ['ID', 'Descripción', 'Cantidad', 'Disponibles', 'Ubicación', 'Tipo', 'Estado', 'Mínimo', 'Área', 'Imagen', 'Acciones'];
+    const columns = ['ID', 'Descripción', 'Cant', 'Dispo', 'Ubicación', 'Tipo', 'Estado', 'Min', 'Area', 'Foto', ''];
 
     const renderRow = (elemento) => (
         <tr key={elemento.idelemento} className="border-b">
@@ -26,8 +26,8 @@ const Elementos = () => {
             <td className="px-4 py-2">
                 {elemento.foto ? (
                     <img
-                        src={elemento.foto}
-                        alt={`Imagen de ${elemento.descripcion}`}
+                        src={`${import.meta.env.VITE_IMAGENES_URL}/${elemento.foto}`}
+                        alt={`Foto de ${elemento.descripcion}`}
                         className="h-16 w-16 object-cover"
                     />
                 ) : (
@@ -36,7 +36,7 @@ const Elementos = () => {
             </td>
             <td className="px-4 py-2">
                 <button onClick={() => openModal(elemento)} className="bg-black text-white px-4 py-2 rounded-md">
-                    Modificar
+                    Ver
                 </button>
             </td>
         </tr>

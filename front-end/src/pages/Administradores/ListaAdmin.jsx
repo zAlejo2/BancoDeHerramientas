@@ -6,7 +6,7 @@ import ModalComponent from '@/components/listas/Modal';
 
 const Admin = () => {
     const { data } = useGetData(['admins']);
-    const { updateEntity } = useUpdate('/admins', '/');
+    const { updateEntity } = useUpdate('/admins', '/administrador/lista');
     const [selectedAdmin, setSelectedAdmin] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 

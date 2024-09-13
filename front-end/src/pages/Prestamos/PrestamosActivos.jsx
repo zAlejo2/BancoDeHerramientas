@@ -63,13 +63,13 @@ const PrestamosActivos = () => {
       <table style={{ margin: '0 auto' }}>
         <thead>
           <tr>
-            <th>DOCUMENTO</th>
-            <th>NOMBRE</th>
-            <th>GRUPO</th>
-            <th>CODIGO</th>
-            <th>DESCRIPCION</th>
-            <th>CANTIDAD</th>
-            <th>FECHA</th>
+            <th>Documento</th>
+            <th>Nombre</th>
+            <th>Grupo</th>
+            <th>Codigo</th>
+            <th>Descripcion</th>
+            <th>Cantidad</th>
+            <th>Fecha</th>
           </tr>
         </thead>
         <tbody>

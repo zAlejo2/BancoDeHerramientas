@@ -27,16 +27,17 @@ const ListComponent = ({
 
     return (
         <div className="p-4">
-            <h1 className="text-2xl font-bold text-white bg-black p-4 mb-4">{title}</h1>
+            <div className='flex justify-between items-center'>
+            <h1 className="text-2xl font-bold text-black p-4 mb-4">{title}</h1>
 
             {/* Buscador */}
             <input
                 type="text"
-                className="border border-gray-300 p-2 w-full mb-4 rounded-md"
+                className="border border-black p-2 w-1/3 mb-4 rounded-md"
                 placeholder="Buscar..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            /> </div>
 
             {/* Tabla genérica */}
             <div className="overflow-x-auto">

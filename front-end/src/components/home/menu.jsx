@@ -26,6 +26,46 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
+            name: "Consumos", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Formulario", to: "/consumos" }, 
+                // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
+            name: "Prestamos Es", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Formulario", to: "/consumos" }, 
+                // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
+            name: "Moras", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Formulario", to: "/consumos" }, 
+                // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
+            name: "Daños", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Formulario", to: "/consumos" }, 
+                // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
+            name: "Bajas", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Formulario", to: "/consumos" }, 
+                // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
             name: "Elementos", 
             to: "/elementos", 
             subMenu: [
@@ -64,15 +104,6 @@ export const Menu = ({ children }) => {
                 { name: "Formulario", to: "/administrador/formulario" }, 
                 { name: "Lista", to: "/administrador/lista" }
             ]
-        },
-        
-        { 
-            name: "Consumos", 
-            to: "/consumos", 
-            subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
-                // { name: "Encargos", to: "/admin/encargos" }
-            ]
         }
     ];
 
@@ -89,7 +120,7 @@ export const Menu = ({ children }) => {
                         <h1 className="text-lg font-bold">Admin-B.H</h1>
                     </div>
                 </div>
-                <nav className="flex-1 p-4 space-y-2">
+                <nav className="flex-1 p-4 space-y-2 overflow-y-scroll">
                     {menuItems.map((item) => (
                         <div key={item.name}>
                             {item.name === "Inicio" ? (
