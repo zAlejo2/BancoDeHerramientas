@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, XIcon } from "lucide-react";
+import { BookIcon, CircleAlertIcon, ClipboardIcon, PenToolIcon, TriangleAlertIcon, UserIcon, FileTextIcon, HomeIcon, SettingsIcon, XIcon, List, HandCoins  } from "lucide-react";
 import { LuArrowDownLeftFromCircle } from "react-icons/lu";
 import useGetData from "@/hooks/useGetData";
 import InputPrestamo from '../Prestamos/InputPrestamo.jsx';
+import { AiOutlineAlert } from "react-icons/ai";
+import { CgReorder } from "react-icons/cg";
 
 export const HomePage = () => {
   const [search, setSearch] = useState("");
@@ -100,12 +102,13 @@ export const HomePage = () => {
 function Icon({ name, ...props }) {
   const icons = {
     "Inicio": <HomeIcon {...props} />,
-    "Préstamos": <BookIcon {...props} />,
+    "Préstamos": <HandCoins {...props} />,
     "Consumos": <LuArrowDownLeftFromCircle {...props} />,
-    "Encargos": <ClipboardIcon {...props} />,
-    "Moras": <CircleAlertIcon {...props} />,
+    "Encargos": <CgReorder {...props} />,
+    "Mora": <AiOutlineAlert {...props} />,
     "Daños": <TriangleAlertIcon {...props} />,
     "Elementos": <PenToolIcon {...props} />,
+     "Lista": <List {...props} />,
     "Usuarios": <UserIcon {...props} />,
     "Roles": <FileTextIcon {...props} />,
     "Admin": <SettingsIcon {...props} />
