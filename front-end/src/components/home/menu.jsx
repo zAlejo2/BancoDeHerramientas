@@ -8,6 +8,11 @@ import { MdOutlineConstruction } from "react-icons/md";
 import { Divider } from '@mui/material';
 import LogoutButton from '../forms/elements/cerrarSesionButton';
 import { LuArrowDownLeftFromCircle } from "react-icons/lu";
+import { GiReturnArrow } from "react-icons/gi";
+import { AiOutlineAlert } from "react-icons/ai";
+import { MdManageHistory } from "react-icons/md";
+import { PiImageBroken } from "react-icons/pi";
+import { CgReorder } from "react-icons/cg";
 
 export const Menu = ({ children }) => {
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
@@ -103,6 +108,13 @@ export const Menu = ({ children }) => {
             subMenu: [
                 { name: "Formulario", to: "/administrador/formulario" }, 
                 { name: "Lista", to: "/administrador/lista" }
+            ]
+        },
+        { 
+            name: "Encargos", 
+            to: "/Encargos", 
+            subMenu: [
+                { name: "Formulario", to: "/Encargos" },
             ]
         }
     ];
@@ -210,15 +222,20 @@ function Icon({ name, ...props }) {
     const icons = {
         "Inicio": <HomeIcon {...props} />,
         "Consumos": <LuArrowDownLeftFromCircle {...props} />,
-        "Encargos": <ClipboardIcon {...props} />,
+        "Encargos": <CgReorder {...props} />,
         "Areas": <CircleAlertIcon {...props} />,
         "Clientes": <UserIcon {...props} />,
         "Roles": <FileTextIcon {...props} />,
         "Admin": <SettingsIcon {...props} />,
         "Elementos": <MdOutlineConstruction {...props} />,
-        "Formulario": <ClipboardList {...props} />,
+        "List": <List {...props} />,
+        "Formulario": <List {...props} />,
         "Elementos Prestados": <List {...props} />,
-        // "Lista 2": <List {...props} />,
+        "Prestamos Es": <GiReturnArrow {...props} />,
+        "Moras": <AiOutlineAlert {...props} />,
+        "Daños": <MdManageHistory {...props} />,
+         "Bajas": <PiImageBroken  {...props} />,             
+         "Lista ": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
     };
     return icons[name] || <XIcon {...props} />;
