@@ -278,23 +278,40 @@ Mora.belongsTo(Elemento, {
     foreignKey: 'elementos_idelemento',
     as: 'elemento' 
 });
+
 ElementoHasPrestamoCorriente.belongsTo(PrestamoCorriente, {
     foreignKey: 'prestamoscorrientes_idprestamo',
-  });
+});
   
-  ElementoHasPrestamoCorriente.belongsTo(Elemento, {
-    foreignKey: 'elementos_idelemento',
-  });
-  
-  PrestamoCorriente.belongsTo(Cliente, {
-    foreignKey: 'clientes_documento',
-  });
-  
-  Cliente.hasMany(PrestamoCorriente, {
-    foreignKey: 'clientes_documento',
-  });
-  
+ElementoHasPrestamoCorriente.belongsTo(Elemento, {
+foreignKey: 'elementos_idelemento',
+});
 
+PrestamoCorriente.belongsTo(Cliente, {
+foreignKey: 'clientes_documento',
+});
+
+Cliente.hasMany(PrestamoCorriente, {
+foreignKey: 'clientes_documento',
+});
+
+// Relacion entre consumo y elementohasconsumo
+ElementoHasConsumo.belongsTo(Consumo, {
+    foreignKey: 'consumos_idconsumo',
+});
+  
+ElementoHasConsumo.belongsTo(Elemento, {
+foreignKey: 'elementos_idelemento',
+});
+
+Consumo.belongsTo(Cliente, {
+    foreignKey: 'clientes_documento',
+});
+    
+Cliente.hasMany(Consumo, {
+    foreignKey: 'clientes_documento',
+});
+  
 export {
     Area,
     Administrador,

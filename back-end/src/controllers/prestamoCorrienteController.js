@@ -1,9 +1,10 @@
-import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento, Historial } from '../models/index.js';
+import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
+// CREAR UN PRESTAMO
 const createLoan = async (req, res) => {
     try {
         const { area, id: adminId } = req.user;  // Extraemos el área y el adminId de req.user
@@ -38,6 +39,7 @@ const createLoan = async (req, res) => {
     }
 };
 
+// PARA TRAER LOS ELEMENTOS QUE YA ESTABAN EN EL PRESTAMO
 const findLoanElements = async (req, res) => {
     const { idprestamo } = req.params;
 
@@ -68,6 +70,7 @@ const findLoanElements = async (req, res) => {
     }
 };
 
+// TODAS LAS ACCIONES EN EL FORMULARIO DEL PRESTAMO (ELEMENTOS)
 const addOrUpdate = async (req, res) => {
     try {
 
@@ -116,7 +119,7 @@ const addOrUpdate = async (req, res) => {
         for (let elemento of elementos) {
             const { idelemento, cantidad, cantidadd, observaciones, estado } = elemento;
 
-            const elementoEncontrado = await Elemento.findOne({ where: { idelemento }});
+            const elementoEncontrado = await Elemento.findOne({ where: { idelemento, areas_idarea: area }});
             if (!elementoEncontrado) {
                 return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado en el inventario` });
             }
@@ -204,7 +207,7 @@ const addOrUpdate = async (req, res) => {
                 }
 
             } else {
-                const elementoDisponible = await Elemento.findOne({ where: { idelemento, estado: 'disponible' }});
+                const elementoDisponible = await Elemento.findOne({ where: { idelemento, estado: 'disponible', areas_idarea:area }});
                 if (!elementoDisponible) {
                     return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} agotado` });
                 }
@@ -260,6 +263,7 @@ const addOrUpdate = async (req, res) => {
     }
 };
 
+// PARA OBTENER LOS PRESTAMOS ACTIVOS
 const getAllLoanElements = async (req, res) => {
     try {
         const { area, id: adminId } = req.user;

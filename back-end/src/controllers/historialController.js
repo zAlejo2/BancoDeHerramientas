@@ -19,7 +19,6 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
             accion: Accion,
             fecha_accion: obtenerHoraActual()
         });
-        console.log('historial creado')
     } catch(error) {
         console.log(error)
     }      
