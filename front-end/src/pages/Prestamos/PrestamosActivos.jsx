@@ -70,6 +70,7 @@ const PrestamosActivos = () => {
             <th>Descripcion</th>
             <th>Cantidad</th>
             <th>Fecha</th>
+            <th>Observaciones</th>
           </tr>
         </thead>
         <tbody>
@@ -82,11 +83,12 @@ const PrestamosActivos = () => {
               <td>{prestamo.Elemento.descripcion}</td>
               <td>{prestamo.cantidad}</td>
               <td>{prestamo.fecha_entrega}</td>
+              <td>{prestamo.observaciones}</td>
             </tr>
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan="7">No hay préstamos</TableCell>
+            <TableCell colSpan="8">No hay préstamos</TableCell>
           </TableRow>
         )}
         </tbody>

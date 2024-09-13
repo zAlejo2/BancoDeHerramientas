@@ -14,6 +14,7 @@ import { FormAdmin } from '@/pages/Administradores/FormAdmin';
 import { FormCrearConsumo } from '../pages/Consumos/FormCrearConsumo.jsx';
 import { FormAgregarEditarConsumo } from '../pages/Consumos/FormAgregegarEditar.jsx';
 import { FormAgregarEditarPrestamo } from '../pages/Prestamos/FormAgregarEditar.jsx';
+import Consumos from '@/pages/Consumos/HistorialConsumos';
 import ElementosList from '@/pages/Elementos/ListaElementos';
 import Clientes from '@/pages/Clientes/ListaClientes';
 import Admin from '@/pages/Administradores/ListaAdmin';
@@ -163,6 +164,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <HistorialPrestamos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/consumos/historial',
+            element: (
+                <ProtectedRoute>
+                    <Consumos/>
                 </ProtectedRoute>
             )
         },

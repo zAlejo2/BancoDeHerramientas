@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import useGetData from '@/hooks/useGetData';
 import ListComponent from '@/components/listas/ListComponent';
-
+// FALTA QUE FILTRE SOLO POR PRESTAMOS
 const HistorialPrestamos = () => {
     const { data } = useGetData(['historial']);
 

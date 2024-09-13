@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { IoClose } from "react-icons/io5";
 import useSearchElements from "../../hooks/useSearchElements";
 import usePostData from "../../hooks/usePostData";
 import useDeleteData from "../../hooks/useDeleteData";
@@ -22,18 +23,25 @@ export const FormAgregarEditarConsumo = () => {
     };
 
     const handleAddItem = (item) => {
-        const itemExists = selectedItems.some(selectedItem => selectedItem.idelemento === item.idelemento);
-        
-        if (itemExists) {
-            console.log("El elemento ya está en la lista.");
-            return; // No hacer nada si el elemento ya está en la lista
-        }
+        setSelectedItems((prevItems) => {
+            // Verifica si el elemento ya existe en la lista
+            const itemExists = prevItems.find((selectedItem) => selectedItem.idelemento === item.idelemento);
     
-        console.log("Elemento agregado:", item);
-        setSelectedItems((prevItems) => [
-            ...prevItems,
-            { ...item, cantidad: 1, observaciones: "", checked: false }
-        ]);
+            if (itemExists) {
+                // Si el elemento ya está en la lista, incrementa la cantidad actual en 1
+                return prevItems.map((selectedItem) =>
+                    selectedItem.idelemento === item.idelemento
+                        ? { ...selectedItem, cantidad: parseInt(selectedItem.cantidad, 10) + 1 }
+                        : selectedItem
+                );
+            }
+    
+            // Si el elemento no está en la lista, lo agrega con cantidad 1
+            return [
+                ...prevItems,
+                { ...item, cantidad: 1, cantidadd: 0, observaciones: "", checked: false }
+            ];
+        });
     };    
 
     const handleQuantityChange = (idelemento, quantity) => {
@@ -68,8 +76,15 @@ export const FormAgregarEditarConsumo = () => {
         observaciones
     }));
 
-    const handleSave = usePostData(`consumos/addElements/${idconsumo}`, () => {}, { elementos }, {},`/consumos/elementos/${idconsumo}`);
+    const handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            if (searchResults.length > 0) {
+                handleAddItem(searchResults[0]); // Agregar el primer elemento de la búsqueda
+            }
+        }
+    };
 
+    const handleSave = usePostData(`consumos/addElements/${idconsumo}`, () => {}, { elementos }, {},`/consumos`);
 
     return (
         <div className="form-container">
@@ -86,6 +101,7 @@ export const FormAgregarEditarConsumo = () => {
                         placeholder="Nombre del elemento"
                         value={searchTerm}
                         onChange={handleSearchChange}
+                        onKeyDown={handleKeyPress}
                         className="input-field"
                     />
                     {searchLoading && <p>Cargando...</p>}
@@ -124,6 +140,7 @@ export const FormAgregarEditarConsumo = () => {
                                             onChange={(e) =>
                                                 handleQuantityChange(item.idelemento, e.target.value)
                                             }
+                                            min="1"
                                         />
                                     </td>
                                     <td>
@@ -145,7 +162,7 @@ export const FormAgregarEditarConsumo = () => {
                                                 )
                                             }
                                         >
-                                            Eliminar
+                                            <IoClose/>
                                         </button>
                                     </td>
                                 </tr>
