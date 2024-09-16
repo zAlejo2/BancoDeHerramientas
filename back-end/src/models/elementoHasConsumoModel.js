@@ -32,12 +32,15 @@ ElementoHasConsumo.init({
   },
   fecha: {
       type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      allowNull: false  
   },
   observaciones: {
       type: DataTypes.STRING(200),
       allowNull: true
+  },
+  administradores_documento: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 }, {
     sequelize,

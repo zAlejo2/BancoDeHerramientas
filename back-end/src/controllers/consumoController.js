@@ -6,7 +6,7 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 // CREAR CONSUMO
 const createConsumption = async (req, res) => {
     try {
-        const { area, id: adminId } = req.user;  // Extraemos el área y el adminId de req.user
+        const { area } = req.user;  // Extraemos el área y el adminId de req.user
         const { documento } = req.body;
 
         const cliente = await Cliente.findOne({ where: { documento } });
@@ -17,7 +17,7 @@ const createConsumption = async (req, res) => {
 
         const consumo = await Consumo.create({
             clientes_documento: cliente.documento,
-            areas_idarea: area
+            areas_idarea: area,
         });
         
         const idconsumo = consumo.idconsumo;
@@ -73,12 +73,14 @@ const addElements = async (req, res) => {
                 consumos_idconsumo: idconsumo,
                 cantidad,
                 observaciones,
-                fecha: obtenerHoraActual()
+                fecha: obtenerHoraActual(),
+                administradores_documento: adminId
             });
 
             await Elemento.update(
                 {
                     disponibles: elementoEncontrado.disponibles - cantidad,
+                    cantidad: elementoEncontrado.cantidad - cantidad,
                     estado: elementoEncontrado.disponibles - cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
                 },
                 { where: { idelemento } }
@@ -109,7 +111,7 @@ const deleteConsumption = async (req,res) => {
 
 const getAllConsumptions = async (req, res) => {
     try {
-        const { area, id: adminId } = req.user;
+        const { area } = req.user;
         const consumos = await ElementoHasConsumo.findAll({
             include: [
               {
@@ -133,7 +135,7 @@ const getAllConsumptions = async (req, res) => {
             const fechaAccion = formatFecha(consumo.fecha, 5);
             return {
               ...consumo.dataValues,
-              fecha: fechaAccion,
+              fecha: fechaAccion
             };
           });
       

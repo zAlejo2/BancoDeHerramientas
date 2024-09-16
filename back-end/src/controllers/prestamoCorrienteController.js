@@ -29,7 +29,7 @@ const createLoan = async (req, res) => {
         });
         
         let idprestamo = prestamo.idprestamo;
-        createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, 'actual', 'CREAR PRESTAMO');
+        // createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, 'actual', 'CREAR PRESTAMO');
 
         return res.status(200).json({ idprestamo, elementos: [] });
 
@@ -251,8 +251,7 @@ const addOrUpdate = async (req, res) => {
                     estado: 'finalizado'
                 }
             });
-            console.log('estado de prestamo finalizado')
-            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, 'finalizado', 'FINALIZAR PRESTAMO'); 
+            // createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, 'finalizado', 'FINALIZAR PRESTAMO'); 
         }
 
         return res.status(200).json({ mensaje: 'Elementos agregados al prestamo y actualizados con éxito' })
