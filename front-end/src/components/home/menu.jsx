@@ -13,6 +13,8 @@ import { AiOutlineAlert } from "react-icons/ai";
 import { MdManageHistory } from "react-icons/md";
 import { PiImageBroken } from "react-icons/pi";
 import { CgReorder } from "react-icons/cg";
+import { FaRegHandPointUp } from "react-icons/fa6";
+import { PiMapPinAreaFill } from "react-icons/pi";
 
 export const Menu = ({ children }) => {
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
@@ -122,17 +124,18 @@ export const Menu = ({ children }) => {
 
     return (
         <div className={`flex min-h-screen ${darkMode ? "dark" : ""}`}>
-            <aside className="w-64 bg-background text-foreground flex flex-col border-r border-gray">
+            <aside className="w-64 h-[95vh] overflow-hidden bg-background text-foreground flex flex-col border-r border-gray">
+
                 <div className="flex items-center p-4 border-b">
                     <Avatar>
-                        <AvatarImage src="/placeholder-user.jpg" />
+                        <img src="../../src/assets/Sena.png" />
                         <AvatarFallback>AB</AvatarFallback>
                     </Avatar>
                     <div className="ml-4">
-                        <h1 className="text-lg font-bold">Admin-B.H</h1>
+                        <h1 className="text-lg font-bold">Admin BH</h1>
                     </div>
                 </div>
-                <nav className="flex-1 p-4 space-y-2 overflow-y-scroll">
+                <nav className="max-w-lg flex-1 p-4 space-y-2 overflow-hidden overflow-y-scroll">
                     {menuItems.map((item) => (
                         <div key={item.name}>
                             {item.name === "Inicio" ? (
@@ -147,12 +150,18 @@ export const Menu = ({ children }) => {
                             ) : (
                                 <div>
                                     <div
-                                        className={`flex items-center space-x-2 px-3 py-2 rounded-md transition-colors cursor-pointer hover:bg-muted ${openSubMenu === item.name ? "bg-primary hover:bg-primary text-primary-foreground" : ""}`}
-                                        onClick={() => setOpenSubMenu(openSubMenu === item.name ? null : item.name)}
+                                    className={`flex items-center justify-between px-3 py-2 rounded-md transition-colors cursor-pointer hover:bg-muted ${
+                                        openSubMenu === item.name ? "bg-primary hover:bg-primary text-primary-foreground" : ""
+                                    }`}
+                                    onClick={() => setOpenSubMenu(openSubMenu === item.name ? null : item.name)}
                                     >
+                                    <div className="flex items-center space-x-2">
                                         <Icon name={item.name} className="w-5 h-5" />
                                         <span>{item.name}</span>
-                                        <ChevronDownIcon className={`w-4 h-4 ml-auto transition-transform ${openSubMenu === item.name ? "rotate-180" : ""}`} />
+                                    </div>
+                                    <ChevronDownIcon
+                                        className={`w-3 h-4 transition-transform ${openSubMenu === item.name ? "rotate-180" : ""}`}
+                                    />
                                     </div>
                                     {openSubMenu === item.name && (
                                         <div className="pl-6 mt-2 space-y-1">
@@ -183,8 +192,6 @@ export const Menu = ({ children }) => {
                 <header className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold">Banco de Herramientas</h2>
                     <div className="flex items-center space-x-4">
-                        <span>admin-B.H</span>
-                        <Switch checked={darkMode} onChange={() => setDarkMode(!darkMode)} />
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Avatar className="cursor-pointer">
@@ -197,10 +204,6 @@ export const Menu = ({ children }) => {
                                     <UserIcon className="w-4 h-4 mr-2" />
                                     <span>Perfil</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <SettingsIcon className="w-4 h-4 mr-2" />
-                                    <span>Configuración</span>
-                                </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-destructive">
                                     <LogoutButton>
@@ -211,7 +214,7 @@ export const Menu = ({ children }) => {
                         </DropdownMenu>
                     </div>
                 </header>
-                <Divider />
+                <Divider className='p-2'/>
                 {children}
             </main>
         </div>
@@ -223,19 +226,22 @@ function Icon({ name, ...props }) {
         "Inicio": <HomeIcon {...props} />,
         "Consumos": <LuArrowDownLeftFromCircle {...props} />,
         "Encargos": <CgReorder {...props} />,
-        "Areas": <CircleAlertIcon {...props} />,
+        "Areas": <PiMapPinAreaFill {...props} />,
         "Clientes": <UserIcon {...props} />,
-        "Roles": <FileTextIcon {...props} />,
+        "Roles": <FaRegHandPointUp{...props} />,
         "Admin": <SettingsIcon {...props} />,
         "Elementos": <MdOutlineConstruction {...props} />,
         "List": <List {...props} />,
         "Formulario": <List {...props} />,
+        "Lista": <List {...props} />,
+        "Historial Consumos": <List {...props}/>,
+        "Historial Prestamos": <List {...props}/>,
         "Elementos Prestados": <List {...props} />,
         "Prestamos Es": <GiReturnArrow {...props} />,
         "Moras": <AiOutlineAlert {...props} />,
         "Daños": <MdManageHistory {...props} />,
-         "Bajas": <PiImageBroken  {...props} />,             
-         "Lista ": <List {...props} />,
+        "Bajas": <PiImageBroken  {...props} />,             
+        "Lista ": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
     };
     return icons[name] || <XIcon {...props} />;

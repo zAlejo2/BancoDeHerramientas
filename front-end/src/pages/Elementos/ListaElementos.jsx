@@ -10,7 +10,7 @@ const Elementos = () => {
     const [selectedElement, setSelectedElement] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const columns = ['ID', 'Descripción', 'Cant', 'Dispo', 'Ubicación', 'Tipo', 'Estado', 'Min', 'Area', 'Foto', ''];
+    const columns = ['ID', 'Descripción', 'Cant', 'Dispo', 'Ubicación', 'Tipo', 'Estado', 'Min', 'Foto', ''];
 
     const renderRow = (elemento) => (
         <tr key={elemento.idelemento} className="border-b">
@@ -22,7 +22,6 @@ const Elementos = () => {
             <td className="px-4 py-2">{elemento.tipo}</td>
             <td className="px-4 py-2">{elemento.estado}</td>
             <td className="px-4 py-2">{elemento.minimo}</td>
-            <td className="px-4 py-2">{elemento.areas_idarea}</td>
             <td className="px-4 py-2">
                 {elemento.foto ? (
                     <img

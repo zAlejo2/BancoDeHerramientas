@@ -7,43 +7,42 @@ import useGetData from "@/hooks/useGetData";
 import InputPrestamo from '../Prestamos/InputPrestamo.jsx';
 import { AiOutlineAlert } from "react-icons/ai";
 import { CgReorder } from "react-icons/cg";
+import { GiReturnArrow } from "react-icons/gi";
+import { MdManageHistory } from "react-icons/md";
 
 export const HomePage = () => {
-  const [search, setSearch] = useState("");
-  const { data: prestamosData, error, loading } = useGetData(["prestamos/todosPrestamos"]);
-  const prestamos = prestamosData['prestamos/todosPrestamos'] || [];
+  const { data: cantidad } = useGetData(["prestamos/todosPrestamos"]);
+  const { data: prestamosData, error, loading } = useGetData(["historial"]);
+  const prestamos = prestamosData['historial'] || [];
+  const cantidadPrestamos = cantidad['prestamos/todosPrestamos'] || [];
 
   // Función para obtener el préstamo con la fecha más actual
   const getLatestPrestamos = () => {
     if (prestamos.length === 0) return [];
-
+  
     // Encuentra la fecha más actual
     const maxDate = prestamos.reduce((max, prestamo) => {
-      const fechaEntrega = new Date(prestamo.fecha_entrega || 0);
-      const fechaDevolucion = new Date(prestamo.fecha_devolucion || 0);
-      const maxDateForPrestamo = Math.max(fechaEntrega, fechaDevolucion);
-      return Math.max(max, maxDateForPrestamo);
-    }, 0);
-
+      const fecha = new Date(prestamo.fecha_accion || 0);
+      return fecha.getTime() > max.getTime() ? fecha : max;
+    }, new Date(0)); // Valor inicial: la fecha más temprana posible
+  
     // Filtra los préstamos que tienen la fecha máxima
     return prestamos.filter(prestamo => {
-      const fechaEntrega = new Date(prestamo.fecha_entrega || 0);
-      const fechaDevolucion = new Date(prestamo.fecha_devolucion || 0);
-      const maxDateForPrestamo = Math.max(fechaEntrega, fechaDevolucion);
-      return maxDateForPrestamo === maxDate;
+      const fecha = new Date(prestamo.fecha_accion || 0);
+      return fecha.getTime() === maxDate.getTime();
     });
-  };
+  };  
 
   const countPrestamosByState = (state) => {
-    return prestamos.filter(prestamo => prestamo.estado === state).length;
+    return cantidadPrestamos.filter(prestamo => prestamo.estado === state).length;
   };
 
   const latestPrestamos = getLatestPrestamos();
 
   return (
     <>
-      <section className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2 lg:grid-cols-4">
-        {["Préstamos", "Encargos", "Mora", "Daños"].map((item, index) => (
+      <section className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2 lg:grid-cols-5 ">
+        {["Préstamos", "Encargos", "Mora", "Daños", "Prestamos Esp"].map((item, index) => (
           <Card key={index} className="bg-primary text-primary-foreground">
             <CardHeader className="flex justify-between">
               <CardTitle> {item === "Préstamos" ? countPrestamosByState("actual") : Math.floor(Math.random() * 5000)}</CardTitle>
@@ -61,10 +60,11 @@ export const HomePage = () => {
           <Table>
           <TableHeader sx={{ color: 'white', textAlign: 'center' }}>
             <TableRow>
-              <TableHead className="text-white text-center">DOCUMENTO</TableHead>
-              <TableHead className="text-white text-center">USUARIO</TableHead>
-              <TableHead className="text-white text-center">DESCRIPCION</TableHead>
-              <TableHead className="text-white text-center">ESTADO</TableHead>
+              <TableHead className="text-white text-center">Documento</TableHead>
+              <TableHead className="text-white text-center">Usuario</TableHead>
+              <TableHead className="text-white text-center">Elemento</TableHead>
+              <TableHead className="text-white text-center">Acción</TableHead>
+              <TableHead className="text-white text-center">Estado</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -79,16 +79,17 @@ export const HomePage = () => {
                   </TableRow>
                     ) : latestPrestamos.length > 0 ? (
                       latestPrestamos.map((prestamo) => (
-                        <TableRow key={prestamo.PrestamoCorriente.documento}>
-                          <TableCell>{prestamo.PrestamoCorriente.Cliente.documento}</TableCell>
-                          <TableCell>{prestamo.PrestamoCorriente.Cliente.nombre}</TableCell>
-                          <TableCell>{prestamo.Elemento.descripcion}</TableCell>
+                        <TableRow key={prestamo.id_historial}>
+                          <TableCell>{prestamo.cliente_id}</TableCell>
+                          <TableCell>{prestamo.cliente_nombre}</TableCell>
+                          <TableCell>{prestamo.elemento_nombre}</TableCell>
+                          <TableCell>{prestamo.accion}</TableCell>
                           <TableCell>{prestamo.estado}</TableCell>
                         </TableRow>
                       ))
                     ) : (
                 <TableRow>
-                  <TableCell colSpan="4">No hay préstamos</TableCell>
+                  <TableCell colSpan="5">No hay préstamos</TableCell>
                 </TableRow>
               )}
             </TableBody>
@@ -106,12 +107,13 @@ function Icon({ name, ...props }) {
     "Consumos": <LuArrowDownLeftFromCircle {...props} />,
     "Encargos": <CgReorder {...props} />,
     "Mora": <AiOutlineAlert {...props} />,
-    "Daños": <TriangleAlertIcon {...props} />,
+    "Daños": <MdManageHistory {...props} />,
     "Elementos": <PenToolIcon {...props} />,
-     "Lista": <List {...props} />,
+    "Lista": <List {...props} />,
     "Usuarios": <UserIcon {...props} />,
     "Roles": <FileTextIcon {...props} />,
-    "Admin": <SettingsIcon {...props} />
+    "Admin": <SettingsIcon {...props} />,
+    "Prestamos Esp": <GiReturnArrow {...props} />
   };
   return icons[name] || <XIcon {...props} />;
 }

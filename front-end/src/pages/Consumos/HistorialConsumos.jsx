@@ -26,7 +26,12 @@ const Consumos = () => {
         // Filtrar préstamos por el término de búsqueda
         const consumosFiltrados = consumos.filter(consumo => 
           consumo.Elemento.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          consumo.elementos_idelemento.toString().includes(searchTerm)
+          consumo.elementos_idelemento.toString().includes(searchTerm) ||
+          consumo.Consumo.Cliente.nombre.toString().includes(searchTerm.toLowerCase()) ||
+          consumo.Consumo.Cliente.documento.toString().includes(searchTerm) ||
+          consumo.observaciones.toString().includes(searchTerm.toLowerCase()) ||
+          consumo.cantidad.toString().includes(searchTerm.toLowerCase())||
+          consumo.fecha.toString().includes(searchTerm.toLowerCase())
         );
         setFilteredconsumos(consumosFiltrados);
       }
@@ -70,6 +75,7 @@ const Consumos = () => {
             <th>Cantidad</th>
             <th>Fecha</th>
             <th>Observaciones</th>
+            <th>Admin</th>
           </tr>
         </thead>
         <tbody>
@@ -83,11 +89,12 @@ const Consumos = () => {
               <td>{consumo.cantidad}</td>
               <td>{consumo.fecha}</td>
               <td>{consumo.observaciones}</td>
+              <td>{consumo.administradores_documento}</td>
             </tr>
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan="8">No hay consumos</TableCell>
+            <TableCell colSpan="9">No hay consumos</TableCell>
           </TableRow>
         )}
         </tbody>
