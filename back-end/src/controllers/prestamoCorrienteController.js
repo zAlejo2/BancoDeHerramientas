@@ -1,6 +1,7 @@
 import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
+import { createMora } from './moraController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
@@ -42,9 +43,10 @@ const createLoan = async (req, res) => {
 // PARA TRAER LOS ELEMENTOS QUE YA ESTABAN EN EL PRESTAMO
 const findLoanElements = async (req, res) => {
     const { idprestamo } = req.params;
+    const { area } = req.user;
 
     try {
-        const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual' } });
+        const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual', areas_idarea: area} });
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
             const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo, estado: 'actual' }});
@@ -78,7 +80,7 @@ const addOrUpdate = async (req, res) => {
         const { elementos } = req.body;
         const { area, id: adminId } = req.user;
 
-        const prestamo = await PrestamoCorriente.findOne({ where: { idprestamo } });
+        const prestamo = await PrestamoCorriente.findOne({ where: { idprestamo, areas_idarea: area } });
 
         if (!prestamo) {
             return res.status(404).json({ mensaje: 'Prestamo no encontrado' });
@@ -188,8 +190,8 @@ const addOrUpdate = async (req, res) => {
                         }
                     }
                 } else {
-                    if (estado == 'finalizado'){
-                        return res.status(400).json({ mensaje: 'Actualizaste la cantidad, guarda cambios' });
+                    if (estado == 'finalizado') {
+                        return res.status(400).json({ mensaje: 'Actualizaste la cantidad, primero guarda cambios' });
                     }
                     await ElementoHasPrestamoCorriente.update(
                         { cantidad: cantidadNueva, observaciones: observaciones },
