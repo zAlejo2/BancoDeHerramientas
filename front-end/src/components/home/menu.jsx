@@ -196,7 +196,7 @@ export const Menu = ({ children }) => {
                             <DropdownMenuTrigger asChild>
                                 <Avatar className="cursor-pointer">
                                     <AvatarImage src="/placeholder-user.jpg" />
-                                    <AvatarFallback>AB</AvatarFallback>
+                                    <AvatarFallback className="border border-black">AB</AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">

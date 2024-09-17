@@ -1,0 +1,1 @@
+// nombre UserSquareIcon, cedula, codigo GroupIcon, codigo Elementos, descripcion, cantidad, observaciones, fecha, tiempo en mora

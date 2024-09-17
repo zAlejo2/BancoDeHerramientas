@@ -42,7 +42,7 @@ export const HomePage = () => {
   return (
     <>
       <section className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2 lg:grid-cols-5 ">
-        {["Préstamos", "Encargos", "Mora", "Daños", "Prestamos Esp"].map((item, index) => (
+        {["Préstamos", "Encargos", "Mora", "Daños", "Préstamos Especiales"].map((item, index) => (
           <Card key={index} className="bg-primary text-primary-foreground">
             <CardHeader className="flex justify-between">
               <CardTitle> {item === "Préstamos" ? countPrestamosByState("actual") : Math.floor(Math.random() * 5000)}</CardTitle>
@@ -75,7 +75,7 @@ export const HomePage = () => {
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell colSpan="4">Error al cargar datos</TableCell>
+                  <TableCell colSpan="5">Error al cargar datos</TableCell>
                   </TableRow>
                     ) : latestPrestamos.length > 0 ? (
                       latestPrestamos.map((prestamo) => (
@@ -113,7 +113,7 @@ function Icon({ name, ...props }) {
     "Usuarios": <UserIcon {...props} />,
     "Roles": <FileTextIcon {...props} />,
     "Admin": <SettingsIcon {...props} />,
-    "Prestamos Esp": <GiReturnArrow {...props} />
+    "Préstamos Especiales": <GiReturnArrow {...props} />
   };
   return icons[name] || <XIcon {...props} />;
 }

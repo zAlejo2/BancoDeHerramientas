@@ -179,19 +179,20 @@ export const FormAgregarEditarPrestamo = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
-                                <th>Elemento</th>
+                                <th>Código</th>
+                                <th>Descripción</th>
                                 <th>Cantidad P</th>
-                                <th>Cantidad D</th>
+                                <th>Fecha</th>
                                 <th>Observaciones</th>
-                                <th>Fecha P</th>
-                                <th>Fecha D</th>
+                                <th>Cantidad E</th>
                                 <th>Estado</th>
-                                <th>Acciones</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {selectedItems.map((item) => (
                                 <tr key={item.idelemento}>
+                                    <td>{item.idelemento}</td>
                                     <td>{item.descripcion}</td>
                                     <td>
                                     <input className="input"
@@ -202,6 +203,16 @@ export const FormAgregarEditarPrestamo = () => {
                                             }
                                             min="1"
                                         />               
+                                    </td>
+                                    <td>{item.fecha_entregaFormato}</td>
+                                    <td>
+                                        <textarea className="input"
+                                            type="text"
+                                            value={item.observaciones}
+                                            onChange={(e) =>
+                                                handleObservationsChange(item.idelemento, e.target.value)
+                                            }
+                                        />
                                     </td>
                                     <td>
                                     <input className="input"
@@ -214,17 +225,6 @@ export const FormAgregarEditarPrestamo = () => {
                                             min="1"
                                         />               
                                     </td>
-                                    <td>
-                                        <textarea className="input"
-                                            type="text"
-                                            value={item.observaciones}
-                                            onChange={(e) =>
-                                                handleObservationsChange(item.idelemento, e.target.value)
-                                            }
-                                        />
-                                    </td>
-                                    <td>{item.fecha_entregaFormato}</td>
-                                    <td>{item.fecha_devolucionFormato}</td>
                                     <td>{item.fecha_entregaFormato ? item.estado : ''}</td>
                                     <td>
                                         <button 
