@@ -17,7 +17,7 @@ const createLoan = async (req, res) => {
             return res.status(404).json({ mensaje: 'Cliente no encontrado' });
         } 
 
-        const mora = await Mora.findOne({where: {clientes_documento: cliente.documento}});
+        const mora = await Mora.findOne({where: {clientes_documento: cliente.documento, areas_idarea: area}});
         if (mora) {
             return res.status(400).json({ mensaje: 'El cliente está en MORA'});
         }
@@ -184,7 +184,7 @@ const addOrUpdate = async (req, res) => {
                         }
                     } else if (estado == 'mora') {
                         if (cantidadNueva != 0) {
-                            const mora = await createMora(cantidadNueva, observaciones, idelemento, prestamo.clientes_documento);
+                            const mora = await createMora(cantidadNueva, observaciones, idelemento, prestamo.clientes_documento, area);
                             await Elemento.update(
                                 {
                                     disponibles: elementoEncontrado.disponibles + diferencia,

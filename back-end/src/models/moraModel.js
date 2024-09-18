@@ -2,6 +2,7 @@ import { DataTypes, Model, Sequelize } from 'sequelize';
 import sequelize from '../db/connection.js';
 import Elemento from './elementoModel.js';
 import Cliente from './clienteModel.js';
+import Area from './areaModel.js';
 
 class Mora extends Model{} 
 
@@ -40,6 +41,17 @@ Mora.init({
         references: {
           model: Cliente,
           key: 'documento',
+          allowNull: false
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
+    },
+    areas_idarea: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: Area,
+          key: 'idarea',
           allowNull: false
         },
         onUpdate: 'CASCADE',
