@@ -1,36 +1,72 @@
-import { Mora } from '../models/index.js';
+import { Mora, Cliente, Elemento } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
-
-const tiempoMora = (fecha) => {
-    // Obtener la fecha actual
-    const fechaActual = obtenerHoraActual();
-    
-    // Convertir la fecha pasada a un objeto de tipo Date
-    const fechaInicial = new Date(fecha);
-  
-    // Calcular la diferencia en milisegundos
-    const diferenciaMilisegundos = fechaActual - fechaInicial;
-  
-    // Convertir la diferencia de milisegundos a días (1 día = 24 * 60 * 60 * 1000 ms)
-    const diasDiferencia = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
-  
-    return diasDiferencia;
-}
   
 const createMora = async (cantidad, observaciones, idelemento, documento) => {
-    await Mora.create({
+    const mora= await Mora.create({
         cantidad: cantidad,
         fecha: obtenerHoraActual(),
         observaciones: observaciones,
-        tiempoMora: tiempoMora(fecha),
         elementos_idelemento: idelemento,
         clientes_documento: documento
     })
+    return mora;
 }
 
-export { createMora };
+const returnMora = async (req, res) => {
+    const { area, adminId } = req.user;
+    const { idmora, idelemento, cantidad } = req.body;
+    const elemento = await Elemento.findOne({where: {idelemento: idelemento}})
+    await Elemento.update(
+        {
+            disponibles: elemento.disponibles + cantidad,
+            estado: elemento.disponibles + cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+        },
+        { where: { idelemento } }
+    );
+    const mora = await Mora.findOne({ where: {idmora: idmora}});
+    await Mora.destroy({
+        where: {
+            idmora: idmora,
+            elementos_idelemento: idelemento
+        }
+    })
+    createRecord(area, 'mora', idprestamo, adminId, prestamo.clientes_documento, idelemento, cantidadNueva, observaciones, 'mora', 'ENVIAR A MORA');
+}
+
+const getAllMoras = async (req, res) => {
+    try {
+        const { area } = req.user;
+        const moras = await Mora.findAll({
+            include: [
+              {
+                model: Elemento,
+                where: { areas_idarea: area },  
+                attributes: ['idelemento', 'descripcion']
+              },
+              {
+                model: Cliente,
+                attributes: ['documento', 'nombre', 'roles_idrol']
+              }
+            ]
+          });
+        const moraFormateada = moras.map(mora => {
+            const fechaAccion = formatFecha(mora.fecha, 5);
+            return {
+              ...mora.dataValues,
+              fecha: fechaAccion
+            };
+          });
+      
+          res.json(moraFormateada); 
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ mensaje: 'error al obtener las moras', error})
+    }
+}
+
+export { createMora, getAllMoras, returnMora };
 
 // nombre User, cedula, codigo GroupIcon, codigo Elementos, descripcion, cantidad, observaciones, fecha, tiempo en mora

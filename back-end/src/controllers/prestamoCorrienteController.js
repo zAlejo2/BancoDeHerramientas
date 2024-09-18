@@ -1,4 +1,4 @@
-import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento } from '../models/index.js';
+import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento, Mora, Dano } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 import { createMora } from './moraController.js';
@@ -15,12 +15,22 @@ const createLoan = async (req, res) => {
 
         if (!cliente) {
             return res.status(404).json({ mensaje: 'Cliente no encontrado' });
+        } 
+
+        const mora = await Mora.findOne({where: {clientes_documento: cliente.documento}});
+        if (mora) {
+            return res.status(400).json({ mensaje: 'El cliente está en MORA'});
+        }
+
+        const dano = await Dano.findOne({where: {clientes_documento: cliente.documento}});
+        if (dano) {
+            return res.status(400).json({ mensaje: 'El cliente está en DAÑO'});
         }
 
         const loanExisting = await PrestamoCorriente.findOne({ where: { clientes_documento: documento, estado: 'actual', areas_idarea: area } });
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
-            return res.status(200).json({ idprestamo})
+            return res.status(200).json({ idprestamo })
         }
 
         const prestamo = await PrestamoCorriente.create({
@@ -172,6 +182,24 @@ const addOrUpdate = async (req, res) => {
                             });
                             createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidad, observaciones, 'finalizado', 'DEVOLVER ELEMENTO (total)');
                         }
+                    } else if (estado == 'mora') {
+                        if (cantidadNueva != 0) {
+                            const mora = await createMora(cantidadNueva, observaciones, idelemento, prestamo.clientes_documento);
+                            await Elemento.update(
+                                {
+                                    disponibles: elementoEncontrado.disponibles + diferencia,
+                                    estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                                },
+                                { where: { idelemento } }
+                            );
+                            await ElementoHasPrestamoCorriente.destroy({
+                                where: {
+                                    prestamoscorrientes_idprestamo: idprestamo,
+                                    elementos_idelemento: idelemento,
+                                }
+                            });
+                            createRecord(area, 'mora', mora.idmora, adminId, mora.clientes_documento, mora.elementos_idelemento, mora.cantidad, mora.observaciones, 'mora', 'ENVIAR A MORA');
+                        }
                     } else {
                         await ElementoHasPrestamoCorriente.update(
                             { cantidad: cantidadNueva, observaciones: observaciones },
@@ -190,7 +218,7 @@ const addOrUpdate = async (req, res) => {
                         }
                     }
                 } else {
-                    if (estado == 'finalizado') {
+                    if (estado == 'finalizado' || estado == 'mora') {
                         return res.status(400).json({ mensaje: 'Actualizaste la cantidad, primero guarda cambios' });
                     }
                     await ElementoHasPrestamoCorriente.update(

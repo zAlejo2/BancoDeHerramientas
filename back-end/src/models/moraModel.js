@@ -25,10 +25,6 @@ Mora.init({
         type: DataTypes.STRING(200),
         allowNull: true 
     },
-    tiempoMora: {
-        type: DataTypes.TIME,
-        allowNull: false 
-    },
     elementos_idelemento: {
         type: DataTypes.INTEGER,
         references: {  

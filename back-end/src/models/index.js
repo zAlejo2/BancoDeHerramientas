@@ -153,14 +153,12 @@ PrestamoEspecial.belongsTo(Cliente, {
 
 // Un Cliente puede tener muchas Moras
 Cliente.hasMany(Mora, {
-    foreignKey: 'clientes_documento',
-    as: 'moras'
+    foreignKey: 'clientes_documento'
 });
 
 // Una Mora pertenece a un Cliente
 Mora.belongsTo(Cliente, {
-    foreignKey: 'clientes_documento',
-    as: 'cliente'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Cliente puede tener muchos Danos
@@ -269,14 +267,12 @@ Dano.belongsTo(Elemento, {
 
 // Un Elemento puede tener muchas Moras
 Elemento.hasMany(Mora, { 
-    foreignKey: 'elementos_idelemento',
-    as: 'moras' 
+    foreignKey: 'elementos_idelemento'
 });
 
 // Una mora pertenece a un Elemento 
 Mora.belongsTo(Elemento, { 
-    foreignKey: 'elementos_idelemento',
-    as: 'elemento' 
+    foreignKey: 'elementos_idelemento'
 });
 
 ElementoHasPrestamoCorriente.belongsTo(PrestamoCorriente, {
