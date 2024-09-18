@@ -36,7 +36,7 @@ export const Menu = ({ children }) => {
             name: "Consumos", 
             to: "/consumos", 
             subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
+                { name: "Registrar Consumo", to: "/consumos" }, 
                 { name: "Historial Consumos", to: "/consumos/historial" }
             ]
         },
@@ -50,10 +50,10 @@ export const Menu = ({ children }) => {
         },
         { 
             name: "Moras", 
-            to: "/consumos", 
+            to: "/moras", 
             subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
-                // { name: "Encargos", to: "/admin/encargos" }
+                { name: "Moras Activas", to: "/moras" }, 
+                { name: "Historial Moras", to: "/moras/historial" }
             ]
         },
         { 
@@ -76,7 +76,7 @@ export const Menu = ({ children }) => {
             name: "Elementos", 
             to: "/elementos", 
             subMenu: [
-                { name: "Formulario", to: "/elementos/formulario" }, 
+                { name: "Registrar Elemento", to: "/elementos/formulario" }, 
                 { name: "Lista", to: "/elementos/lista" }
             ]
         },
@@ -92,7 +92,7 @@ export const Menu = ({ children }) => {
             name: "Clientes", 
             to: "/clientes", 
             subMenu: [
-                { name: "Formulario", to: "/usuarios/formulario" }, 
+                { name: "Registrar Cliente", to: "/usuarios/formulario" }, 
                 { name: "Lista", to: "/usuarios/lista" }
             ]
         },
@@ -100,7 +100,7 @@ export const Menu = ({ children }) => {
             name: "Roles", 
             to: "/roles", 
             subMenu: [
-                { name: "Formulario", to: "/roles/formulario" }, 
+                { name: "Registrar Rol", to: "/roles/formulario" }, 
                 { name: "Lista", to: "/roles/lista" }
             ]
         },
@@ -108,7 +108,7 @@ export const Menu = ({ children }) => {
             name: "Admin", 
             to: "/admin", 
             subMenu: [
-                { name: "Formulario", to: "/administrador/formulario" }, 
+                { name: "Registrar Admin", to: "/administrador/formulario" }, 
                 { name: "Lista", to: "/administrador/lista" }
             ]
         },
@@ -236,6 +236,8 @@ function Icon({ name, ...props }) {
         "Lista": <List {...props} />,
         "Historial Consumos": <List {...props}/>,
         "Historial Prestamos": <List {...props}/>,
+        "Historial Moras": <List {...props} />,
+        "Moras Activas": <List {...props} />,
         "Elementos Prestados": <List {...props} />,
         "Prestamos Es": <GiReturnArrow {...props} />,
         "Moras": <AiOutlineAlert {...props} />,
@@ -243,6 +245,10 @@ function Icon({ name, ...props }) {
         "Bajas": <PiImageBroken  {...props} />,             
         "Lista ": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
+        "Registrar Elemento": <List {...props}/>,
+        "Registrar Cliente": <List {...props}/>,
+        "Registrar Rol": <List {...props}/>,
+        "Registrar Admin": <List {...props}/>
     };
     return icons[name] || <XIcon {...props} />;
 }

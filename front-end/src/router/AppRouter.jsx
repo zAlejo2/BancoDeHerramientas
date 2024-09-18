@@ -20,6 +20,8 @@ import Clientes from '@/pages/Clientes/ListaClientes';
 import Admin from '@/pages/Administradores/ListaAdmin';
 import Roles from '@/pages/Roles/ListaRoles';
 import HistorialPrestamos from '@/pages/Prestamos/HistorialPrestamos';
+import Moras from '@/pages/Moras/ListaMoras';
+import HistorialMoras from '@/pages/Moras/HistorialMoras';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -172,6 +174,22 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <Consumos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/moras',
+            element: (
+                <ProtectedRoute>
+                    <Moras/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/moras/historial',
+            element: (
+                <ProtectedRoute>
+                    <HistorialMoras/>
                 </ProtectedRoute>
             )
         },

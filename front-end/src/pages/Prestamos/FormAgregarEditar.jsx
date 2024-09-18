@@ -20,6 +20,16 @@ export const FormAgregarEditarPrestamo = () => {
             )
         );
     };
+
+    const handleMoraAll = () => {
+        setSelectedItems((prevItems) =>
+            prevItems.map((item) =>
+                item.fecha_entregaFormato // Solo para los elementos con fecha de entrega
+                    ? { ...item, estado: 'mora' } // Actualiza `cantidadd` con el valor de `cantidad`
+                    : item
+            )
+        );
+    };
     
     useEffect(() => {
         const fetchExistingLoan = async () => {
@@ -112,7 +122,9 @@ export const FormAgregarEditarPrestamo = () => {
             prevItems.map((item) => {
                 const updatedItem = items.find((updated) => updated.idelemento === item.idelemento);
                 if (updatedItem) {
-                    console.log(updatedItem.cantidad, updatedItem.cantidadd)
+                    if (updatedItem.manualStatus) {
+                        return { ...updatedItem, estado: updatedItem.manualStatus };
+                    }
                     if (updatedItem.cantidad == updatedItem.cantidadd) {
                         return { ...updatedItem, estado: 'finalizado' };
                     } else {
@@ -123,6 +135,18 @@ export const FormAgregarEditarPrestamo = () => {
             })
         );
     };
+
+    const handleManualStatusChange = (idelemento, status) => {
+        setSelectedItems((prevItems) => {
+            const updatedItems = prevItems.map((item) =>
+                item.idelemento === idelemento
+                    ? { ...item, manualStatus: status, estado: status }  // Update manual status and set state
+                    : item
+            );
+            return updatedItems;
+        });
+    };
+    
 
     const elementos = selectedItems.map(({ idelemento, cantidad, cantidadd, observaciones, estado }) => ({
         idelemento,
@@ -186,6 +210,7 @@ export const FormAgregarEditarPrestamo = () => {
                                 <th>Observaciones</th>
                                 <th>Cantidad E</th>
                                 <th>Estado</th>
+                                <th>Enviar</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -227,6 +252,21 @@ export const FormAgregarEditarPrestamo = () => {
                                     </td>
                                     <td>{item.fecha_entregaFormato ? item.estado : ''}</td>
                                     <td>
+                                    <select
+                                            value={item.manualStatus || item.estado} // Default to automatic status if no manual status
+                                            onChange={(e) => handleManualStatusChange(item.idelemento, e.target.value)}
+                                            disabled={item.fecha_entregaFormato ? false : true || item.estado == 'finalizado'} // Disable if no date
+                                            className="input"
+                                        >
+                                            <option></option>
+                                            <option value="mora">mora</option>
+                                            <option value="dano">daño</option>
+                                            <option value="baja">baja</option>
+                                            <option value="persona">persona</option>
+                                            <option value="consumo">consumo</option>
+                                        </select> 
+                                    </td>
+                                    <td>
                                         <button 
                                             type="button"
                                             className="delete-button"
@@ -261,8 +301,32 @@ export const FormAgregarEditarPrestamo = () => {
                     >
                         Devolver Todo 
                     </button>
+                    <button
+                        type="button"
+                        className="consume-button"
+                        onClick={handleMoraAll} // Cambiar la función
+                    >
+                        Todo a Mora 
+                    </button>
+                    <button
+                        type="button"
+                        className="consume-button"
+                        // onClick={handleReturnAll} // Cambiar la función
+                    >
+                        Pasar Todo 
+                    </button>
+                    <button
+                        type="button"
+                        className="consume-button"
+                        // onClick={handleReturnAll} // Cambiar la función
+                    >
+                        Consumir todo 
+                    </button>
                 </div>
             </div>
         </div>
     );
 };
+
+
+// {item.fecha_entregaFormato ? item.estado : ''}
