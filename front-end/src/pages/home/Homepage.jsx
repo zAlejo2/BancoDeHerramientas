@@ -11,10 +11,13 @@ import { GiReturnArrow } from "react-icons/gi";
 import { MdManageHistory } from "react-icons/md";
 
 export const HomePage = () => {
-  const { data: cantidad } = useGetData(["prestamos/todosPrestamos"]);
+  const { data: cantidadPrestamo } = useGetData(["prestamos/todosPrestamos"]);
+  const { data: cantidadMora } = useGetData(["moras"]);
   const { data: prestamosData, error, loading } = useGetData(["historial"]);
   const prestamos = prestamosData['historial'] || [];
-  const cantidadPrestamos = cantidad['prestamos/todosPrestamos'] || [];
+  const cantidadPrestamos = cantidadPrestamo['prestamos/todosPrestamos'] || [];
+  const cantidadMoras = cantidadMora['moras'] || [];
+  const totalMoras = cantidadMoras.length;
 
   // Función para obtener el préstamo con la fecha más actual
   const getLatestPrestamos = () => {
@@ -42,10 +45,16 @@ export const HomePage = () => {
   return (
     <>
       <section className="grid grid-cols-1 gap-4 mt-6 md:grid-cols-2 lg:grid-cols-5 ">
-        {["Préstamos", "Encargos", "Mora", "Daños", "Préstamos Especiales"].map((item, index) => (
+        {["Préstamos", "Encargos", "Moras", "Daños", "Préstamos Especiales"].map((item, index) => (
           <Card key={index} className="bg-primary text-primary-foreground">
             <CardHeader className="flex justify-between">
-              <CardTitle> {item === "Préstamos" ? countPrestamosByState("actual") : Math.floor(Math.random() * 5000)}</CardTitle>
+            <CardTitle>
+              {item === "Préstamos" 
+                ? countPrestamosByState("actual") 
+                : item === "Moras" 
+                ? totalMoras 
+                : Math.floor(Math.random() * 5000)} 
+            </CardTitle>
               <Icon name={item} className="w-6 h-6" />
             </CardHeader>
             <CardContent>
@@ -71,7 +80,7 @@ export const HomePage = () => {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan="4">Cargando...</TableCell>
+                  <TableCell colSpan="5">Cargando...</TableCell>
                 </TableRow>
               ) : error ? (
                 <TableRow>
@@ -106,7 +115,7 @@ function Icon({ name, ...props }) {
     "Préstamos": <HandCoins {...props} />,
     "Consumos": <LuArrowDownLeftFromCircle {...props} />,
     "Encargos": <CgReorder {...props} />,
-    "Mora": <AiOutlineAlert {...props} />,
+    "Moras": <AiOutlineAlert {...props} />,
     "Daños": <MdManageHistory {...props} />,
     "Elementos": <PenToolIcon {...props} />,
     "Lista": <List {...props} />,

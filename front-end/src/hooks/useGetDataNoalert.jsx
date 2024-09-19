@@ -18,7 +18,6 @@ function useGetData(urls) {
 
             setData(updatedData);
         } catch (error) {
-            console.error('Error al obtener los datos:', error);
             setError('Error al obtener los datos');
             Swal.fire({
                 icon: "error",

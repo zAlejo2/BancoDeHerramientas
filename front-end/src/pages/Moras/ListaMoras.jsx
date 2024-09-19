@@ -94,7 +94,7 @@ const Moras = () => {
           ))
         ) : (
           <TableRow>
-            <TableCell colSpan="8">No hay moras</TableCell>
+            <TableCell colSpan="9">No hay moras</TableCell>
           </TableRow>
         )}
         </tbody>
