@@ -10,7 +10,7 @@ function generarToken(userId, userType, userRole, areaId) {
         area: areaId
     };
 
-    const expiresIn = userType === 'administrador' ? '12h' : '1h';
+    const expiresIn = userType === 'administrador' ? '8h' : '30m';
 
     const secretKey = config.jwt.secret;
 

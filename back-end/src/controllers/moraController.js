@@ -23,18 +23,17 @@ const returnMora = async (req, res) => {
     await Elemento.update(
         {
             disponibles: elemento.disponibles + cantidad,
-            estado: elemento.disponibles + cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+            estado: elemento.disponibles + cantidad <= elemento.minimo ? 'agotado' : 'disponible'
         },
         { where: { idelemento } }
     );
-    const mora = await Mora.findOne({ where: {idmora: idmora}});
     await Mora.destroy({
         where: {
             idmora: idmora,
             elementos_idelemento: idelemento
         }
     })
-    createRecord(area, 'mora', idprestamo, adminId, prestamo.clientes_documento, idelemento, cantidadNueva, observaciones, 'mora', 'ENVIAR A MORA');
+    // createRecord(area, 'mora', idmora, adminId, prestamo.clientes_documento, idelemento, cantidadNueva, observaciones, 'mora', 'ENVIAR A MORA');
 }
 
 const getAllMoras = async (req, res) => {
