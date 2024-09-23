@@ -19,14 +19,12 @@ const InputPrestamo = () => {
         ]
     };
 
-    const onSubmit = (data) => {
-        const idprestamo = data.idprestamo;
-        if (idprestamo) {
-            console.log("Préstamo creado exitosamente con ID:", idprestamo);
-            // Redirige a la ruta construida dinámicamente
+    const onSubmit = (data, error) => {
+        if (data?.idprestamo) {
+            // Si el préstamo fue creado exitosamente
+            const idprestamo = data.idprestamo;
             navigate(`/prestamos/elementos/${idprestamo}`, { replace: true });
-        } else {
-            console.error("No se pudo crear el préstamo.");
+        } else if (error) {
         }
     };
 
@@ -34,7 +32,7 @@ const InputPrestamo = () => {
         "prestamos",
         onSubmit,     
         { documento }, 
-        validations  
+        validations
     );
 
     return (

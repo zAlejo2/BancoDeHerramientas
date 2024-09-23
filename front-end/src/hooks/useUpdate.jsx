@@ -30,12 +30,13 @@ const useUpdate = (baseUrl, redirectUrl) => {
 
             return response.data;
         } catch (err) {
-            console.error(`Error al actualizar:`, err);
+            const mensaje = err.response?.data?.mensaje || "Error inesperado";
 
             Swal.fire({
                 icon: 'error',
-                title: 'Error al actualizar',
+                title: mensaje,
                 text: `Hubo un problema al actualizar.`,
+                confirmButtonColor: '#FC3F3F',
                 confirmButtonText: 'Ok',
             });
 

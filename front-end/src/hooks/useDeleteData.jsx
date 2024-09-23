@@ -12,15 +12,20 @@ const useDeleteData = (url, ruta) => {
 
     const deleteData = async () => {
         const confirmResult = await Swal.fire({
-            title: '¿Estás seguro?',
+            title: '¿Estás seguro de eliminarlo?',
             text: "No podrás revertir esta acción",
             icon: 'warning',
+            iconColor: '#007BFF',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar'
-        });
+            confirmButtonColor: '#007BFF',
+            cancelButtonColor: '#81d4fa',
+            confirmButtonText: 'Sí, estoy seguro!',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                container: 'swal2-container',
+                popup: 'swal2-popup'
+            }
+        })
 
         if (confirmResult.isConfirmed) {
             setIsLoading(true);
@@ -30,20 +35,13 @@ const useDeleteData = (url, ruta) => {
                 const response = await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/${url}`);
                 setData(response.data);
                 navigate(ruta, { replace: true });
-
-                // Mostrar una notificación de éxito
-                Swal.fire(
-                    'Eliminado!',
-                    'El registro ha sido eliminado.',
-                    'success'
-                );
-            } catch (err) {
-                setError(err.response ? err.response.data : 'Error de conexión');
-                
+            } catch (error) {
+                setError(error.response ? err.response.data : 'Error de conexión');
+                const mensaje = error.response?.data?.mensaje || "Error inesperado";
                 // Mostrar una notificación de error
                 Swal.fire(
                     'Error!',
-                    'Hubo un problema al eliminar el registro.',
+                    mensaje,
                     'error'
                 );
             } finally {

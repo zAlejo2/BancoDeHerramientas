@@ -13,27 +13,20 @@ const LogoutButton = () => {
             const documento = decodedToken.id; 
             
             Swal.fire({
-                title: '¿Estás seguro?',
+                title: '¿Estás seguro de cerrar tu sesión?',
                 text: "No podrás revertir esta acción",
                 icon: 'warning',
+                iconColor :'#007BFF',
                 showCancelButton: true,  // Mostrar el botón de cancelar
+                confirmButtonColor: '#007BFF',
+                cancelButtonColor: '#81d4fa',
                 confirmButtonText: 'Sí, continuar',  // Texto del botón de confirmación
                 cancelButtonText: 'Cancelar',  // Texto del botón de cancelar
-                reverseButtons: true  // Opcional: invierte el orden de los botones
               }).then((result) => {
                 if (result.isConfirmed) {
                   localStorage.removeItem('authToken');
                   axios.post(`${import.meta.env.VITE_API_URL}/logout`, { documento });
-                  Swal.fire(
-                    'Tu Sesión ha sido Cerrada Correctamente.',
-                  ).then(()=>{
-                    window.location.href = '/login';
-                  })
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                  Swal.fire(
-                    'Cancelado',
-                    'Tu acción ha sido cancelada.'
-                  )
+                  window.location.href = '/login';
                 }
               });
               

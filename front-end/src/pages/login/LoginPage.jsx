@@ -60,14 +60,20 @@ export const Login = () => {
     };
 
     return (
-        <div className={`flex items-center justify-center min-h-screen p-4 w-full ${colorTheme === 'white' ? 'bg-white' : colorTheme === 'gray' ? 'bg-gray-500' : 'bg-black'}`}>
-          <div className={`flex flex-col md:flex-row rounded-lg shadow-lg overflow-hidden max-w-4xl w-full ${colorTheme === 'white' ? 'bg-white text-black' : colorTheme === 'gray' ? 'bg-gray-300 text-black' : 'bg-black text-white'}`}>
-            <div className={`flex flex-col justify-center items-center p-8 md:w-1/2 ${colorTheme === 'white' ? 'bg-gray-100' : colorTheme === 'gray' ? 'bg-gray-600' : 'bg-gray-800'}`}>
+        <div 
+          className={`flex items-center justify-center min-h-screen p-4 w-full ${colorTheme === 'white' ? 'bg-white' : colorTheme === 'gray' ? 'bg-gray-500' : 'bg-black'}`} 
+          style={{
+            backgroundImage: "url('https://img.freepik.com/vector-premium/fondo-vector-monocromo-blanco-abstracto-folleto-diseno-folleto-sitio-web-fondo-pantalla-blanco-geometrico-pagina-inicio-presentacion-certificado_249611-5879.jpg')",
+            backgroundSize: 'cover',  // Ajusta la imagen para cubrir todo el contenedor
+            backgroundPosition: 'center',  // Centra la imagen
+            backgroundRepeat: 'no-repeat', // Evita que la imagen se repita
+          }}>
+          <div className={`flex flex-col md:flex-row rounded-lg shadow-[5px_5px_100px_40px_rgba(0,0,0,0.2)] overflow-hidden max-w-4xl w-full ${colorTheme === 'white' ? 'bg-white text-black' : colorTheme === 'gray' ? 'bg-gray-300 text-black' : 'bg-black text-white'}`} style={{}}>
+            <div className={`flex flex-col justify-center items-center p-8 md:w-1/2 ${colorTheme === 'white' ? 'bg-gray-600' : colorTheme === 'gray' ? 'bg-gray-600' : 'bg-gray-800'}`}>
               <div className="flex items-center mb-4">
-                <div className={`h-8 w-8 rounded-full ${colorTheme === 'white' ? 'bg-gray-500' : colorTheme === 'gray' ? 'bg-gray-700' : 'bg-gray-300'}`} />
               </div><br/>
-              <h1 className="text-4xl font-bold mb-4">Bienvenid@</h1><br/>
-              <p className="mb-6">
+              <h1 className="text-4xl font-bold mb-4 text-white">Bienvenid@</h1><br/>
+              <p className="mb-6 text-center text-white">
                 Este es un software utilizado para la gestión de préstamos de elementos de los bancos de herramientas del Sena CIAA, solo es para usuarios ya registrados.
               </p>
             </div>
@@ -75,14 +81,14 @@ export const Login = () => {
             <img src={Sena} alt="Descripción de la imagen" className="w-20 h-auto mb-4" />
               <h2 className="text-2xl font-bold mb-6">Inicio de sesión</h2>
               <form className="w-full max-w-sm" onSubmit={handleSubmit}>
-                <div className="mb-4">
+                <div className="mb-6">
                   <Label htmlFor="documento" className="block">
                     Número de Documento
                   </Label>
                   <Input 
                     name="documento" 
                     placeholder="Documento" 
-                    className="w-full mt-1" 
+                    className="w-full mt-1 border-gray-400" 
                     onChange={handleInputChange} 
                     value={inputs.documento}
                   />
@@ -95,14 +101,14 @@ export const Login = () => {
                     name="contrasena"
                     type="password"
                     placeholder="Contraseña"
-                    className="w-full mt-1"
+                    className="w-full mt-1 border-gray-400"
                     onChange={handleInputChange}
                     value={inputs.contrasena}
                   />
                 </div>
                 <Button type="submit" className="w-full py-2 rounded-full">Enviar</Button>
               </form>
-              <button onClick={toggleColorTheme} className="mt-4 px-4 py-2 rounded bg-blue-500 text-white">Cambiar Tema</button>
+              {/* <button onClick={toggleColorTheme} className="mt-4 px-4 py-2 rounded bg-blue-500 text-white">Cambiar Tema</button> */}
             </div>
           </div>
         </div>

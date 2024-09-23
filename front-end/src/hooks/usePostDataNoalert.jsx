@@ -18,22 +18,23 @@ const usePostDataNoalert = (url, onSubmit, inputs, validations) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validateInputs()) {
+        if (validateInputs()) { 
             try {
                 const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);
                 onSubmit(response.data);
             } catch (error) {
+                const mensaje = error.response?.data?.mensaje || "Error inesperado";
+
                 Swal.fire({
                     icon: "error",
-                    title: "Oops...",
-                    text: "Parece que hubo un error: por favor verifique los datos.",
-                    confirmButtonColor: "#6fc390",
+                    title: mensaje,
+                    text: "Por favor verifique los datos.",
+                    confirmButtonColor: '#FC3F3F',
                     customClass: {
                         container: 'swal2-container',
                         popup: 'swal2-popup'
                     }
                 });
-                console.log(error);
             }
         }
     };

@@ -2,6 +2,8 @@ import { FaCheck } from "react-icons/fa";
 import { useState, useEffect, useRef } from 'react';
 import useGetData from '../../hooks/useGetData';
 import { TableCell, TableRow } from "@/components/ui/table";
+import axiosInstance from "@/helpers/axiosConfig";
+import Swal from 'sweetalert2';
 
 const Moras = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Estado del término de búsqueda
@@ -45,6 +47,34 @@ const Moras = () => {
   if (morasLoading) return <p>Cargando...</p>;
   if (morasError) return <p>{morasError}</p>;
 
+  const handleReturnMora = (idmora, idelemento, cantidad, observaciones, documento) => {
+    Swal.fire({
+      title: '¿Estás seguro de que quieres finalizar la mora?',
+      text: "No podrás revertir esta acción",
+      icon: 'warning',
+      iconColor: '#3085d6',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#81d4fa',
+      confirmButtonText: 'Sí, devolverlo'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosInstance.post('moras/return', {idmora, idelemento, cantidad, observaciones, documento})
+          .then(response => {
+            if (response.status === 200) {
+              setFilteredmoras((prevMoras) => prevMoras.filter(mora => mora.idmora !== idmora));
+            }
+          })
+          .catch(error => {
+            Swal.fire(
+              'Error!',
+              'Hubo un problema al devolver el elemento.',
+              'error'
+            );
+          });
+      }
+    });
+  }
   return (
     <div style={{ textAlign: 'center' }}><br/>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
@@ -89,7 +119,9 @@ const Moras = () => {
               <td>{mora.cantidad}</td>
               <td>{mora.fecha}</td>
               <td>{mora.observaciones}</td>
-              <td><button><FaCheck/></button></td>
+              <td><button onClick={() => handleReturnMora(mora.idmora, mora.Elemento.idelemento, mora.cantidad, mora.observaciones, mora.Cliente.documento)}>
+                <FaCheck/>
+              </button></td>
             </tr>
           ))
         ) : (

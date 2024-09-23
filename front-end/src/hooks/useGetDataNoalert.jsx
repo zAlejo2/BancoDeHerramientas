@@ -18,17 +18,19 @@ function useGetData(urls) {
 
             setData(updatedData);
         } catch (error) {
-            setError('Error al obtener los datos');
+            const mensaje = error.response?.data?.mensaje || "Error inesperado";
+
             Swal.fire({
                 icon: "error",
-                title: "Oops...",
-                text: "Parece que hubo un error al obtener los datos.",
-                confirmButtonColor: "#6fc390",
+                title: mensaje,
+                text: "Por favor verifique los datos.",
+                confirmButtonColor: '#FC3F3F',
                 customClass: {
                     container: 'swal2-container',
                     popup: 'swal2-popup'
                 }
             });
+            console.log(error);
         } finally {
             setLoading(false);
         }

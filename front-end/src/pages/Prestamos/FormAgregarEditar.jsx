@@ -292,7 +292,7 @@ export const FormAgregarEditarPrestamo = () => {
                         className="consume-button"
                         onClick={handleSave} 
                     >
-                        Guardar Prestamo
+                        Guardar
                     </button>
                     <button
                         type="button"
@@ -308,7 +308,7 @@ export const FormAgregarEditarPrestamo = () => {
                     >
                         Todo a Mora 
                     </button>
-                    <button
+                    {/* <button
                         type="button"
                         className="consume-button"
                         // onClick={handleReturnAll} // Cambiar la función
@@ -321,7 +321,7 @@ export const FormAgregarEditarPrestamo = () => {
                         // onClick={handleReturnAll} // Cambiar la función
                     >
                         Consumir todo 
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>

@@ -29,11 +29,12 @@ const useLogin = (url, onSubmit, inputs) => {
                 });
             });
         } catch (error) {
+            const mensaje = error.response?.data?.mensaje || "Error inesperado";
             Swal.fire({
                 icon: "error",
-                title: "Oops...",
-                text: `Parece que hubo un error: Por favor verifique los datos.`,
-                confirmButtonColor: "#6fc390",
+                title: mensaje,
+                text: `Por favor verifique los datos.`,
+                confirmButtonColor: '#FC3F3F'
             });
             console.log(error);
         }
