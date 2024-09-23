@@ -19,7 +19,7 @@ const login = async (req, res) => {
 
         if (!isAdminMatch) {
 
-          return res.status(401).json({ message: 'Contraseña incorrecta' });
+          return res.status(400).json({ mensaje: 'Contraseña incorrecta' });
 
         } else {
 
@@ -46,7 +46,7 @@ const login = async (req, res) => {
 
         if (!isClientMatch) {
 
-          return res.status(401).json({ message: 'Contraseña incorrecta' });
+          return res.status(400).json({ mensaje: 'Contraseña incorrecta' });
 
         } else { 
 
@@ -73,13 +73,13 @@ const login = async (req, res) => {
 
       } else {
 
-        return res.status(404).json({ message: 'Usuario no encontrado' });
+        return res.status(404).json({ mensaje: 'Usuario no encontrado' });
 
       }
       
     } catch (error) {
 
-      res.status(500).json({ message: 'Error en el login', error });
+      res.status(500).json({ mensaje: 'Error en el login', error });
 
     }
   };

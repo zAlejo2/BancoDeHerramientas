@@ -17,8 +17,9 @@ const createMora = async (cantidad, observaciones, idelemento, documento, area) 
 }
 
 const returnMora = async (req, res) => {
-    const { area, adminId } = req.user;
-    const { idmora, idelemento, cantidad } = req.body;
+  try {
+    const { area, id: adminId } = req.user;
+    const { idmora, idelemento, cantidad, observaciones, documento } = req.body;
     const elemento = await Elemento.findOne({where: {idelemento: idelemento}})
     await Elemento.update(
         {
@@ -33,7 +34,12 @@ const returnMora = async (req, res) => {
             elementos_idelemento: idelemento
         }
     })
-    // createRecord(area, 'mora', idmora, adminId, prestamo.clientes_documento, idelemento, cantidadNueva, observaciones, 'mora', 'ENVIAR A MORA');
+    createRecord(area, 'mora', idmora, adminId, documento, idelemento, cantidad, observaciones, 'finalizado', 'DEVOLVER ELEMENTO EN MORA');
+    return res.status(200).json({ mensaje: 'elementos regresados'})
+  } catch (error) { 
+    console.log(error); 
+    return res.status(500).json({ mensaje: 'error al regresar mora', error})
+  }
 }
 
 const getAllMoras = async (req, res) => {
