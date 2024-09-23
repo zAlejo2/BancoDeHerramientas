@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import useValidation from '@/hooks/useValidation'; // Importa el hook de validación
+import fondoInicio from '../../assets/fondo-inicio.avif';
 
 export const Login = () => {
     const navigate = useNavigate();
@@ -63,7 +64,7 @@ export const Login = () => {
         <div 
           className={`flex items-center justify-center min-h-screen p-4 w-full ${colorTheme === 'white' ? 'bg-white' : colorTheme === 'gray' ? 'bg-gray-500' : 'bg-black'}`} 
           style={{
-            backgroundImage: "url('https://img.freepik.com/vector-premium/fondo-vector-monocromo-blanco-abstracto-folleto-diseno-folleto-sitio-web-fondo-pantalla-blanco-geometrico-pagina-inicio-presentacion-certificado_249611-5879.jpg')",
+            backgroundImage: `url(${fondoInicio})`,
             backgroundSize: 'cover',  // Ajusta la imagen para cubrir todo el contenedor
             backgroundPosition: 'center',  // Centra la imagen
             backgroundRepeat: 'no-repeat', // Evita que la imagen se repita
