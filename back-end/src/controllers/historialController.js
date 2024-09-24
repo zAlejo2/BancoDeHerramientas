@@ -27,7 +27,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
 const getAllRecord = async (req, res) => {
     try {
         const area = req.area; 
-        const historiales = await Historial.findAll({ where: { area_id: area } });
+        const historiales = await Historial.findAll({ where: { area_id: area }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
             // Consulta el nombre del cliente

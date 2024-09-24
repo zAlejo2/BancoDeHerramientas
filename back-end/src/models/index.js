@@ -21,134 +21,112 @@ import Historial from './historialModel.js';
 
 // Un administrador puede tener muchas sesiones
 Administrador.hasMany(AdminSesion, { 
-    foreignKey: 'administradores_documento',
-    as: 'sesiones' 
+    foreignKey: 'administradores_documento'
 });
 
 // Una sesión puede tener un administrador
 AdminSesion.belongsTo(Administrador, { 
-    foreignKey: 'administradores_documento',
-    as: 'administrador'
+    foreignKey: 'administradores_documento'
 });
 
 // Un Elemento pertenece a un Area
 Elemento.belongsTo(Area, {
-    foreignKey: 'areas_idarea',
-    as: 'area'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Area puede tener muchos Elementos
 Area.hasMany(Elemento, {
-    foreignKey: 'areas_idarea',
-    as: 'elementos'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Administrador pertenece a un Area
 Administrador.belongsTo(Area, {
-    foreignKey: 'areas_idarea',
-    as: 'area'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Area puede tener muchos Administradores
 Area.hasMany(Administrador, {
-    foreignKey: 'areas_idarea',
-    as: 'administradores'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Prestamo Corriente pertenece a un Area
 PrestamoCorriente.belongsTo(Area, {
-    foreignKey: 'areas_idarea',
-    as: 'area'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Area puede tener muchos PrestamosCorrientes
 Area.hasMany(PrestamoCorriente, {
-    foreignKey: 'areas_idarea',
-    as: 'prestamoscorrientes'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Prestamo Especial pertenece a un Area
 PrestamoEspecial.belongsTo(Area, {
-    foreignKey: 'areas_idarea',
-    as: 'area'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Area puede tener muchos PrestamosEspeciales
 Area.hasMany(PrestamoEspecial, {
-    foreignKey: 'areas_idarea',
-    as: 'prestamosespeciales'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Consumo pertenece a un Area
 Consumo.belongsTo(Area, {
-    foreignKey: 'areas_idarea',
-    as: 'area'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Area puede tener muchos Consumos
 Area.hasMany(Consumo, {
-    foreignKey: 'areas_idarea',
-    as: 'consumos'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Encargo pertenece a un Area
 Encargo.belongsTo(Area, {
-    foreignKey: 'areas_idarea',
-    as: 'area'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Area puede tener muchos Encargos
 Area.hasMany(Encargo, {
-    foreignKey: 'areas_idarea',
-    as: 'encargos'
+    foreignKey: 'areas_idarea'
 });
 
 // Un Cliente pertenece a un Rol
 Cliente.belongsTo(Rol, {
-    foreignKey: 'roles_idrol',
-    as: 'rol'
+    foreignKey: 'roles_idrol'
 });
 
 // Un Rol puede tener muchos Clientes
 Rol.hasMany(Cliente, {
-    foreignKey: 'roles_idrol',
-    as: 'clientes'
+    foreignKey: 'roles_idrol'
 });
 
 // Una Baja pertenece a un Elemento
 Baja.belongsTo(Elemento, {
-    foreignKey: 'elementos_idelemento',
-    as: 'elemento'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un Elemento puede tener muchas bajas
 Elemento.hasMany(Baja, {
-    foreignKey: 'elementos_idelemento',
-    as: 'bajas'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un Cliente puede tener muchos PrestamosCorrientes
 Cliente.hasMany(PrestamoCorriente, {
-    foreignKey: 'clientes_documento',
-    as: 'prestamoscorrientes'
+    foreignKey: 'clientes_documento'
 });
 
 // Un PrestamoCorriente pertenece a un Cliente
 PrestamoCorriente.belongsTo(Cliente, {
-    foreignKey: 'clientes_documento',
-    as: 'cliente'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Cliente puede tener muchos PrestamosEspeciales
 Cliente.hasMany(PrestamoEspecial, {
-    foreignKey: 'clientes_documento',
-    as: 'prestamosespeciales'
+    foreignKey: 'clientes_documento'
 });
 
 // Un PrestamoEspecial pertenece a un Cliente
 PrestamoEspecial.belongsTo(Cliente, {
-    foreignKey: 'clientes_documento',
-    as: 'cliente'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Cliente puede tener muchas Moras
@@ -163,106 +141,90 @@ Mora.belongsTo(Cliente, {
 
 // Un Cliente puede tener muchos Danos
 Cliente.hasMany(Dano, {
-    foreignKey: 'clientes_documento',
-    as: 'danos'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Dano pertenece a un Cliente
 Dano.belongsTo(Cliente, {
-    foreignKey: 'clientes_documento',
-    as: 'cliente'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Cliente puede tener muchos Consumos
 Cliente.hasMany(Consumo, {
-    foreignKey: 'clientes_documento',
-    as: 'consumos'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Consumo pertenece a un Cliente
 Consumo.belongsTo(Cliente, {
-    foreignKey: 'clientes_documento',
-    as: 'cliente'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Cliente puede tener muchos Encargos
 Cliente.hasMany(Encargo, {
-    foreignKey: 'clientes_documento',
-    as: 'encargos'
+    foreignKey: 'clientes_documento'
 });
 
 // Un Encargo pertenece a un Cliente
 Encargo.belongsTo(Cliente, {
-    foreignKey: 'clientes_documento',
-    as: 'cliente'
+    foreignKey: 'clientes_documento'
 });
 
 // Un PrestamoCorrriente puede tener muchos Elementos
 PrestamoCorriente.belongsToMany(Elemento, {
     through: ElementoHasPrestamoCorriente,
-    foreignKey: 'prestamoscorrientes_idprestamo',
-    as: 'elementos'
+    foreignKey: 'prestamoscorrientes_idprestamo'
 });
 
 // Un Elemento puede estar en muchos PrestamosCorrientes
 Elemento.belongsToMany(PrestamoCorriente, {
     through: ElementoHasPrestamoCorriente,
-    foreignKey: 'elementos_idelemento',
-    as: 'prestamoscorrientes'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un PrestamoEspecial puede tener muchos Elementos
 PrestamoEspecial.belongsToMany(Elemento, {
     through: ElementoHasPrestamoEspecial,
-    foreignKey: 'prestamosespeciales_idprestamo',
-    as: 'elementos'
+    foreignKey: 'prestamosespeciales_idprestamo'
 });
 
 // Un Elemento puede estar en muchos PrestamosEspeciales
 Elemento.belongsToMany(PrestamoEspecial, {
     through: ElementoHasPrestamoEspecial,
-    foreignKey: 'elementos_idelemento',
-    as: 'prestamosespeciales'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un Consumo puede tener muchos Elementos
 Consumo.belongsToMany(Elemento, {
     through: ElementoHasConsumo,
-    foreignKey: 'consumos_idconsumo',
-    as: 'elementos'
+    foreignKey: 'consumos_idconsumo'
 });
 
 // Un Elemento puede estar en muchos Consumos
 Elemento.belongsToMany(Consumo, {
     through: ElementoHasConsumo,
-    foreignKey: 'elementos_idelemento',
-    as: 'consumos'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un Encargo puede tener muchos Elementos
 Encargo.belongsToMany(Elemento, {
     through: ElementoHasEncargo,
-    foreignKey: 'encargos_idencargo',
-    as: 'elementos'
+    foreignKey: 'encargos_idencargo'
 });
 
 // Un Elemento puede estar en muchos Encargos
 Elemento.belongsToMany(Encargo, {
     through: ElementoHasEncargo,
-    foreignKey: 'elementos_idelemento',
-    as: 'encargos'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un Elemento puede tener muchos Danos
 Elemento.hasMany(Dano, { 
-    foreignKey: 'elementos_idelemento',
-    as: 'danos'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un Daño pertenece a un Elemento
 Dano.belongsTo(Elemento, { 
-    foreignKey: 'elementos_idelemento',
-    as: 'elemento'
+    foreignKey: 'elementos_idelemento'
 });
 
 // Un Elemento puede tener muchas Moras

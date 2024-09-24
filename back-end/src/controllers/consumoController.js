@@ -1,4 +1,4 @@
-import { Consumo, ElementoHasConsumo, Cliente, Elemento } from '../models/index.js';
+import { Consumo, ElementoHasConsumo, Cliente, Elemento, Mora } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
@@ -15,6 +15,11 @@ const createConsumption = async (req, res) => {
             return res.status(404).json({ mensaje: 'Cliente no encontrado' });
         }
 
+        const mora = await Mora.findOne({where: {clientes_documento: cliente.documento, areas_idarea: area}});
+        if (mora) {
+            return res.status(400).json({ mensaje: 'El cliente está en MORA'});
+        }
+        
         const consumo = await Consumo.create({
             clientes_documento: cliente.documento,
             areas_idarea: area,
@@ -26,7 +31,7 @@ const createConsumption = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({ mensaje: 'Error al crear préstamo: ', error });
+        res.status(500).json({ mensaje: 'Error al crear préstamo, por favor vuelva a intentarlo'});
     }
 };
 
@@ -89,7 +94,7 @@ const addElements = async (req, res) => {
         return res.status(201).json({ mensaje: 'Elementos agregados al consumo con éxito' });
 
     } catch (error) {
-        res.status(500).json({ mensaje: 'Error al agregar elementos al consumo: ', error });
+        res.status(500).json({ mensaje: 'Error al agregar elementos al consumo, por favor vuelva a intentarlo '});
     }
 };
 
@@ -142,7 +147,7 @@ const getAllConsumptions = async (req, res) => {
           res.json(consumoFormateado); 
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ mensaje: 'error al obtener el historial', error})
+        return res.status(500).json({ mensaje: 'Error al obtener el historial, por favor vuelva a intentarlo'})
     }
 }
 

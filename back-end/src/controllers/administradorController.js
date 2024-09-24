@@ -18,7 +18,7 @@ const getAdminById = async (req, res) => {
         if (admin) {
             res.json(admin);
         } else {
-            res.status(404).json({ message: 'El Administrador ingresado no existe' });
+            res.status(404).json({ mensaje: 'El Administrador ingresado no existe' });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -39,7 +39,7 @@ const createAdmin = async (req, res) => {
                 
             res.status(201).json(registro);
         } else {
-            res.status(400).json({ message: 'El Administrador ingresado ya existe' });
+            res.status(400).json({ mensaje: 'El Administrador que intenta crear ya existe' });
         }
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -52,13 +52,13 @@ const updateAdmin = async (req, res) => {
         const admin = await Administrador.findByPk(req.params.documento);
 
         if (!admin) {
-            return res.status(404).json({ message: 'Administrador no encontrado' });
+            return res.status(404).json({ mensaje: 'Administrador no encontrado' });
         }
 
         const isSameData = Object.keys(req.body).every(key => admin[key] === req.body[key]);
 
         if (isSameData) {
-            return res.status(400).json({ message: 'No se ha hecho ningún cambio en el Administrador' });
+            return res.status(400).json({ mensaje: 'No se ha hecho ningún cambio en el Administrador' });
         }
 
         const [updated] = await Administrador.update(req.body, {
@@ -69,7 +69,7 @@ const updateAdmin = async (req, res) => {
             const updatedUser = await Administrador.findByPk(req.params.documento);
             res.json(updatedUser);
         } else {
-            res.status(404).json({ message: 'Error al actualizar el Administrador' });
+            res.status(404).json({ mensaje: 'Error al actualizar el Administrador, por favor vuelva a intentarlo' });
         }
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -83,10 +83,10 @@ const deleteAdmin = async (req, res) => {
             where: { documento: req.params.documento }
         });
         if (deleted) {
-            res.status(200).json({ message: 'Administrador eliminado correctamente' });
+            res.status(200).json({ mensaje: 'Administrador eliminado correctamente' });
             // el 204 indica que el servidor ha recibido la solicitud con éxito, pero no devuelve ningún contenido.
         } else {
-            res.status(404).json({ message: 'Administrador no encontrado' });
+            res.status(404).json({ mensaje: 'Administrador no encontrado' });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });

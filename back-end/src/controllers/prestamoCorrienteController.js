@@ -2,35 +2,41 @@ import { PrestamoCorriente, ElementoHasPrestamoCorriente, Cliente, Elemento, Mor
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 import { createMora } from './moraController.js';
+import { createDano } from './danoController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 // CREAR UN PRESTAMO
 const createLoan = async (req, res) => {
     try {
-        const { area, id: adminId } = req.user;  // Extraemos el área y el adminId de req.user
-        const { documento } = req.body;
+        const { area, id: adminId } = req.user;
+        const { documento, continuar } = req.body;
 
         const cliente = await Cliente.findOne({ where: { documento } });
-
         if (!cliente) {
             return res.status(404).json({ mensaje: 'Cliente no encontrado' });
         } 
 
-        const mora = await Mora.findOne({where: {clientes_documento: cliente.documento, areas_idarea: area}});
-        if (mora) {
-            return res.status(400).json({ mensaje: 'El cliente está en MORA'});
+        const mora = await Mora.findOne({ where: { clientes_documento: cliente.documento, areas_idarea: area } });
+
+        // Si el cliente está en mora y el frontend no ha enviado "continuar", muestra advertencia
+        if (mora && !continuar) {
+            return res.status(200).json({ advertencia: 'El cliente está en MORA', continuar: true });
+        }
+        // Si el cliente está en mora pero el frontend ha enviado "continuar", sigue el proceso
+
+        const dano = await Dano.findOne({ where: { clientes_documento: cliente.documento, areas_idarea: area } });
+        if (dano && !continuar) {
+            return res.status(200).json({ advertencia: 'El cliente tiene un DAÑO', continuar: true });
         }
 
-        const dano = await Dano.findOne({where: {clientes_documento: cliente.documento}});
-        if (dano) {
-            return res.status(400).json({ mensaje: 'El cliente está en DAÑO'});
-        }
+        const loanExisting = await PrestamoCorriente.findOne({
+            where: { clientes_documento: documento, estado: 'actual', areas_idarea: area }
+        });
 
-        const loanExisting = await PrestamoCorriente.findOne({ where: { clientes_documento: documento, estado: 'actual', areas_idarea: area } });
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
-            return res.status(200).json({ idprestamo })
+            return res.status(200).json({ idprestamo });
         }
 
         const prestamo = await PrestamoCorriente.create({
@@ -38,14 +44,12 @@ const createLoan = async (req, res) => {
             estado: 'actual',
             areas_idarea: area
         });
-        
-        let idprestamo = prestamo.idprestamo;
-        // createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, null, null, null, 'actual', 'CREAR PRESTAMO');
 
+        let idprestamo = prestamo.idprestamo;
         return res.status(200).json({ idprestamo, elementos: [] });
 
     } catch (error) {
-        console.log(error)
+        console.log(error);
         res.status(500).json({ mensaje: 'Error al crear préstamo: ', error });
     }
 };
@@ -78,7 +82,7 @@ const findLoanElements = async (req, res) => {
         }
     } catch (error) {
         console.error('Error al obtener elementos del préstamo:', error);
-        return res.status(500).json({ mensaje: 'Error al obtener los elementos del préstamo' });
+        return res.status(500).json({ mensaje: 'Error al obtener los elementos del préstamo, por favor vuelva a intentarlo' });
     }
 };
 
@@ -138,9 +142,9 @@ const addOrUpdate = async (req, res) => {
             const dispoTotal = elementoEncontrado.disponibles - elementoEncontrado.minimo;
 
             if (cantidad <= 0) {
-                return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor que éste`});
+                return res.status(400).json({ mensaje: `La cantidad de préstamo no puede ser 0 ni menor que éste`});
             } else if (cantidadd < 0 || cantidadd > cantidad) {
-                return res.status(400).json({ mensaje: `La cantidad de devolución no puede ser menor que 0 ni mayor que la cantidad prestada`})
+                return res.status(400).json({ mensaje: `La cantidad de devolución no puede ser menor a 1 ni mayor a la cantidad prestada`})
             }
 
             const elementoEnPrestamo = await ElementoHasPrestamoCorriente.findOne({
@@ -200,6 +204,24 @@ const addOrUpdate = async (req, res) => {
                             });
                             createRecord(area, 'mora', mora.idmora, adminId, mora.clientes_documento, mora.elementos_idelemento, mora.cantidad, mora.observaciones, 'mora', 'ENVIAR A MORA');
                         }
+                    } else if (estado == 'dano') {
+                        if (cantidadNueva != 0) {
+                            const dano = await createDano(cantidadNueva, observaciones, idelemento, prestamo.clientes_documento, area);
+                            await Elemento.update(
+                                {
+                                    disponibles: elementoEncontrado.disponibles + diferencia,
+                                    estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                                },
+                                { where: { idelemento } }
+                            );
+                            await ElementoHasPrestamoCorriente.destroy({
+                                where: {
+                                    prestamoscorrientes_idprestamo: idprestamo,
+                                    elementos_idelemento: idelemento,
+                                }
+                            });
+                            createRecord(area, 'daño', dano.iddano, adminId, dano.clientes_documento, dano.elementos_idelemento, dano.cantidad, dano.observaciones, 'daño', 'REPORTAR DAÑO');
+                        }
                     } else {
                         await ElementoHasPrestamoCorriente.update(
                             { cantidad: cantidadNueva, observaciones: observaciones },
@@ -218,8 +240,8 @@ const addOrUpdate = async (req, res) => {
                         }
                     }
                 } else {
-                    if (estado == 'finalizado' || estado == 'mora') {
-                        return res.status(400).json({ mensaje: 'Actualizaste la cantidad, primero guarda cambios' });
+                    if (estado == 'finalizado' || estado == 'mora' || estado == 'dano') {
+                        return res.status(400).json({ mensaje: 'Actualizaste la cantidad, primero guarda cambios antes de cambiar el estado del préstamo' });
                     }
                     await ElementoHasPrestamoCorriente.update(
                         { cantidad: cantidadNueva, observaciones: observaciones },
@@ -243,7 +265,7 @@ const addOrUpdate = async (req, res) => {
                 }
 
                 if (dispoTotal < cantidad) {
-                    return res.status(400).json({ mensaje: `No hay suficientes elementos del ID ${idelemento} para hacer el préstamo, revise mínimos en el inventario` });
+                    return res.status(400).json({ mensaje: `La cantidad solicitada del elemento con el ID ${idelemento} supera la disponibilidad de éste, revise mínimos en el inventario` });
                 }
 
                 await ElementoHasPrestamoCorriente.create({
@@ -288,7 +310,7 @@ const addOrUpdate = async (req, res) => {
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({ mensaje: 'Error al agregar y actualizar elementos al prestamo: ', error });
+        res.status(500).json({ mensaje: 'Error al realizar las acciones en el préstamo, por favor vuelva a intentarlo'});
     }
 };
 
