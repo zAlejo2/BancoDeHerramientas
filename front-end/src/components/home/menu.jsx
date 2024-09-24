@@ -58,10 +58,10 @@ export const Menu = ({ children }) => {
         },
         { 
             name: "Daños", 
-            to: "/consumos", 
+            to: "/danos", 
             subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
-                // { name: "Encargos", to: "/admin/encargos" }
+                { name: "Daños Pendientes", to: "/danos" }, 
+                { name: "Historial Daños", to: "/danos/historial" }
             ]
         },
         { 
@@ -237,7 +237,9 @@ function Icon({ name, ...props }) {
         "Historial Consumos": <List {...props}/>,
         "Historial Prestamos": <List {...props}/>,
         "Historial Moras": <List {...props} />,
+        "Historial Daños": <List {...props} />,
         "Moras Activas": <List {...props} />,
+        "Daños Pendientes": <List {...props} />,
         "Elementos Prestados": <List {...props} />,
         "Prestamos Es": <GiReturnArrow {...props} />,
         "Moras": <AiOutlineAlert {...props} />,
@@ -246,6 +248,7 @@ function Icon({ name, ...props }) {
         "Lista ": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
         "Registrar Elemento": <List {...props}/>,
+        "Registrar Consumo": <List {...props}/>,
         "Registrar Cliente": <List {...props}/>,
         "Registrar Rol": <List {...props}/>,
         "Registrar Admin": <List {...props}/>

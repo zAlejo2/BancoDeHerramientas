@@ -22,6 +22,8 @@ import Roles from '@/pages/Roles/ListaRoles';
 import HistorialPrestamos from '@/pages/Prestamos/HistorialPrestamos';
 import Moras from '@/pages/Moras/ListaMoras';
 import HistorialMoras from '@/pages/Moras/HistorialMoras';
+import Danos from '@/pages/Daños/ListaDanos';
+import HistorialDanos from '@/pages/Daños/HistorialDanos';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -190,6 +192,22 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <HistorialMoras/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/danos',
+            element: (
+                <ProtectedRoute>
+                    <Danos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/danos/historial',
+            element: (
+                <ProtectedRoute>
+                    <HistorialDanos/>
                 </ProtectedRoute>
             )
         },

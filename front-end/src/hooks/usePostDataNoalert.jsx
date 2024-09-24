@@ -18,10 +18,37 @@ const usePostDataNoalert = (url, onSubmit, inputs, validations) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (validateInputs()) { 
+
+        if (validateInputs()) {
             try {
                 const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);
-                onSubmit(response.data);
+
+                // Verifica si hay advertencia de mora
+                if (response.data.advertencia && response.data.continuar) {
+                    Swal.fire({
+                        title: response.data.advertencia,
+                        text: "¿Está seguro de que quiere continuar con el préstamo?",
+                        icon: "warning",
+                        iconColor: "#FC3F3F",
+                        showCancelButton: true,
+                        confirmButtonColor: "#FFA2A3",
+                        cancelButtonColor: "#FC3F3F",
+                        confirmButtonText: "Continuar",
+                        cancelButtonText: "Cancelar"
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            // Si el usuario confirma, continuar con el préstamo
+                            inputs.continuar = true;  // Añade "continuar: true" al cuerpo de la solicitud
+                            const newResponse = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);  // Misma ruta
+                            onSubmit(newResponse.data);
+                        }
+                    });
+                    
+                } else {
+                    // Si no hay advertencia de mora, continuar normalmente
+                    onSubmit(response.data);
+                }
+
             } catch (error) {
                 const mensaje = error.response?.data?.mensaje || "Error inesperado";
 

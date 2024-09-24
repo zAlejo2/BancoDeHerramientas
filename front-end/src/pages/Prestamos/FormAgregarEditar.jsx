@@ -30,6 +30,16 @@ export const FormAgregarEditarPrestamo = () => {
             )
         );
     };
+
+    const handleDanoAll = () => {
+        setSelectedItems((prevItems) =>
+            prevItems.map((item) =>
+                item.fecha_entregaFormato // Solo para los elementos con fecha de entrega
+                    ? { ...item, estado: 'dano' } // Actualiza `cantidadd` con el valor de `cantidad`
+                    : item
+            )
+        );
+    };
     
     useEffect(() => {
         const fetchExistingLoan = async () => {
@@ -307,6 +317,13 @@ export const FormAgregarEditarPrestamo = () => {
                         onClick={handleMoraAll} // Cambiar la función
                     >
                         Todo a Mora 
+                    </button>
+                    <button
+                        type="button"
+                        className="consume-button"
+                        onClick={handleDanoAll} // Cambiar la función
+                    >
+                        Todo a Daño 
                     </button>
                     {/* <button
                         type="button"

@@ -13,11 +13,14 @@ import { MdManageHistory } from "react-icons/md";
 export const HomePage = () => {
   const { data: cantidadPrestamo } = useGetData(["prestamos/todosPrestamos"]);
   const { data: cantidadMora } = useGetData(["moras"]);
+  const { data: cantidadDano } = useGetData(["danos"]);
   const { data: prestamosData, error, loading } = useGetData(["historial"]);
   const prestamos = prestamosData['historial'] || [];
   const cantidadPrestamos = cantidadPrestamo['prestamos/todosPrestamos'] || [];
   const cantidadMoras = cantidadMora['moras'] || [];
   const totalMoras = cantidadMoras.length;
+  const cantidadDanos = cantidadDano['danos'] || [];
+  const totalDanos = cantidadDanos.length;
 
   // Función para obtener el préstamo con la fecha más actual
   const getLatestPrestamos = () => {
@@ -53,7 +56,9 @@ export const HomePage = () => {
                 ? countPrestamosByState("actual") 
                 : item === "Moras" 
                 ? totalMoras 
-                : Math.floor(Math.random() * 5000)} 
+                : item === "Daños"
+                ? totalDanos
+                : 0} 
             </CardTitle>
               <Icon name={item} className="w-6 h-6" />
             </CardHeader>
