@@ -143,8 +143,8 @@ export const FormElementos = () => {
                     value={inputs.tipo}
                     onChange={handleInputChange}
                     options={[
-                        { value: "Prestamo", label: "Prestamo" },
-                        { value: "Consumo", label: "Consumo" },
+                        { value: "devolutivo", label: "Devolutivo" },
+                        { value: "consumible", label: "Consumible" },
                     ]}                
                 />
                 <Select

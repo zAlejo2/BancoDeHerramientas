@@ -40,6 +40,16 @@ export const FormAgregarEditarPrestamo = () => {
             )
         );
     };
+
+    const handleConsumoAll = () => {
+        setSelectedItems((prevItems) =>
+            prevItems.map((item) =>
+                item.fecha_entregaFormato && item.tipo == 'consumo'// Solo para los elementos con fecha de entrega
+                    ? { ...item, estado: 'consumo' } // Actualiza `cantidadd` con el valor de `cantidad`
+                    : item
+            )
+        );
+    };
     
     useEffect(() => {
         const fetchExistingLoan = async () => {
@@ -47,7 +57,7 @@ export const FormAgregarEditarPrestamo = () => {
                 const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/prestamos/${idprestamo}/elementos`, { documento: idprestamo });
                 const { elementos } = response.data;
 
-                setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado }) => ({
+                setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado, tipo }) => ({
                     idelemento: elemento.idelemento,
                     descripcion: elemento.descripcion,
                     cantidad,
@@ -55,7 +65,8 @@ export const FormAgregarEditarPrestamo = () => {
                     observaciones,
                     fecha_entregaFormato,
                     fecha_devolucionFormato,
-                    estado
+                    estado,
+                    tipo: elemento.tipo
                 })));
             } catch (error) {
                 console.error('Error al obtener el préstamo existente:', error);
@@ -272,8 +283,8 @@ export const FormAgregarEditarPrestamo = () => {
                                             <option value="mora">mora</option>
                                             <option value="dano">daño</option>
                                             <option value="baja">baja</option>
-                                            <option value="persona">persona</option>
-                                            <option value="consumo">consumo</option>
+                                            <option value="persona">pasar</option>
+                                            <option disabled={item.tipo == 'prestamo'} value="consumo">consumo</option>
                                         </select> 
                                     </td>
                                     <td>
@@ -325,20 +336,20 @@ export const FormAgregarEditarPrestamo = () => {
                     >
                         Todo a Daño 
                     </button>
-                    {/* <button
+                    <button
                         type="button"
                         className="consume-button"
-                        // onClick={handleReturnAll} // Cambiar la función
+                        onClick={handleConsumoAll} // Cambiar la función
                     >
-                        Pasar Todo 
+                        Consumo Todo
                     </button>
                     <button
                         type="button"
                         className="consume-button"
-                        // onClick={handleReturnAll} // Cambiar la función
+                        onClick={handleConsumoAll} // Cambiar la función
                     >
-                        Consumir todo 
-                    </button> */}
+                        Pasar Todo
+                    </button>
                 </div>
             </div>
         </div>

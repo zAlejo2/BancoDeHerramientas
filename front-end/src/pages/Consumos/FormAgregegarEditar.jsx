@@ -4,7 +4,7 @@ import useSearchElements from "../../hooks/useSearchElements";
 import usePostData from "../../hooks/usePostData";
 import useDeleteData from "../../hooks/useDeleteData";
 import { useParams } from "react-router-dom";
-import '../../assets/formAgregarEditarStyles.css'; // Importa el archivo CSS
+import '../../assets/formAgregarEditarStyles.css'; 
 
 export const FormAgregarEditarConsumo = () => {
     const { idconsumo } = useParams();
@@ -174,7 +174,7 @@ export const FormAgregarEditarConsumo = () => {
                     <button
                         type="button"
                         className="consume-button"
-                        onClick={handleSave} // Cambia handleConsume a handleSave
+                        onClick={handleSave}
                     >
                         Guardar Consumo
                     </button>
@@ -182,7 +182,7 @@ export const FormAgregarEditarConsumo = () => {
                         type="button"
                         className="consume-button"
                         onClick={handleDelete} disabled={isLoading}>
-                        {isLoading ? 'Eliminando...' : 'Eliminar Consumo'}                    
+                        {isLoading ? 'Cancelar...' : 'Cancelar Consumo'}                    
                     </button>
                 </div>
             </div>
