@@ -1,4 +1,4 @@
-import { Consumo, ElementoHasConsumo, Cliente, Elemento, Mora } from '../models/index.js';
+import { Consumo, ElementoHasConsumo, Cliente, Elemento, Mora, Dano } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
@@ -7,7 +7,7 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 const createConsumption = async (req, res) => {
     try {
         const { area } = req.user;  // Extraemos el área y el adminId de req.user
-        const { documento } = req.body;
+        const { documento, continuar } = req.body;
 
         const cliente = await Cliente.findOne({ where: { documento } });
 
@@ -15,11 +15,19 @@ const createConsumption = async (req, res) => {
             return res.status(404).json({ mensaje: 'Cliente no encontrado' });
         }
 
-        const mora = await Mora.findOne({where: {clientes_documento: cliente.documento, areas_idarea: area}});
-        if (mora) {
-            return res.status(400).json({ mensaje: 'El cliente está en MORA'});
+        const mora = await Mora.findOne({ where: { clientes_documento: cliente.documento, areas_idarea: area } });
+
+        // Si el cliente está en mora y el frontend no ha enviado "continuar", muestra advertencia
+        if (mora && !continuar) {
+            return res.status(200).json({ advertencia: 'El cliente está en MORA', continuar: true });
         }
-        
+        // Si el cliente está en mora pero el frontend ha enviado "continuar", sigue el proceso
+
+        const dano = await Dano.findOne({ where: { clientes_documento: cliente.documento, areas_idarea: area } });
+        if (dano && !continuar) {
+            return res.status(200).json({ advertencia: 'El cliente tiene un DAÑO', continuar: true });
+        }
+
         const consumo = await Consumo.create({
             clientes_documento: cliente.documento,
             areas_idarea: area,
@@ -151,5 +159,31 @@ const getAllConsumptions = async (req, res) => {
     }
 }
 
+const recordConsumption = async (cantidad, observaciones, idelemento, documento, area, adminId) => {
+    const consumo = await Consumo.create({
+        clientes_documento: documento,
+        areas_idarea: area,
+    });
 
-export { createConsumption, getAllConsumptions, addElements, deleteConsumption};
+    const elemento = await Elemento.findOne({where: { idelemento }});
+
+    await ElementoHasConsumo.create({
+        elementos_idelemento: idelemento,
+        consumos_idconsumo: consumo.idconsumo,
+        cantidad,
+        observaciones,
+        fecha: obtenerHoraActual(),
+        administradores_documento: adminId
+    });
+console.log(elemento, elemento.cantidad)
+    await Elemento.update(
+        {
+            cantidad: elemento.cantidad - cantidad,
+            estado: elemento.disponibles - cantidad <= elemento.minimo ? 'agotado' : 'disponible'
+        },
+        { where: { idelemento } }
+    );
+};
+
+
+export { createConsumption, getAllConsumptions, addElements, deleteConsumption, recordConsumption};

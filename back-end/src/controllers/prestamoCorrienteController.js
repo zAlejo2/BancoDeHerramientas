@@ -3,6 +3,7 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 import { createMora } from './moraController.js';
 import { createDano } from './danoController.js';
+import { recordConsumption } from './consumoController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
@@ -222,6 +223,16 @@ const addOrUpdate = async (req, res) => {
                             });
                             createRecord(area, 'daño', dano.iddano, adminId, dano.clientes_documento, dano.elementos_idelemento, dano.cantidad, dano.observaciones, 'daño', 'REPORTAR DAÑO');
                         }
+                    } else if (estado == 'consumo') {
+                        if (cantidadNueva != 0) {
+                            const consumo = await recordConsumption(cantidadNueva, observaciones, idelemento, prestamo.clientes_documento, area, adminId);
+                            await ElementoHasPrestamoCorriente.destroy({
+                                where: {
+                                    prestamoscorrientes_idprestamo: idprestamo,
+                                    elementos_idelemento: idelemento,
+                                }
+                            });
+                        }
                     } else {
                         await ElementoHasPrestamoCorriente.update(
                             { cantidad: cantidadNueva, observaciones: observaciones },
@@ -240,7 +251,7 @@ const addOrUpdate = async (req, res) => {
                         }
                     }
                 } else {
-                    if (estado == 'finalizado' || estado == 'mora' || estado == 'dano') {
+                    if (estado == 'finalizado' || estado == 'mora' || estado == 'dano' || estado == 'consumo') {
                         return res.status(400).json({ mensaje: 'Actualizaste la cantidad, primero guarda cambios antes de cambiar el estado del préstamo' });
                     }
                     await ElementoHasPrestamoCorriente.update(
