@@ -44,10 +44,14 @@ const usePostData = (url, onSubmit, inputs, validations, ruta) => {
                     container: 'swal2-container',
                     popup: 'swal2-popup'
                 }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    location.reload(); // Recarga la página si el usuario confirma
+                }
             });
             console.log(error);
         }
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();

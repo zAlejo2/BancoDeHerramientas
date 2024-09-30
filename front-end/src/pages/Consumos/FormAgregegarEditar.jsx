@@ -17,6 +17,7 @@ export const FormAgregarEditarConsumo = () => {
     };
 
     const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
+    const filteredResults = searchResults.filter((item) => item.tipo === 'consumible');
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -70,16 +71,17 @@ export const FormAgregarEditarConsumo = () => {
         );
     };
 
-    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones }) => ({
+    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones, tipo }) => ({
         idelemento,
         cantidad,
-        observaciones
+        observaciones,
+        tipo
     }));
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            if (searchResults.length > 0) {
-                handleAddItem(searchResults[0]); // Agregar el primer elemento de la búsqueda
+            if (filteredResults.length > 0) {
+                handleAddItem(filteredResults[0]); // Agregar el primer elemento de la búsqueda
             }
         }
     };
@@ -88,7 +90,7 @@ export const FormAgregarEditarConsumo = () => {
 
     return (
         <div className="form-container">
-            <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario de Consumo</h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Consumo de </h1>
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
@@ -107,7 +109,7 @@ export const FormAgregarEditarConsumo = () => {
                     {searchLoading && <p>Cargando...</p>}
                     {searchError && <p>Error: {searchError}</p>}
                     <div className="search-results">
-                        {Array.isArray(searchResults) && searchResults.map((item) => (
+                        {Array.isArray(filteredResults) && filteredResults.map((item) => (
                             <div
                                 key={item.idelemento}
                                 className="search-result-item"
@@ -123,16 +125,20 @@ export const FormAgregarEditarConsumo = () => {
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
-                                <th>Elemento</th>
+                                <th>Código</th>
+                                <th>Descripción</th>
+                                <th>Dispo</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
-                                <th>Acciones</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             {selectedItems.map((item) => (
                                 <tr key={item.idelemento}>
+                                    <td>{item.idelemento}</td>
                                     <td>{item.descripcion}</td>
+                                    <td>{item.disponibles - item.minimo}</td>
                                     <td>
                                         <input className="input"
                                             type="number"

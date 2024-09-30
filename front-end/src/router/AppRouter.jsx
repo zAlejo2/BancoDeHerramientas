@@ -24,6 +24,7 @@ import Moras from '@/pages/Moras/ListaMoras';
 import HistorialMoras from '@/pages/Moras/HistorialMoras';
 import Danos from '@/pages/Daños/ListaDanos';
 import HistorialDanos from '@/pages/Daños/HistorialDanos';
+import HistorialTodo from '@/pages/Historial/HistorialTodo';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -208,6 +209,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <HistorialDanos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/historial',
+            element: (
+                <ProtectedRoute>
+                    <HistorialTodo/>
                 </ProtectedRoute>
             )
         },

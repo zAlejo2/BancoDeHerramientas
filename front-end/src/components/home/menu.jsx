@@ -15,6 +15,7 @@ import { PiImageBroken } from "react-icons/pi";
 import { CgReorder } from "react-icons/cg";
 import { FaRegHandPointUp } from "react-icons/fa6";
 import { PiMapPinAreaFill } from "react-icons/pi";
+import { MdHistoryToggleOff } from "react-icons/md";
 
 export const Menu = ({ children }) => {
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
@@ -37,7 +38,7 @@ export const Menu = ({ children }) => {
             to: "/consumos", 
             subMenu: [
                 { name: "Registrar Consumo", to: "/consumos" }, 
-                { name: "Historial Consumos", to: "/consumos/historial" }
+                { name: "Lista Consumos", to: "/consumos/historial" }
             ]
         },
         { 
@@ -117,6 +118,13 @@ export const Menu = ({ children }) => {
             to: "/Encargos", 
             subMenu: [
                 { name: "Formulario", to: "/Encargos" },
+            ]
+        },
+        { 
+            name: "Historial", 
+            to: "/historial", 
+            subMenu: [
+                { name: "Historial Completo", to: "/historial" },
             ]
         }
     ];
@@ -234,7 +242,7 @@ function Icon({ name, ...props }) {
         "List": <List {...props} />,
         "Formulario": <List {...props} />,
         "Lista": <List {...props} />,
-        "Historial Consumos": <List {...props}/>,
+        "Lista Consumos": <List {...props}/>,
         "Historial Prestamos": <List {...props}/>,
         "Historial Moras": <List {...props} />,
         "Historial Daños": <List {...props} />,
@@ -251,7 +259,9 @@ function Icon({ name, ...props }) {
         "Registrar Consumo": <List {...props}/>,
         "Registrar Cliente": <List {...props}/>,
         "Registrar Rol": <List {...props}/>,
-        "Registrar Admin": <List {...props}/>
+        "Registrar Admin": <List {...props}/>,
+        "Historial": <MdHistoryToggleOff {...props}/>,
+        "Historial Completo": <List {...props}/>
     };
     return icons[name] || <XIcon {...props} />;
 }
