@@ -7,6 +7,33 @@ import { recordConsumption } from './consumoController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
+// CEDER ELEMENTOS EN UN PRESTAMO A OTRA PERSONA
+const cederElemento = async (area, adminId, idprestamo, idelemento, documento, cantidad, observaciones) => {
+    let prestamo = await PrestamoCorriente.findOne({ where: { clientes_documento: documento }});
+    if (!prestamo) {
+        prestamo = await PrestamoCorriente.create({
+            clientes_documento: documento,
+            estado: 'actual',
+            areas_idarea: area
+        });
+    }
+    await ElementoHasPrestamoCorriente.create({
+        elementos_idelemento: idelemento,
+        prestamoscorrientes_idprestamo: prestamo.idprestamo,
+        cantidad,
+        observaciones,
+        fecha_entrega: obtenerHoraActual(),
+        estado: 'actual'
+    });
+    await ElementoHasPrestamoCorriente.destroy({
+        where: {
+            prestamoscorrientes_idprestamo: idprestamo,
+            elementos_idelemento: idelemento
+        }
+    });
+    createRecord(area,'prestamo', idprestamo, adminId, documento, idelemento, cantidad, observaciones, 'cedido', 'CEDER ELEMENTO');
+};
+
 // CREAR UN PRESTAMO
 const createLoan = async (req, res) => {
     try {
@@ -62,6 +89,10 @@ const findLoanElements = async (req, res) => {
 
     try {
         const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual', areas_idarea: area} });
+        const cliente = await Cliente.findOne({ where: {documento:loanExisting.clientes_documento}});
+        const nombre = cliente.nombre;
+        const documento = cliente.documento;
+        const grupo = cliente.roles_idrol;
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
             const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo, estado: 'actual' }});
@@ -77,7 +108,7 @@ const findLoanElements = async (req, res) => {
 
             const elementos = await Promise.all(elementosEnPrestamo);
 
-            return res.status(200).json({ idprestamo, elementos });
+            return res.status(200).json({ idprestamo, elementos, documento, nombre, grupo });
         } else {
             return res.status(404).json({ mensaje: 'Préstamo no encontrado' });
         }
@@ -134,7 +165,7 @@ const addOrUpdate = async (req, res) => {
         }
 
         for (let elemento of elementos) {
-            const { idelemento, cantidad, cantidadd, observaciones, estado } = elemento;
+            const { idelemento, cantidad, cantidadd, observaciones, estado, cedido } = elemento; 
 
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento, areas_idarea: area }});
             if (!elementoEncontrado) {
@@ -145,7 +176,7 @@ const addOrUpdate = async (req, res) => {
             if (cantidad <= 0) {
                 return res.status(400).json({ mensaje: `La cantidad de préstamo no puede ser 0 ni menor que éste`});
             } else if (cantidadd < 0 || cantidadd > cantidad) {
-                return res.status(400).json({ mensaje: `La cantidad de devolución no puede ser menor a 1 ni mayor a la cantidad prestada`})
+                return res.status(400).json({ mensaje: `La cantidad de devolución no puede ser menor a 0 ni mayor a la cantidad prestada`})
             }
 
             const elementoEnPrestamo = await ElementoHasPrestamoCorriente.findOne({
@@ -232,6 +263,16 @@ const addOrUpdate = async (req, res) => {
                                     elementos_idelemento: idelemento,
                                 }
                             });
+                        }
+                    } else if (estado == 'cedido') {
+                        if (cantidadNueva != 0) {
+                            const persona = await Cliente.findOne({ where: {documento: cedido}});
+                            if(!persona) {
+                                return res.status(404).json({ mensaje: `El documento ${cedido}, al cual desea ceder elementos, no existe` });
+                            } else if (cedido == prestamo.clientes_documento) {
+                                return res.status(400).json({ mensaje: 'No puedes ceder elementos al cliente que actualmente los tiene'})
+                            }
+                            const cedidos = await cederElemento(area, adminId, idprestamo, idelemento, cedido, cantidadNueva, observaciones);
                         }
                     } else {
                         await ElementoHasPrestamoCorriente.update(

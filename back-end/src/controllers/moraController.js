@@ -3,7 +3,8 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
-  
+
+// CREAR UNA MORA DESDE PRÉSTAMO
 const createMora = async (cantidad, observaciones, idelemento, documento, area) => {
     const mora= await Mora.create({
         cantidad: cantidad,
@@ -16,6 +17,7 @@ const createMora = async (cantidad, observaciones, idelemento, documento, area) 
     return mora;
 }
 
+// REGRESAR ELEMENTOS EN MORA
 const returnMora = async (req, res) => {
   try {
     const { area, id: adminId } = req.user;
@@ -42,6 +44,7 @@ const returnMora = async (req, res) => {
   }
 }
 
+// REGISTROS DE TODAS LAS MORAS ACTIVAS
 const getAllMoras = async (req, res) => {
     try {
         const { area } = req.user;

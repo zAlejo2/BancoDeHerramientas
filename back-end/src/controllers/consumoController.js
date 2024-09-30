@@ -1,5 +1,6 @@
 import { Consumo, ElementoHasConsumo, Cliente, Elemento, Mora, Dano } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
+import { createRecord } from './historialController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
@@ -34,16 +35,13 @@ const createConsumption = async (req, res) => {
         });
         
         const idconsumo = consumo.idconsumo;
-
-        return res.status(200).json({idconsumo});
-
+        return res.status(200).json({idconsumo})
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ mensaje: 'Error al crear préstamo, por favor vuelva a intentarlo'});
+        return res.status(500).json({mensaje: 'Error al crear el consumo, por favor volver a intentar'})
     }
-};
-
-// AGREGAR ELEMENTOS AL CONSUMO 
+};    
+ 
+// AGREGAR ELEMENTOS AL CONSUMO
 const addElements = async (req, res) => {
     try {
 
@@ -64,7 +62,7 @@ const addElements = async (req, res) => {
                 return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor que éste`});
             }
 
-            const elementoEncontrado = await Elemento.findOne({ where: { idelemento , areas_idarea: area}});
+            const elementoEncontrado = await Elemento.findOne({ where: { idelemento , areas_idarea: area, tipo: 'consumible'}});
             if (!elementoEncontrado) {
                 return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado en el inventario` });
             }
@@ -98,6 +96,7 @@ const addElements = async (req, res) => {
                 },
                 { where: { idelemento } }
             );
+            createRecord(area, 'consumo', consumo.idconsumo, adminId, consumo.clientes_documento, idelemento, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE CONSUMO');
         }
         return res.status(201).json({ mensaje: 'Elementos agregados al consumo con éxito' });
 
@@ -122,6 +121,7 @@ const deleteConsumption = async (req,res) => {
     }
 };
 
+// REGISTROS DE TABLA CONSUMOS, TODOS LOS CONSUMOS
 const getAllConsumptions = async (req, res) => {
     try {
         const { area } = req.user;
@@ -159,6 +159,7 @@ const getAllConsumptions = async (req, res) => {
     }
 }
 
+// REGISTRAR CONSUMO DESDE PRESTAMO
 const recordConsumption = async (cantidad, observaciones, idelemento, documento, area, adminId) => {
     const consumo = await Consumo.create({
         clientes_documento: documento,
@@ -175,7 +176,7 @@ const recordConsumption = async (cantidad, observaciones, idelemento, documento,
         fecha: obtenerHoraActual(),
         administradores_documento: adminId
     });
-console.log(elemento, elemento.cantidad)
+
     await Elemento.update(
         {
             cantidad: elemento.cantidad - cantidad,
@@ -183,6 +184,8 @@ console.log(elemento, elemento.cantidad)
         },
         { where: { idelemento } }
     );
+
+    createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, idelemento, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO');
 };
 
 

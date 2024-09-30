@@ -27,7 +27,7 @@ Elemento.init({
     allowNull: false
   },
   tipo: {
-    type: DataTypes.ENUM('prestamo', 'consumo'),
+    type: DataTypes.ENUM('devolutivo', 'consumible'),
     allowNull: false
   },
   estado: {
