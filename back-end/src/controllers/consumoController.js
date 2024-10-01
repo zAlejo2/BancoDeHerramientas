@@ -142,7 +142,8 @@ const getAllConsumptions = async (req, res) => {
                 where: { areas_idarea: area },  
                 attributes: ['idelemento', 'descripcion']
               }
-            ]
+            ],
+            order: [['fecha', 'DESC']]
           });
         const consumoFormateado = consumos.map(consumo => {
             const fechaAccion = formatFecha(consumo.fecha, 5);
@@ -188,5 +189,24 @@ const recordConsumption = async (cantidad, observaciones, idelemento, documento,
     createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, idelemento, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO');
 };
 
+const clienteData = async (req, res) => {
+    try {
+        const {idconsumo} = req.params;
+        const consumo = await Consumo.findOne({ where: { idconsumo }});
+        const cliente = await Cliente.findOne({ where: {documento:consumo.clientes_documento}});
+        const nombre = cliente.nombre;
+        const documento = cliente.documento;
+        const grupo = cliente.roles_idrol;
+        if (consumo) {
+            return res.status(200).json({ documento, nombre, grupo });
+        } else {
+            return res.status(404).json({ mensaje: 'Consumo no encontrado' });
+        }
+    } catch (error) {
+        console.error('Error al obtener el consumo:', error);
+        return res.status(500).json({ mensaje: 'Error al obtener el consumo, por favor vuelva a intentarlo' });
+    }
+}
 
-export { createConsumption, getAllConsumptions, addElements, deleteConsumption, recordConsumption};
+
+export { createConsumption, getAllConsumptions, addElements, deleteConsumption, recordConsumption, clienteData};

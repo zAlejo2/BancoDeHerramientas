@@ -3,6 +3,7 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
+// REGISTRAR UN HISTORIAL
 const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, elementoId, Cantidad, Observaciones, Estado, Accion) => {
     try{
 
@@ -24,6 +25,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
     }      
 };
 
+// OBTENER TODOS LOS REGISTROS DEL HISTORIAL
 const getAllRecord = async (req, res) => {
     try {
         const area = req.area; 
