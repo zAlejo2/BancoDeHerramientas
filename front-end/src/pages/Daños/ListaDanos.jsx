@@ -92,45 +92,46 @@ const Danos = () => {
             borderRadius: '5px',
           }}
         />
-      </div>
-
-      <table style={{ margin: '0 auto' }}>
-        <thead>
-          <tr>
-            <th>Documento</th>
-            <th>Nombre</th>
-            <th>Grupo</th>
-            <th>Codigo</th>
-            <th>Descripcion</th>
-            <th>Cantidad</th>
-            <th>Fecha</th>
-            <th>Observaciones</th>
-            <th>Reponer</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filtereddanos.length > 0 ? (filtereddanos.map((dano) => (
-            <tr key={dano.iddano}>
-              <td>{dano.Cliente.documento}</td>
-              <td>{dano.Cliente.nombre}</td>
-              <td>{dano.Cliente.roles_idrol}</td>
-              <td>{dano.Elemento.idelemento}</td>
-              <td>{dano.Elemento.descripcion}</td>
-              <td>{dano.cantidad}</td>
-              <td>{dano.fecha}</td>
-              <td>{dano.observaciones}</td>
-              <td><button onClick={() => handleReturndano(dano.iddano, dano.Elemento.idelemento, dano.cantidad, dano.observaciones, dano.Cliente.documento)}>
-                <FaCheck/>
-              </button></td>
+      </div> 
+      <div className="max-h-[400px] max-w-[1000px] overflow-y-auto overflow-x-auto">
+        <table style={{ margin: '0 auto' }}>
+            <thead>
+            <tr>
+                <th>Documento</th>
+                <th>Nombre</th>
+                <th>Grupo</th>
+                <th>Codigo</th>
+                <th>Descripcion</th>
+                <th>Cantidad</th>
+                <th>Fecha</th>
+                <th>Observaciones</th>
+                <th>Reponer</th>
             </tr>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan="9">No hay danos</TableCell>
-          </TableRow>
-        )}
-        </tbody>
-      </table>
+            </thead>
+            <tbody>
+            {filtereddanos.length > 0 ? (filtereddanos.map((dano) => (
+                <tr key={dano.iddano}>
+                <td>{dano.Cliente.documento}</td>
+                <td>{dano.Cliente.nombre}</td>
+                <td>{dano.Cliente.roles_idrol}</td>
+                <td>{dano.Elemento.idelemento}</td>
+                <td>{dano.Elemento.descripcion}</td>
+                <td>{dano.cantidad}</td>
+                <td>{dano.fecha}</td>
+                <td>{dano.observaciones}</td>
+                <td><button onClick={() => handleReturndano(dano.iddano, dano.Elemento.idelemento, dano.cantidad, dano.observaciones, dano.Cliente.documento)}>
+                    <FaCheck/>
+                </button></td>
+                </tr>
+            ))
+            ) : (
+            <TableRow>
+                <TableCell colSpan="9">No hay danos</TableCell>
+            </TableRow>
+            )}
+            </tbody>
+        </table>
+      </div>    
     </div>
   );
 };

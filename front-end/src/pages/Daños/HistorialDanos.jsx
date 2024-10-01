@@ -31,7 +31,7 @@ const HistorialDanos = () => {
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['entidad_id', 'cliente_id', 'cliente_nombre', 'elemento_id', 'elemento_nombre', 'cantidad', 'observaciones', 'estado', 'accion', 'admin_id', 'fecha_accion']}
-                title="Historial Moras"
+                title="Historial Daños"
             />
         </div>
     );

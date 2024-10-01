@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import useSearchElements from "../../hooks/useSearchElements";
 import usePostData from "../../hooks/usePostData";
 import useDeleteData from "../../hooks/useDeleteData";
 import { useParams } from "react-router-dom";
+import axiosInstance from '../../helpers/axiosConfig.js';
 import '../../assets/formAgregarEditarStyles.css'; 
 
 export const FormAgregarEditarConsumo = () => {
@@ -11,6 +12,24 @@ export const FormAgregarEditarConsumo = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
     const { deleteData, data, isLoading, error } = useDeleteData(`consumos/${idconsumo}`, '/consumos');
+    const [cliente, setCliente] = useState({ nombre: '', grupo: '', documento: '' });
+
+    useEffect(() => {
+        // Hacer la solicitud para obtener el consumo y los datos del cliente relacionado
+        const fetchClienteData = async () => {
+            try {
+                const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/consumos/datosCliente/${idconsumo}`);
+                const { nombre, grupo, documento } = response.data; // Ajusta el acceso según la estructura de tu respuesta
+                setCliente({ nombre, grupo, documento });
+            } catch (error) {
+                console.error('Error al obtener los datos del cliente', error);
+            }
+        };
+
+        if (idconsumo) {
+            fetchClienteData();
+        }
+    }, [idconsumo]);
 
     const handleDelete = () => {
         deleteData();
@@ -90,7 +109,7 @@ export const FormAgregarEditarConsumo = () => {
 
     return (
         <div className="form-container">
-            <h1 className="text-center my-2 mb-8 text-xl font-bold">Consumo de </h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Consumo de {cliente.documento} (Nombre: {cliente.nombre} --- Grupo: {cliente.grupo})</h1>
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
@@ -121,8 +140,8 @@ export const FormAgregarEditarConsumo = () => {
                     </div>
                 </div>
 
-                <div className="table-container">
-                    <table className="min-w-full divide-y divide-gray-200">
+                <div className="table-container max-h-[210px] overflow-y-auto overflow-x-auto">
+                    <table className="min-w-full divide-y divide-gray-200 ">
                         <thead>
                             <tr>
                                 <th>Código</th>
@@ -182,13 +201,13 @@ export const FormAgregarEditarConsumo = () => {
                         className="consume-button"
                         onClick={handleSave}
                     >
-                        Guardar Consumo
+                        Guardar 
                     </button>
                     <button
                         type="button"
                         className="consume-button"
                         onClick={handleDelete} disabled={isLoading}>
-                        {isLoading ? 'Cancelar...' : 'Cancelar Consumo'}                    
+                        {isLoading ? 'Cancelar...' : 'Cancelar'}                    
                     </button>
                 </div>
             </div>

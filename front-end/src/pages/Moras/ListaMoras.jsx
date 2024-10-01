@@ -93,44 +93,45 @@ const Moras = () => {
           }}
         />
       </div>
-
-      <table style={{ margin: '0 auto' }}>
-        <thead>
-          <tr>
-            <th>Documento</th>
-            <th>Nombre</th>
-            <th>Grupo</th>
-            <th>Codigo</th>
-            <th>Descripcion</th>
-            <th>Cantidad</th>
-            <th>Fecha</th>
-            <th>Observaciones</th>
-            <th>Devolver</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredmoras.length > 0 ? (filteredmoras.map((mora) => (
-            <tr key={mora.idmora}>
-              <td>{mora.Cliente.documento}</td>
-              <td>{mora.Cliente.nombre}</td>
-              <td>{mora.Cliente.roles_idrol}</td>
-              <td>{mora.Elemento.idelemento}</td>
-              <td>{mora.Elemento.descripcion}</td>
-              <td>{mora.cantidad}</td>
-              <td>{mora.fecha}</td>
-              <td>{mora.observaciones}</td>
-              <td><button onClick={() => handleReturnMora(mora.idmora, mora.Elemento.idelemento, mora.cantidad, mora.observaciones, mora.Cliente.documento)}>
-                <FaCheck/>
-              </button></td>
+      <div className="max-h-[400px] max-w-[1000px] overflow-y-auto overflow-x-auto">
+        <table style={{ margin: '0 auto' }}>
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Nombre</th>
+              <th>Grupo</th>
+              <th>Codigo</th>
+              <th>Descripcion</th>
+              <th>Cantidad</th>
+              <th>Fecha</th>
+              <th>Observaciones</th>
+              <th>Devolver</th>
             </tr>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan="9">No hay moras</TableCell>
-          </TableRow>
-        )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredmoras.length > 0 ? (filteredmoras.map((mora) => (
+              <tr key={mora.idmora}>
+                <td>{mora.Cliente.documento}</td>
+                <td>{mora.Cliente.nombre}</td>
+                <td>{mora.Cliente.roles_idrol}</td>
+                <td>{mora.Elemento.idelemento}</td>
+                <td>{mora.Elemento.descripcion}</td>
+                <td>{mora.cantidad}</td>
+                <td>{mora.fecha}</td>
+                <td>{mora.observaciones}</td>
+                <td><button onClick={() => handleReturnMora(mora.idmora, mora.Elemento.idelemento, mora.cantidad, mora.observaciones, mora.Cliente.documento)}>
+                  <FaCheck/>
+                </button></td>
+              </tr>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan="9">No hay moras</TableCell>
+            </TableRow>
+          )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

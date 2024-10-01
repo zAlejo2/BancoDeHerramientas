@@ -296,7 +296,7 @@ export const FormAgregarEditarPrestamo = () => {
                     </div>
                 </div>
 
-                <div className="table-container">
+                <div className="table-container max-h-[210px] overflow-y-auto overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
@@ -360,7 +360,6 @@ export const FormAgregarEditarPrestamo = () => {
                                             <option></option>
                                             <option value="mora">mora</option>
                                             <option value="dano">daño</option>
-                                            <option value="baja">baja</option>
                                             <option value="cedido">ceder</option>
                                             <option disabled={item.tipo == 'devolutivo'} value="consumo">consumo</option>
                                     </select> 
