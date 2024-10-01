@@ -21,22 +21,41 @@ const createMora = async (cantidad, observaciones, idelemento, documento, area) 
 const returnMora = async (req, res) => {
   try {
     const { area, id: adminId } = req.user;
-    const { idmora, idelemento, cantidad, observaciones, documento } = req.body;
-    const elemento = await Elemento.findOne({where: {idelemento: idelemento}})
-    await Elemento.update(
+    const { idmora, idelemento, cantidadDevuelta, observaciones, documento } = req.body;
+    const mora = await Mora.findOne({ where: {idmora: idmora}});
+    const elemento = await Elemento.findOne({where: {idelemento: idelemento}});
+    if (mora.cantidad == cantidadDevuelta) {
+      await Elemento.update(
         {
-            disponibles: elemento.disponibles + cantidad,
-            estado: elemento.disponibles + cantidad <= elemento.minimo ? 'agotado' : 'disponible'
+            disponibles: elemento.disponibles + cantidadDevuelta,
+            estado: elemento.disponibles + cantidadDevuelta <= elemento.minimo ? 'agotado' : 'disponible'
         },
         { where: { idelemento } }
-    );
-    await Mora.destroy({
-        where: {
-            idmora: idmora,
-            elementos_idelemento: idelemento
-        }
-    })
-    createRecord(area, 'mora', idmora, adminId, documento, idelemento, cantidad, observaciones, 'finalizado', 'DEVOLVER ELEMENTO EN MORA');
+      );
+      await Mora.destroy({
+          where: {
+              idmora: idmora,
+              elementos_idelemento: idelemento
+          }
+      });
+      createRecord(area, 'mora', idmora, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'finalizado', 'DEVOLVER TOTAL ELEMENTO EN MORA');
+    } else if  (mora.cantidad !== cantidadDevuelta) {
+        await Elemento.update(
+          {
+              disponibles: elemento.disponibles + cantidadDevuelta,
+              estado: elemento.disponibles + cantidadDevuelta <= elemento.minimo ? 'agotado' : 'disponible'
+          },
+          { where: { idelemento } }
+        );
+        await Mora.update(
+          { cantidad: mora.cantidad - cantidadDevuelta },
+          { where: { idmora: idmora}}
+        );
+        createRecord(area, 'mora', idmora, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'mora', 'DEVOLVER PARTE ELEMENTO EN MORA');
+    } else if (mora.cantidad<cantidadDevuelta || cantidadDevuelta<1) {
+        return res.status(400).json({ mensaje: 'La cantidad de devolución no puede ser mayor a la cantidad a mora ni meno a 1', error})
+    } 
+
     return res.status(200).json({ mensaje: 'elementos regresados'})
   } catch (error) { 
     console.log(error); 
