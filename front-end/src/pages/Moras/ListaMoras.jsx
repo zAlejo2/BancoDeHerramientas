@@ -49,26 +49,42 @@ const Moras = () => {
 
   const handleReturnMora = (idmora, idelemento, cantidad, observaciones, documento) => {
     Swal.fire({
-      title: '¿Estás seguro de que quieres finalizar la mora?',
-      text: "No podrás revertir esta acción",
-      icon: 'warning',
-      iconColor: '#3085d6',
+      title: 'Ingrese la cantidad devuelta del elemento',
+      input: 'text',
+      inputPlaceholder: 'Cantidad devuelta del elemento',
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Devolver',
+      confirmButtonColor: '#007BFF',
+      cancelButtonText: 'Cancelar',
       cancelButtonColor: '#81d4fa',
-      confirmButtonText: 'Sí, devolverlo'
+      preConfirm: (cedido) => {
+          if (!cedido) {
+              Swal.showValidationMessage('Debe ingresar la cantidad');
+          }
+          return cedido;
+      }
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosInstance.post('moras/return', {idmora, idelemento, cantidad, observaciones, documento})
+        const cantidadDevuelta = Number(result.value);
+        if (cantidadDevuelta>cantidad || result.value<1) {
+          return Swal.fire({
+            icon: "error",
+            title: "La cantidad a devolver no puede ser mayor que la cantidad en mora ni menor que 1",
+            text: "Por favor verifique los datos.",
+            confirmButtonColor: '#FC3F3F'
+          });
+        }console.log(cantidadDevuelta)
+        axiosInstance.post('moras/return', {idmora, idelemento, cantidadDevuelta, observaciones, documento})
           .then(response => {
             if (response.status === 200) {
-              setFilteredmoras((prevMoras) => prevMoras.filter(mora => mora.idmora !== idmora));
+              // setFilteredmoras((prevMoras) => prevMoras.filter(mora => mora.idmora !== idmora));
+              location.reload();
             }
           })
           .catch(error => {
             Swal.fire(
-              'Error!',
               'Hubo un problema al devolver el elemento.',
+              'Por favor recargue la página y vuelva a intentarlo',
               'error'
             );
           });
