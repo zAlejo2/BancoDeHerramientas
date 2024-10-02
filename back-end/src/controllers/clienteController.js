@@ -70,32 +70,51 @@ const createClient = async (req, res) => {
 // Actualizar un Cliente
 const updateClient = async (req, res) => {
     try {
-        const user = await Cliente.findByPk(req.params.documento);
+        // Manejar la carga de archivos (si se proporciona una nueva imagen)
+        upload.single('foto')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ mensaje: 'Error al guardar cambios, por favor recargue la página' });
+            }
 
-        if (!user) {
-            return res.status(404).json({ message: 'Cliente no encontrado' });
-        }
+            // Verificar si el cliente existe
+            const client = await Cliente.findByPk(req.body.documento);
+            if (!client) {
+                return res.status(404).json({ mensaje: 'El Cliente no existe' });
+            }
 
-        const isSameData = Object.keys(req.body).every(key => user[key] === req.body[key]);
+            // Verificar si el rol está vacío
+            const rolMissing = req.body.roles_idrol;
+            if (rolMissing === '') {
+                return res.status(400).json({ mensaje: 'El rol del cliente no puede estar vacío' });
+            }
 
-        if (isSameData) {
-            return res.status(400).json({ message: 'No se ha hecho ningún cambio en el Cliente' });
-        }
+            // Verificar si el rol existe
+            const rolExist = await Rol.findByPk(req.body.roles_idrol);
+            if (!rolExist) {
+                return res.status(400).json({ mensaje: 'El rol ingresado no existe' });
+            }
 
-        const [updated] = await Cliente.update(req.body, {
-            where: { documento: req.params.documento }
+            // Si hay una nueva contraseña, encriptarla
+            if (req.body.contrasena && req.body.contrasena !== '') {
+                req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
+            } else {
+                // Mantener la contraseña actual si no se ha proporcionado una nueva
+                req.body.contrasena = client.contrasena;
+            }
+
+            // Obtener el nombre del archivo de la imagen subida, si existe una nueva imagen
+            const foto = req.file ? req.file.filename : client.foto; // Mantener la imagen anterior si no se subió una nueva
+
+            // Actualizar el cliente con los nuevos datos
+            await client.update({ ...req.body, foto });
+
+            res.status(200).json({ mensaje: 'Cliente actualizado correctamente', client });
         });
-
-        if (updated) {
-            const updatedUser = await Cliente.findByPk(req.params.documento);
-            res.json(updatedUser);
-        } else {
-            res.status(404).json({ message: 'Error al actualizar el Cliente' });
-        }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ mensaje: 'Error al actualizar el cliente, por favor recargue la página' });
     }
 };
+
 
 // Eliminar un Cliente
 const deleteClient = async (req, res) => {

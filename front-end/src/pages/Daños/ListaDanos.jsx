@@ -49,32 +49,57 @@ const Danos = () => {
 
   const handleReturndano = (iddano, idelemento, cantidad, observaciones, documento) => {
     Swal.fire({
-      title: '¿Estás seguro de que quieres reponer la daño?',
-      text: "No podrás revertir esta acción",
-      icon: 'warning',
-      iconColor: '#3085d6',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#81d4fa',
-      confirmButtonText: 'Sí, devolverlo'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axiosInstance.post('danos/return', {iddano, idelemento, cantidad, observaciones, documento})
-          .then(response => {
-            if (response.status === 200) {
-              setFiltereddanos((prevDanos) => prevDanos.filter(dano => dano.iddano !== iddano));
+        title: 'Ingrese los detalles de la reposición del daño',
+        html: `
+            <input type="number" id="cantidad" class="swal2-input border-1 border-gray-400" placeholder="Cantidad repuesta">
+            <input type="text" id="observaciones" class="swal2-input border-1 border-gray-400" placeholder="Observaciones">
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Reponer',
+        confirmButtonColor: '#007BFF',
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#81d4fa',
+        preConfirm: () => {
+            const cantidadDevuelta = document.getElementById('cantidad').value;
+            const observaciones = document.getElementById('observaciones').value;
+
+            if (!cantidadDevuelta || cantidadDevuelta < 1) {
+                Swal.showValidationMessage('Debe ingresar una cantidad válida.');
             }
-          })
-          .catch(error => {
-            Swal.fire(
-              'Error!',
-              'Hubo un problema al reponer el elemento.',
-              'error'
-            );
-          });
-      }
+
+            return { cantidadDevuelta, observaciones };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const { cantidadDevuelta, observaciones } = result.value;
+            const cantidadNum = Number(cantidadDevuelta);
+
+            if (cantidadNum > cantidad || cantidadNum < 1) {
+                return Swal.fire({
+                    icon: "error",
+                    title: "La cantidad a reponer no puede ser mayor que la cantidad en daño ni menor que 1",
+                    text: "Por favor verifique los datos.",
+                    confirmButtonColor: '#FC3F3F'
+                });
+            }
+
+            axiosInstance.post('danos/return', { iddano, idelemento, cantidadDevuelta: cantidadNum, observaciones, documento })
+                .then(response => {
+                    if (response.status === 200) {
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    Swal.fire(
+                        'Hubo un problema al reponer el elemento.',
+                        'Por favor recargue la página y vuelva a intentarlo',
+                        'error'
+                    );
+                });
+        }
     });
-  }
+};
+
   return (
     <div style={{ textAlign: 'center' }}><br/>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>

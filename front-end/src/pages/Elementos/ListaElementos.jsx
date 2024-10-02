@@ -9,8 +9,9 @@ const Elementos = () => {
     const { updateEntity } = useUpdate('/elements', '/elementos/lista');
     const [selectedElement, setSelectedElement] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null); // Nuevo estado para el archivo
 
-    const columns = ['ID', 'Descripción', 'Cant', 'Dispo', 'Ubicación', 'Tipo', 'Estado', 'Min', 'Foto', ''];
+    const columns = ['ID', 'Descripción', 'Cant', 'Dispo', 'Ubicación', 'Tipo', 'Estado', 'Min', 'Observaciones', ''];
 
     const renderRow = (elemento) => (
         <tr key={elemento.idelemento} className="border-b">
@@ -22,7 +23,8 @@ const Elementos = () => {
             <td className="px-4 py-2">{elemento.tipo}</td>
             <td className="px-4 py-2">{elemento.estado}</td>
             <td className="px-4 py-2">{elemento.minimo}</td>
-            <td className="px-4 py-2">
+            <td className="px-4 py-2">{elemento.observaciones}</td>
+            {/* <td className="px-4 py-2">
                 {elemento.foto ? (
                     <img
                         src={`${import.meta.env.VITE_IMAGENES_URL}/${elemento.foto}`}
@@ -32,7 +34,7 @@ const Elementos = () => {
                 ) : (
                     <span>No imagen</span>
                 )}
-            </td>
+            </td> */}
             <td className="px-4 py-2">
                 <button onClick={() => openModal(elemento)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
@@ -49,6 +51,7 @@ const Elementos = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedElement(null);
+        setSelectedFile(null); // Limpiar el archivo al cerrar el modal
     };
 
     const handleInputChange = (e) => {
@@ -59,8 +62,23 @@ const Elementos = () => {
         }));
     };
 
+    // Nuevo handler para manejar el archivo seleccionado
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+
     const handleUpdate = async () => {
-        await updateEntity(selectedElement.idelemento, selectedElement);
+        const formData = new FormData();
+        Object.entries(selectedElement).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        // Solo si hay un archivo seleccionado, lo añadimos al formData
+        if (selectedFile) {
+            formData.append('foto', selectedFile);
+        }
+
+        await updateEntity(selectedElement.idelemento, formData);
         closeModal();
     };
 
@@ -70,9 +88,10 @@ const Elementos = () => {
         { label: 'Cantidad', name: 'cantidad', type: 'number' },
         { label: 'Disponibles', name: 'disponibles', type: 'number' },
         { label: 'Ubicación', name: 'ubicacion' },
-        { label: 'Tipo', name: 'tipo' },
-        { label: 'Estado', name: 'estado' },
+        { label: 'Tipo', name: 'tipo', readOnly: true },
+        { label: 'Estado', name: 'estado', readOnly: true },
         { label: 'Mínimo', name: 'minimo', type: 'number' },
+        { label: 'Observaciones', name: 'observaciones', type: 'text' },
     ];
 
     return (
@@ -92,7 +111,25 @@ const Elementos = () => {
                     handleInputChange={handleInputChange}
                     handleSubmit={handleUpdate}
                     closeModal={closeModal}
-                />
+                >
+                    {/* Mostrar imagen si existe */}
+                    {selectedElement?.foto && (
+                        <div className="mb-4">
+                            <label className="block font-bold mb-2">Foto actual:</label>
+                            <img
+                                src={`${import.meta.env.VITE_IMAGENES_URL}/${selectedElement.foto}`}
+                                alt={`Foto de ${selectedElement.descripcion}`}
+                                className="h-32 w-32 object-cover"
+                            />
+                        </div>
+                    )}
+
+                    {/* Campo para subir una nueva foto */}
+                    <div className="mb-4">
+                        <label className="block font-bold mb-2">Subir nueva foto:</label>
+                        <input type="file" accept="image/*" onChange={handleFileChange} />
+                    </div>
+                </ModalComponent>
             )}
         </div>
     );

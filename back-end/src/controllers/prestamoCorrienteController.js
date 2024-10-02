@@ -273,6 +273,13 @@ const addOrUpdate = async (req, res) => {
                                 return res.status(400).json({ mensaje: 'No puedes ceder elementos al cliente que actualmente los tiene'})
                             }
                             const cedidos = await cederElemento(area, adminId, idprestamo, idelemento, cedido, cantidadNueva, observaciones);
+                            await Elemento.update(
+                                {
+                                    disponibles: elementoEncontrado.disponibles + diferencia,
+                                    estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                                },
+                                { where: { idelemento } }
+                            );
                         }
                     } else {
                         await ElementoHasPrestamoCorriente.update(

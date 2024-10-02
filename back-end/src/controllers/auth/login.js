@@ -59,7 +59,7 @@ const login = async (req, res) => {
 
           const id = client.documento;
           const type = 'cliente';
-          const role = obtenerDescripcion ? obtenerDescripcion.descripcion : null;
+          const role = obtenerDescripcion ? obtenerDescripcion.descripcion : 'iuytgbngd';
 
           const token = generarToken(id, type, role);
 

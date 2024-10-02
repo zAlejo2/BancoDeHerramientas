@@ -9,8 +9,11 @@ const Clientes = () => {
     const { updateEntity } = useUpdate('/clients', '/usuarios/lista');
     const [selectedClient, setSelectedClient] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null); 
+    const { data: rolesd } = useGetData(['roles']);
+    const roles = rolesd.roles || []; 
 
-    const columns = ['Documento', 'Nombre', 'Correo', 'Fecha inicio', 'Fecha fin', 'Observaciones', 'Telefono', 'Grupo', 'Foto', ''];
+    const columns = ['Documento', 'Nombre', 'Correo', 'Fecha inicio', 'Fecha fin', 'Observaciones', 'Telefono', 'Grupo',  ''];
 
     const renderRow = (cliente) => (
         <tr key={cliente.documento} className="border-b">
@@ -22,7 +25,7 @@ const Clientes = () => {
             <td className="px-4 py-2">{cliente.observaciones}</td>
             <td className="px-4 py-2">{cliente.numero}</td>
             <td className="px-4 py-2">{cliente.roles_idrol}</td>
-            <td className="px-4 py-2">
+            {/* <td className="px-4 py-2">
                 {cliente.foto ? (
                     <img
                         src={`${import.meta.env.VITE_IMAGENES_URL}/${cliente.foto}`}
@@ -32,7 +35,7 @@ const Clientes = () => {
                 ) : (
                     <span>No imagen</span>
                 )}
-            </td>
+            </td> */}
             <td className="px-4 py-2">
                 <button onClick={() => openModal(cliente)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
@@ -49,6 +52,7 @@ const Clientes = () => {
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedClient(null);
+        setSelectedFile(null); 
     };
 
     const handleInputChange = (e) => {
@@ -59,10 +63,34 @@ const Clientes = () => {
         }));
     };
 
+    // Nuevo handler para manejar el archivo seleccionado
+    const handleFileChange = (e) => {
+        setSelectedFile(e.target.files[0]);
+    };
+
     const handleUpdate = async () => {
-        await updateEntity(selectedClient.documento, selectedClient);
+        const formData = new FormData();
+        Object.entries(selectedClient).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+
+        // Solo si hay un archivo seleccionado, lo añadimos al formData
+        if (selectedFile) {
+            formData.append('foto', selectedFile);
+        }
+
+        await updateEntity(selectedClient.documento, formData);
         closeModal();
     };
+
+    const roleOptions = roles.map(role => ({
+        value: role.idrol, // O el campo adecuado para el ID de rol
+        label: role.descripcion, // O el campo adecuado para el nombre del rol
+    }));
+
+    const instructorRole = roles.find(role => role.descripcion === 'instructor');
+    const instructorRoleId = instructorRole ? instructorRole.idrol : null;
+    const isInstructor = selectedClient?.roles_idrol === instructorRoleId;
 
     const fields = [
         { label: 'Documento', name: 'documento', readOnly: true },
@@ -72,7 +100,10 @@ const Clientes = () => {
         { label: 'Fecha Fin', name: 'fechaFin', type: 'date' },
         { label: 'Observaciones', name: 'observaciones' },
         { label: 'Telefono', name: 'numero' },
-        { label: 'Foto', name: 'foto', type: 'file' },
+        { label: 'Grupo', name: 'roles_idrol', type: 'select', options: roleOptions },
+        ...(isInstructor
+            ? [{ label: 'Contraseña', name: 'contrasena', type: 'password' }]
+            : [])
     ];
 
     return (
@@ -84,7 +115,7 @@ const Clientes = () => {
                 searchKeys={['documento', 'nombre', 'correo', 'fechaInicio', 'fechaFin', 'numero', 'observaciones']}
                 title="Lista Clientes"
             />
-
+    
             {isModalOpen && (
                 <ModalComponent
                     item={selectedClient}
@@ -92,10 +123,28 @@ const Clientes = () => {
                     handleInputChange={handleInputChange}
                     handleSubmit={handleUpdate}
                     closeModal={closeModal}
-                />
+                >
+                    {/* Mostrar imagen si existe */}
+                    {selectedClient?.foto && (
+                        <div className="mb-4">
+                            <label className="block font-bold mb-2">Foto actual:</label>
+                            <img
+                                src={`${import.meta.env.VITE_IMAGENES_URL}/${selectedClient.foto}`}
+                                alt={`Foto de ${selectedClient.nombre}`}
+                                className="h-32 w-32 object-cover"
+                            />
+                        </div>
+                    )}
+    
+                    {/* Campo para subir una nueva foto */}
+                    <div className="mb-4">
+                        <label className="block font-bold mb-2">Subir nueva foto:</label>
+                        <input type="file" accept="image/*" onChange={handleFileChange} />
+                    </div>
+                </ModalComponent>
             )}
         </div>
-    );
+    );    
 };
 
 export default Clientes;

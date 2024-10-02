@@ -27,7 +27,7 @@ const useUpdate = (baseUrl, redirectUrl) => {
                     navigate(redirectUrl);
                 }, 2000);           
             });
-
+            location.reload();
             return response.data;
         } catch (err) {
             const mensaje = err.response?.data?.mensaje || "Error inesperado";
@@ -39,7 +39,7 @@ const useUpdate = (baseUrl, redirectUrl) => {
                 confirmButtonColor: '#FC3F3F',
                 confirmButtonText: 'Ok',
             });
-
+            location.reload();
             setError(`Error al actualizar`);
         } finally {
             setLoading(false);

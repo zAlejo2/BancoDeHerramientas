@@ -3,7 +3,8 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
-  
+ 
+// CREAR DAÑO
 const createDano = async (cantidad, observaciones, idelemento, documento, area) => {
     const dano= await Dano.create({
         cantidad: cantidad,
@@ -16,32 +17,53 @@ const createDano = async (cantidad, observaciones, idelemento, documento, area) 
     return dano;
 }
 
+// REPONER ELEMENTO EN DAÑO
 const returnDano = async (req, res) => {
-  try {
-    const { area, id: adminId } = req.user;
-    const { iddano, idelemento, cantidad, observaciones, documento } = req.body;
-    const elemento = await Elemento.findOne({where: {idelemento: idelemento}})
-    await Elemento.update(
-        {
-            disponibles: elemento.disponibles + cantidad,
-            estado: elemento.disponibles + cantidad <= elemento.minimo ? 'agotado' : 'disponible'
-        },
-        { where: { idelemento } }
-    );
-    await Dano.destroy({
-        where: {
-            iddano: iddano,
-            elementos_idelemento: idelemento
-        }
-    })
-    createRecord(area, 'daño', iddano, adminId, documento, idelemento, cantidad, observaciones, 'finalizado', 'REPONER ELEMENTO DAÑADO');
-    return res.status(200).json({ mensaje: 'elementos regresados'})
-  } catch (error) { 
-    console.log(error); 
-    return res.status(500).json({ mensaje: 'Error al reponer el elemento'})
-  }
+    try {
+      const { area, id: adminId } = req.user;
+      const { iddano, idelemento, cantidadDevuelta, observaciones, documento } = req.body;
+      const dano = await Dano.findOne({ where: {iddano: iddano}});
+      const elemento = await Elemento.findOne({where: {idelemento: idelemento}});
+      if (dano.cantidad == cantidadDevuelta) {
+        await Elemento.update(
+          {
+              disponibles: elemento.disponibles + cantidadDevuelta,
+              estado: elemento.disponibles + cantidadDevuelta <= elemento.minimo ? 'agotado' : 'disponible'
+          },
+          { where: { idelemento } }
+        );
+        await Dano.destroy({
+            where: {
+                iddano: iddano,
+                elementos_idelemento: idelemento
+            }
+        });
+        createRecord(area, 'daño', iddano, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'finalizado', 'REPONER TOTAL ELEMENTO EN DAÑO');
+      } else if  (dano.cantidad !== cantidadDevuelta) {
+          await Elemento.update(
+            {
+                disponibles: elemento.disponibles + cantidadDevuelta,
+                estado: elemento.disponibles + cantidadDevuelta <= elemento.minimo ? 'agotado' : 'disponible'
+            },
+            { where: { idelemento } }
+          );
+          await Dano.update(
+            { cantidad: dano.cantidad - cantidadDevuelta },
+            { where: { iddano: iddano}}
+          );
+          createRecord(area, 'daño', iddano, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'daño', 'REPONER PARTE ELEMENTO EN DAÑO');
+      } else if (dano.cantidad<cantidadDevuelta || cantidadDevuelta<1) {
+          return res.status(400).json({ mensaje: 'La cantidad de devolución no puede ser mayor a la cantidad a dano ni meno a 1', error})
+      } 
+  
+      return res.status(200).json({ mensaje: 'elementos repuestos'})
+    } catch (error) { 
+      console.log(error); 
+      return res.status(500).json({ mensaje: 'error al regresar daño', error})
+    }
 }
 
+// OBTENER TODOS LOS DAÑOS ACTUALES
 const getAllDanos = async (req, res) => {
     try {
         const { area } = req.user;

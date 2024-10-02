@@ -6,7 +6,7 @@ const HistorialDanos = () => {
     const { data } = useGetData(['historial']);
     const filteredData = data?.historial ? data.historial.filter(historial => historial.tipo_entidad === 'daño') : [];
 
-    const columns = ['Código Mora', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
+    const columns = ['Código Daño', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
 
     const renderRow = (historial) => (
         <tr key={historial.id_historial} className="border-b">

@@ -103,30 +103,41 @@ const createElement = async (req, res) => {
 // Actualizar un elemento
 const updateElement = async (req, res) => {
     try {
-        const element = await Elemento.findByPk(req.params.idelemento);
+        // Manejar la carga de archivos (si se proporciona una nueva imagen)
+        upload.single('foto')(req, res, async (err) => {
+            if (err) {
+                return res.status(400).json({ mensaje: 'Error al actualizar al guardar cambios, recarga la página' });
+            }
 
-        if (!element) {
-            return res.status(404).json({ message: 'elemento no encontrado' });
-        }
+            // Verificar si el elemento existe
+            const element = await Elemento.findByPk(req.body.idelemento);
+            if (!element) {
+                return res.status(404).json({ mensaje: 'El elemento no existe' });
+            }
 
-        const isSameData = Object.keys(req.body).every(key => element[key] === req.body[key]);
+            // Verificar si el área está vacía
+            const areaMissing = req.body.areas_idarea;
+            if (areaMissing === '') {
+                return res.status(400).json({ mensaje: 'El área del elemento no puede estar vacía' });
+            }
 
-        if (isSameData) {
-            return res.status(400).json({ message: 'No se ha hecho ningún cambio en el elemento' });
-        }
+            // Verificar si el área existe
+            const areaExist = await Area.findByPk(req.body.areas_idarea);
+            if (!areaExist) {
+                return res.status(400).json({ mensaje: 'El área ingresada no existe' });
+            }
 
-        const [updated] = await Elemento.update(req.body, {
-            where: { idelemento: req.params.idelemento }
+            // Obtener el nombre del archivo de la imagen subida, si existe una nueva imagen
+            const foto = req.file ? req.file.filename : element.foto; // Mantener la imagen anterior si no se subió una nueva
+
+            // Actualizar el elemento con los nuevos datos
+            await element.update({ ...req.body, foto });
+
+            res.status(200).json({ mensaje: 'Elemento actualizado correctamente', element });
         });
-
-        if (updated) {
-            const updatedElement = await Elemento.findByPk(req.params.idelemento);
-            res.json(updatedElement);
-        } else {
-            res.status(404).json({ message: 'Error al actualizar el elemento' });
-        }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.log(error)
+        res.status(400).json({ mensaje: 'Error al actualzar el elemento, por favor recarga la página' });
     }
 };
 

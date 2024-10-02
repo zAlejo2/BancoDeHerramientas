@@ -49,48 +49,57 @@ const Moras = () => {
 
   const handleReturnMora = (idmora, idelemento, cantidad, observaciones, documento) => {
     Swal.fire({
-      title: 'Ingrese la cantidad devuelta del elemento',
-      input: 'text',
-      inputPlaceholder: 'Cantidad devuelta del elemento',
+      title: 'Ingrese los detalles de la devolución de la mora',
+      html: `
+          <input type="number" id="cantidad" class="swal2-input border-1 border-gray-400" placeholder="Cantidad devuelta">
+          <input type="text" id="observaciones" class="swal2-input border-1 border-gray-400" placeholder="Observaciones">
+      `,
       showCancelButton: true,
       confirmButtonText: 'Devolver',
       confirmButtonColor: '#007BFF',
       cancelButtonText: 'Cancelar',
       cancelButtonColor: '#81d4fa',
-      preConfirm: (cedido) => {
-          if (!cedido) {
-              Swal.showValidationMessage('Debe ingresar la cantidad');
+      preConfirm: () => {
+          const cantidadDevuelta = document.getElementById('cantidad').value;
+          const observaciones = document.getElementById('observaciones').value;
+
+          if (!cantidadDevuelta || cantidadDevuelta < 1) {
+              Swal.showValidationMessage('Debe ingresar una cantidad válida.');
           }
-          return cedido;
+
+          return { cantidadDevuelta, observaciones };
       }
     }).then((result) => {
       if (result.isConfirmed) {
-        const cantidadDevuelta = Number(result.value);
-        if (cantidadDevuelta>cantidad || result.value<1) {
-          return Swal.fire({
-            icon: "error",
-            title: "La cantidad a devolver no puede ser mayor que la cantidad en mora ni menor que 1",
-            text: "Por favor verifique los datos.",
-            confirmButtonColor: '#FC3F3F'
-          });
-        }console.log(cantidadDevuelta)
-        axiosInstance.post('moras/return', {idmora, idelemento, cantidadDevuelta, observaciones, documento})
-          .then(response => {
-            if (response.status === 200) {
-              // setFilteredmoras((prevMoras) => prevMoras.filter(mora => mora.idmora !== idmora));
-              location.reload();
-            }
-          })
-          .catch(error => {
-            Swal.fire(
-              'Hubo un problema al devolver el elemento.',
-              'Por favor recargue la página y vuelva a intentarlo',
-              'error'
-            );
-          });
+          const { cantidadDevuelta, observaciones } = result.value;
+          const cantidadNum = Number(cantidadDevuelta);
+
+          if (cantidadNum > cantidad || cantidadNum < 1) {
+              return Swal.fire({
+                  icon: "error",
+                  title: "La cantidad a devolver no puede ser mayor que la cantidad en mora ni menor que 1",
+                  text: "Por favor verifique los datos.",
+                  confirmButtonColor: '#FC3F3F'
+              });
+          }
+
+          axiosInstance.post('moras/return', { idmora, idelemento, cantidadDevuelta: cantidadNum, observaciones, documento })
+              .then(response => {
+                  if (response.status === 200) {
+                      location.reload();
+                  }
+              })
+              .catch(error => {
+                  Swal.fire(
+                      'Hubo un problema al devolver el elemento.',
+                      'Por favor recargue la página y vuelva a intentarlo',
+                      'error'
+                  );
+              });
       }
     });
   }
+
   return (
     <div style={{ textAlign: 'center' }}><br/>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>

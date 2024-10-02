@@ -31,7 +31,7 @@ Cliente.init ({
         allowNull: false 
     },
     observaciones: {
-        type: DataTypes.STRING(100),
+        type: DataTypes.STRING(300),
         allowNull: true 
     },
     numero: {
