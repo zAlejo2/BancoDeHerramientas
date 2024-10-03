@@ -82,14 +82,17 @@ const Elementos = () => {
         closeModal();
     };
 
+    const optionsEstado = [{label: 'Disponible', value: 'disponible'}, {label: 'Agotado', value: 'agotado'}];
+    const optionsTipo = [{label: 'Consumible', value: 'consumible'}, {label: 'Devolutivo', value: 'devolutivo'}];
+
     const fields = [
         { label: 'ID', name: 'idelemento', readOnly: true },
         { label: 'Descripción', name: 'descripcion' },
         { label: 'Cantidad', name: 'cantidad', type: 'number' },
         { label: 'Disponibles', name: 'disponibles', type: 'number' },
         { label: 'Ubicación', name: 'ubicacion' },
-        { label: 'Tipo', name: 'tipo', readOnly: true },
-        { label: 'Estado', name: 'estado', readOnly: true },
+        { label: 'Tipo', name: 'tipo', type: 'select', options: optionsTipo},
+        { label: 'Estado', name: 'estado', type: 'select', options: optionsEstado },
         { label: 'Mínimo', name: 'minimo', type: 'number' },
         { label: 'Observaciones', name: 'observaciones', type: 'text' },
     ];

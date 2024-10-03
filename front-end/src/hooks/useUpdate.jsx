@@ -39,7 +39,6 @@ const useUpdate = (baseUrl, redirectUrl) => {
                 confirmButtonColor: '#FC3F3F',
                 confirmButtonText: 'Ok',
             });
-            location.reload();
             setError(`Error al actualizar`);
         } finally {
             setLoading(false);

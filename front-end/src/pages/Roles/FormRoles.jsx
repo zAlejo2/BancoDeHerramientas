@@ -7,19 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import useValidation from "@/hooks/useValidation"; // Importa el hook de validación
 
 export const FormRoles = () => {
-    const initialData = { idrol: "", descripcion: "" };
+    const initialData = { descripcion: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
     const validations = {
         idrol: [
-            {
-                validate: value => value.trim() !== "",
-                message: "El ID del rol es obligatorio."
-            },
-            {
-                validate: value => /^[0-9]+$/.test(value),
-                message: "El ID del rol debe contener solo números."
-            }
         ],
         descripcion: [
             {
@@ -30,14 +22,6 @@ export const FormRoles = () => {
     };
 
     const inputs1 = [
-        { 
-            id: 1, 
-            type: 'number', 
-            name: 'idrol', 
-            placeholder: 'Ingrese el id del rol', 
-            value: inputs.idrol, 
-            required: true 
-        },
         { 
             id: 2, 
             type: 'text', 
@@ -59,10 +43,9 @@ export const FormRoles = () => {
 
     const onSubmit = () => {
         handleFormReset();
-        navigate("/", { replace: true });
     };
 
-    const handleSubmit = usePostData("roles", onSubmit, inputs, validations); // Utiliza la función validateInputs
+    const handleSubmit = usePostData("roles", onSubmit, inputs, validations, '/roles/formulario'); // Utiliza la función validateInputs
     
     return (
         <Forms>

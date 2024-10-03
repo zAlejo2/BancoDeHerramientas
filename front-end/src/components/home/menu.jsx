@@ -85,8 +85,8 @@ export const Menu = ({ children }) => {
             name: "Areas", 
             to: "/areas", 
             subMenu: [
-                { name: "Formulario", to: "/areas/formulario" }, 
-                // { name: "Encargos", to: "/alertas/encargos" }
+                { name: "Registrar Área", to: "/areas/formulario" }, 
+                { name: "Lista", to: "/areas/lista" }
             ]
         },
         { 
@@ -263,5 +263,5 @@ function Icon({ name, ...props }) {
         "Historial": <MdHistoryToggleOff {...props}/>,
         "Historial Completo": <List {...props}/>
     };
-    return icons[name] || <XIcon {...props} />;
+    return icons[name] || <List {...props} />;
 }

@@ -3,7 +3,7 @@ import axiosInstance from '../helpers/axiosConfig';
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 
-const useValidatedPostDataImage = (url, onSubmit, formData, validations) => {
+const useValidatedPostDataImage = (url, onSubmit, formData, validations, ruta) => {
     const [errors, setErrors] = useState({});
     const navigate = useNavigate();
 
@@ -59,19 +59,21 @@ const useValidatedPostDataImage = (url, onSubmit, formData, validations) => {
                 }
             }).then(() => {
                 onSubmit();
-                navigate("/inicio", { replace: true });
+                navigate(ruta, { replace: true });
+                location.reload();
             });
         } catch (error) {
+            const mensaje = error.response?.data?.mensaje || "Error inesperado";
             Swal.fire({
                 icon: "error",
-                title: "Oops...",
-                text: `Parece que hubo un error: por favor verifique los datos.`,
-                confirmButtonColor: "#6fc390",
+                title: mensaje,
+                text: "Por favor verifique los datos.",
+                confirmButtonColor: '#FC3F3F',
                 customClass: {
                     container: 'swal2-container',
                     popup: 'swal2-popup'
                 }
-            });
+            })
             console.log(error);
         }
     };
@@ -96,9 +98,9 @@ const useValidatedPostDataImage = (url, onSubmit, formData, validations) => {
             title: '¿Estás seguro?',
             text: "Confirma que la información sea correcta.",
             icon: 'warning',
-            iconColor: '#212121',
+            iconColor: '#007BFF',
             showCancelButton: true,
-            confirmButtonColor: '#212121',
+            confirmButtonColor: '#007BFF',
             cancelButtonColor: '#81d4fa',
             confirmButtonText: 'Sí, estoy seguro!',
             cancelButtonText: 'Cancelar',

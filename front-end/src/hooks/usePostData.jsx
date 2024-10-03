@@ -29,10 +29,23 @@ const usePostData = (url, onSubmit, inputs, validations, ruta) => {
     const aceptSubmit = async () => {
         try {
             const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);
-            onSubmit(response.data);
-            onSubmit();
-            navigate(ruta, { replace: true });
-
+            Swal.fire({
+                title: "¡Bien!",
+                text: "La información ha sido guardada correctamente.",
+                icon: "success",
+                iconColor: "#212121",
+                showConfirmButton: false,
+                timer: 2500,
+                customClass: {
+                    container: 'swal2-container',
+                    popup: 'swal2-popup'
+                }
+            }).then(() => {
+                onSubmit(response.data);
+                onSubmit();
+                navigate(ruta, { replace: true });
+                location.reload()
+            });
         } catch (error) {
             const mensaje = error.response?.data?.mensaje || "Error inesperado";
             Swal.fire({
@@ -67,7 +80,7 @@ const usePostData = (url, onSubmit, inputs, validations, ruta) => {
             icon: 'warning',
             iconColor: '#007BFF',
             showCancelButton: true,
-            confirmButtonColor: '#007BFF',
+                confirmButtonColor: '#007BFF',
             cancelButtonColor: '#81d4fa',
             confirmButtonText: 'Sí, estoy seguro!',
             cancelButtonText: 'Cancelar',

@@ -27,17 +27,70 @@ const getAreaById = async (req, res) => {
 // Crear una nueva area
 const createArea = async (req, res) => {
     try {
-        const areaExisting = await Area.findByPk(req.body.idarea);
 
-        if(!areaExisting) { 
-            const area = await Area.create(req.body);
-            res.status(201).json(area);
-        } else {
-            res.status(400).json({ message: 'El Area ingresada ya existe' });
-        }
+        const { nombre } = req.body;
+        const areaMax = await Area.findOne({
+            order: [['idarea', 'DESC']],
+            attributes: ['idarea'],
+        });
+        const idarea = areaMax ? areaMax.idarea + 1 : 1;
+
+        const area = await Area.create({
+            idarea: idarea,
+            nombre: nombre
+        });
+        res.status(200).json(area);
+
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ mensaje: 'Error inesperado, intente recargar la página' });
     }
 };
 
-export { getAllAreas, getAreaById, createArea };
+// Actualizar un area
+const updateArea = async (req, res) => {
+    try {
+        const area = await Area.findByPk(req.params.idarea);
+
+        if (!area) {
+            return res.status(404).json({ mensaje: 'Area no encontrada' });
+        }
+
+        const isSameData = Object.keys(req.body).every(key => area[key] === req.body[key]);
+
+        if (isSameData) {
+            return res.status(400).json({ mensaje: 'No se ha hecho ningún cambio en el Area' });
+        }
+
+        const [updated] = await Area.update(req.body, {
+            where: { idarea: req.params.idarea }
+        });
+
+        if (updated) {
+            const updatedArea = await Area.findByPk(req.params.idarea);
+            res.json(updatedArea);
+        } else {
+            res.status(404).json({ mensaje: 'Error al actualizar el Area' });
+        }
+    } catch (error) {
+        res.status(400).json({ mensaje: 'Error inesperado, recargue la página' });
+    }
+};
+
+// Eliminar un area
+const deleteRole = async (req, res) => {
+    try {
+        const deleted = await Rol.destroy({
+            where: { idrol: req.params.idrol }
+        });
+        if (deleted) {
+            res.status(200).json({ message: 'Rol eliminado correctamente' });
+            // el 204 indica que el servidor ha recibido la solicitud con éxito, pero no devuelve ningún contenido.
+        } else {
+            res.status(404).json({ message: 'Rol no encontrado' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export { getAllAreas, getAreaById, createArea, updateArea };

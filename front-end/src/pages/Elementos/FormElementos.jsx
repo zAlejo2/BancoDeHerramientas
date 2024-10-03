@@ -8,7 +8,7 @@ import useGetData from "@/hooks/useGetData";
 import useValidatedPostDataImage from "@/hooks/useValidatePostDataImage";
 
 export const FormElementos = () => {
-    const initialData = { idelemento: "", descripcion: "", cantidad: "", disponibles: "", ubicacion: "", tipo: "", estado: "", areas_idarea: "", foto: "", observaciones: "", minimo: "" };
+    const initialData = { descripcion: "", cantidad: "", disponibles: "", ubicacion: "", tipo: "", estado: "", areas_idarea: "", foto: "", observaciones: "", minimo: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
     const urls = ["areas"];
@@ -31,20 +31,18 @@ export const FormElementos = () => {
     });
 
     const validations = {
-        idelemento: { required: true },
         descripcion: { required: true },
         cantidad: { required: true, pattern: /^\d+$/ }, // Validación numérica
         disponibles: { required: true, pattern: /^\d+$/ }, // Validación numérica
         ubicacion: { required: true },
         tipo: { required: true },
         estado: { required: true },
-        areas_idarea: { required: true },
         foto: { required: true },
         observaciones: { required: true },
         minimo: { required: true, pattern: /^\d+$/ } // Validación numérica
     };
 
-    const { handleSubmit, errors, handleChange } = useValidatedPostDataImage("elements", onSubmit, formData, validations);
+    const { handleSubmit, errors, handleChange } = useValidatedPostDataImage("elements", onSubmit, formData, validations, '/elementos/formulario');
 
     const handleInputChange = (event) => {
         const { name, value, files } = event.target;
@@ -54,14 +52,14 @@ export const FormElementos = () => {
     };
 
     const inputs1 = [
-        { 
-            id: 1, 
-            type: 'number', 
-            name: 'idelemento', 
-            placeholder: 'Ingrese el id del elemento', 
-            value: inputs.idelemento, 
-            required: true 
-        },
+        // { 
+        //     id: 1, 
+        //     type: 'number', 
+        //     name: 'idelemento', 
+        //     placeholder: 'Ingrese el id del elemento', 
+        //     value: inputs.idelemento, 
+        //     required: true 
+        // },
         { 
             id: 2, 
             type: 'text', 
@@ -123,7 +121,7 @@ export const FormElementos = () => {
     return (
         <Forms>
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Elementos</h1>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto max-h-[900px]" onSubmit={handleSubmit}>
                 {inputs1.map(input => (
                     <div key={input.id}>
                         <Input
@@ -156,13 +154,6 @@ export const FormElementos = () => {
                         { value: "Disponible", label: "Disponible" },
                         { value: "Agotado", label: "Agotado" },
                     ]}                
-                />
-                <Select
-                    label="Área"
-                    name="areas_idarea"
-                    value={inputs.areas_idarea}
-                    onChange={handleInputChange}
-                    options={areas.map(area => ({ value: area.idarea, label: area.nombre }))}
                 />
                 <div className={inputs1.length % 2 === 0 ? "md:col-span-2" : "flex items-center justify-center mt-6"}>
                     <Button type={'submit'} name={'Enviar'} />

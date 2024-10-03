@@ -65,40 +65,53 @@ const getElementByName = async (req, res) => {
 
 // Crear un nuevo elemento
 const createElement = async (req, res) => {
-    try {
-        // Manejar la carga de archivos
-        upload.single('foto')(req, res, async (err) => {
+    upload.single('foto')(req, res, async (err) => {
+        try {
             if (err) {
-                return res.status(400).json({ error: err.message });
+                return res.status(400).json({ mensaje: 'Error inesperado, vuelva a intentarlo' });
             }
 
-            const elementExisting = await Elemento.findByPk(req.body.idelemento);
-            if (elementExisting) {
-                return res.status(400).json({ message: 'El Elemento ingresado ya existe' });
+            const { descripcion, cantidad, disponibles, ubicacion, observaciones, minimo, tipo, estado } = req.body;
+            const area = req.area; 
+
+            if (!area) {
+                return res.status(400).json({ mensaje: 'El área del elemento no puede estar vacía' });
             }
 
-            const areaMissing = await req.body.areas_idarea;
-
-            if( areaMissing == '') {
-                return res.status(400).json({ message: 'El area del elemento no puede estar vacía'});
+            const areaExist = await Area.findByPk(area);
+            if (!areaExist) {
+                return res.status(400).json({ mensaje: 'El área ingresada no existe' });
             }
 
-            const areaExist = await Area.findByPk(req.body.areas_idarea);
+            const elementoMax = await Elemento.findOne({
+                order: [['idelemento', 'DESC']],
+                attributes: ['idelemento'],
+            });
+            const idelemento = elementoMax ? elementoMax.idelemento + 1 : 1;
 
-            if(!areaExist) {
-                return res.status(400).json({ message: 'El area ingresada no existe' });
-            }
-
-            // Obtener el nombre del archivo de la imagen subida
             const foto = req.file ? req.file.filename : null;
 
-            const element = await Elemento.create({ ...req.body, foto });
-            res.status(201).json(element);
-        });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-}
+            const element = await Elemento.create({
+                idelemento: idelemento,
+                descripcion: descripcion,
+                cantidad: cantidad,
+                disponibles: disponibles,
+                ubicacion: ubicacion,
+                minimo: minimo,
+                observaciones,
+                estado: estado,
+                tipo: tipo,
+                foto: foto,
+                areas_idarea: area,
+            });
+
+            res.status(200).json(element);
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ mensaje: 'Error inesperado, intente recargando la página' });
+        }
+    });
+};
 
 // Actualizar un elemento
 const updateElement = async (req, res) => {

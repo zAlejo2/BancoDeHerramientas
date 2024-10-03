@@ -4,67 +4,67 @@ import useUpdate from '@/hooks/useUpdate';
 import ListComponent from '@/components/listas/ListComponent';
 import ModalComponent from '@/components/listas/Modal';
 
-const Roles = () => {
-    const { data } = useGetData(['roles']);
-    const { updateEntity } = useUpdate('/roles', '/roles/lista');
-    const [selectedRol, setSelectedRol] = useState(null);
+const Areas = () => {
+    const { data } = useGetData(['areas']);
+    const { updateEntity } = useUpdate('/areas', '/areas/lista');
+    const [selectedArea, setselectedArea] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const columns = ['Codigo Grupo', 'Descripcion', ''];
+    const columns = ['Codigo Área', 'Nombre', ''];
 
-    const renderRow = (rol) => (
-        <tr key={rol.idrol} className="border-b">
-            <td className="px-4 py-2">{rol.idrol}</td>
-            <td className="px-4 py-2">{rol.descripcion}</td>
+    const renderRow = (area) => (
+        <tr key={area.idarea} className="border-b">
+            <td className="px-4 py-2">{area.idarea}</td>
+            <td className="px-4 py-2">{area.nombre}</td>
             <td className="px-4 py-2">
-                <button onClick={() => openModal(rol)} className="bg-black text-white px-4 py-2 rounded-md">
+                <button onClick={() => openModal(area)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
                 </button>
             </td>
         </tr>
     );
 
-    const openModal = (rol) => {
-        setSelectedRol(rol);
+    const openModal = (area) => {
+        setselectedArea(area);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setSelectedRol(null);
+        setselectedArea(null);
     };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setSelectedRol((prevRol) => ({
-            ...prevRol,
+        setselectedArea((prevArea) => ({
+            ...prevArea,
             [name]: value,
         }));
     };
 
     const handleUpdate = async () => {
-        await updateEntity(selectedRol.idrol, selectedRol);
+        await updateEntity(selectedArea.idarea, selectedArea);
         closeModal();
     };
 
     const fields = [
-        { label: 'Id', name: 'idrol', readOnly: true },
-        { label: 'Descripcion', name: 'descripcion' },  
+        { label: 'Id', name: 'idarea', readOnly: true },
+        { label: 'Nombre', name: 'nombre' },  
     ];
 
     return (
         <div>
             <ListComponent
-                data={data?.roles}
+                data={data?.areas}
                 columns={columns}
                 renderRow={renderRow}
-                searchKeys={['idrol', 'descripcion']}
-                title="Lista Grupos"
+                searchKeys={['idarea', 'nombre']}
+                title="Lista Áreas"
             />
 
             {isModalOpen && (
                 <ModalComponent
-                    item={selectedRol}
+                    item={selectedArea}
                     fields={fields}
                     handleInputChange={handleInputChange}
                     handleSubmit={handleUpdate}
@@ -75,4 +75,4 @@ const Roles = () => {
     );
 };
 
-export default Roles;
+export default Areas;
