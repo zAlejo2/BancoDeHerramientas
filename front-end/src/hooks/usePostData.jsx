@@ -35,7 +35,7 @@ const usePostData = (url, onSubmit, inputs, validations, ruta) => {
                 icon: "success",
                 iconColor: "#212121",
                 showConfirmButton: false,
-                timer: 2500,
+                timer: 1500,
                 customClass: {
                     container: 'swal2-container',
                     popup: 'swal2-popup'

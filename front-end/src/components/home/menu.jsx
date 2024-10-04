@@ -98,10 +98,10 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Roles", 
+            name: "Grupos", 
             to: "/roles", 
             subMenu: [
-                { name: "Registrar Rol", to: "/roles/formulario" }, 
+                { name: "Registrar Grupo", to: "/roles/formulario" }, 
                 { name: "Lista", to: "/roles/lista" }
             ]
         },
@@ -236,7 +236,7 @@ function Icon({ name, ...props }) {
         "Encargos": <CgReorder {...props} />,
         "Areas": <PiMapPinAreaFill {...props} />,
         "Clientes": <UserIcon {...props} />,
-        "Roles": <FaRegHandPointUp{...props} />,
+        "Grupos": <FaRegHandPointUp{...props} />,
         "Admin": <SettingsIcon {...props} />,
         "Elementos": <MdOutlineConstruction {...props} />,
         "List": <List {...props} />,
@@ -258,7 +258,7 @@ function Icon({ name, ...props }) {
         "Registrar Elemento": <List {...props}/>,
         "Registrar Consumo": <List {...props}/>,
         "Registrar Cliente": <List {...props}/>,
-        "Registrar Rol": <List {...props}/>,
+        "Registrar Grupo": <List {...props}/>,
         "Registrar Admin": <List {...props}/>,
         "Historial": <MdHistoryToggleOff {...props}/>,
         "Historial Completo": <List {...props}/>

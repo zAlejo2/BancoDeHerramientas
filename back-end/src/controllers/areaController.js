@@ -77,20 +77,20 @@ const updateArea = async (req, res) => {
 };
 
 // Eliminar un area
-const deleteRole = async (req, res) => {
+const deleteArea = async (req, res) => {
     try {
-        const deleted = await Rol.destroy({
-            where: { idrol: req.params.idrol }
+        const deleted = await Area.destroy({
+            where: { idarea: req.params.idarea }
         });
         if (deleted) {
-            res.status(200).json({ message: 'Rol eliminado correctamente' });
+            res.status(200).json({ mensaje: 'Rol eliminado correctamente' });
             // el 204 indica que el servidor ha recibido la solicitud con éxito, pero no devuelve ningún contenido.
         } else {
-            res.status(404).json({ message: 'Rol no encontrado' });
+            res.status(404).json({ mensaje: 'Rol no encontrado' });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
 
-export { getAllAreas, getAreaById, createArea, updateArea };
+export { getAllAreas, getAreaById, createArea, updateArea, deleteArea };

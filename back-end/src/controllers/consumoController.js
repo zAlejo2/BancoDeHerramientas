@@ -189,7 +189,7 @@ const recordConsumption = async (cantidad, observaciones, idelemento, documento,
     createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, idelemento, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO');
 };
 
-const clienteData = async (req, res) => {
+const clienteData = async (req, res) => { 
     try {
         const {idconsumo} = req.params;
         const consumo = await Consumo.findOne({ where: { idconsumo }});

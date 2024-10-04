@@ -3,15 +3,18 @@ import useGetData from '@/hooks/useGetData';
 import useUpdate from '@/hooks/useUpdate';
 import ListComponent from '@/components/listas/ListComponent';
 import ModalComponent from '@/components/listas/Modal';
+import useDeleteData from '@/hooks/useDeleteData';
 
 const Clientes = () => {
     const { data } = useGetData(['clients']);
     const { updateEntity } = useUpdate('/clients', '/usuarios/lista');
     const [selectedClient, setSelectedClient] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [documento, setIdcliente] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null); 
     const { data: rolesd } = useGetData(['roles']);
     const roles = rolesd.roles || []; 
+    const { deleteData, data: deleted, isLoading, error } = useDeleteData(`clients/${documento}`, '/usuarios/lista');
 
     const columns = ['Documento', 'Nombre', 'Correo', 'Fecha inicio', 'Fecha fin', 'Observaciones', 'Telefono', 'Grupo',  ''];
 
@@ -37,15 +40,16 @@ const Clientes = () => {
                 )}
             </td> */}
             <td className="px-4 py-2">
-                <button onClick={() => openModal(cliente)} className="bg-black text-white px-4 py-2 rounded-md">
+                <button onClick={() => openModal(cliente, cliente.documento)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
                 </button>
             </td>
         </tr>
     );
 
-    const openModal = (cliente) => {
+    const openModal = (cliente, documento) => {
         setSelectedClient(cliente);
+        setIdcliente(documento);
         setIsModalOpen(true);
     };
 
@@ -53,6 +57,10 @@ const Clientes = () => {
         setIsModalOpen(false);
         setSelectedClient(null);
         setSelectedFile(null); 
+    };
+
+    const handleDelete = () => {
+        deleteData();
     };
 
     const handleInputChange = (e) => {
@@ -122,6 +130,7 @@ const Clientes = () => {
                     fields={fields}
                     handleInputChange={handleInputChange}
                     handleSubmit={handleUpdate}
+                    handleDelete={handleDelete}
                     closeModal={closeModal}
                 >
                     {/* Mostrar imagen si existe */}

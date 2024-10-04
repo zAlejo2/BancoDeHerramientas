@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import useGetData from '@/hooks/useGetData';
 import useUpdate from '@/hooks/useUpdate';
+import useDeleteData from '@/hooks/useDeleteData';
 import ListComponent from '@/components/listas/ListComponent';
 import ModalComponent from '@/components/listas/Modal';
 
@@ -9,7 +10,9 @@ const Elementos = () => {
     const { updateEntity } = useUpdate('/elements', '/elementos/lista');
     const [selectedElement, setSelectedElement] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [idelemento, setIdelemento] = useState(null);
     const [selectedFile, setSelectedFile] = useState(null); // Nuevo estado para el archivo
+    const { deleteData, data: deleted, isLoading, error } = useDeleteData(`elements/${idelemento}`, '/elementos/lista');
 
     const columns = ['ID', 'Descripción', 'Cant', 'Dispo', 'Ubicación', 'Tipo', 'Estado', 'Min', 'Observaciones', ''];
 
@@ -36,15 +39,16 @@ const Elementos = () => {
                 )}
             </td> */}
             <td className="px-4 py-2">
-                <button onClick={() => openModal(elemento)} className="bg-black text-white px-4 py-2 rounded-md">
+                <button onClick={() => openModal(elemento, elemento.idelemento)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
                 </button>
             </td>
         </tr>
     );
 
-    const openModal = (element) => {
+    const openModal = (element, idelemento) => {
         setSelectedElement(element);
+        setIdelemento(idelemento)
         setIsModalOpen(true);
     };
 
@@ -52,6 +56,10 @@ const Elementos = () => {
         setIsModalOpen(false);
         setSelectedElement(null);
         setSelectedFile(null); // Limpiar el archivo al cerrar el modal
+    };
+
+    const handleDelete = () => {
+        deleteData();
     };
 
     const handleInputChange = (e) => {
@@ -113,6 +121,7 @@ const Elementos = () => {
                     fields={fields}
                     handleInputChange={handleInputChange}
                     handleSubmit={handleUpdate}
+                    handleDelete={handleDelete}
                     closeModal={closeModal}
                 >
                     {/* Mostrar imagen si existe */}

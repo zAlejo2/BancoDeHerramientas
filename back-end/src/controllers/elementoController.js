@@ -161,10 +161,10 @@ const deleteElement = async (req, res) => {
             where: { idelemento: req.params.idelemento }
         });
         if (deleted) {
-            res.status(200).json({ message: 'Elemento eliminado correctamente' });
+            res.status(200).json({ mensaje: 'Elemento eliminado correctamente' });
             // el 204 indica que el servidor ha recibido la solicitud con éxito, pero no devuelve ningún contenido.
         } else {
-            res.status(404).json({ message: 'Elemento no encontrado' });
+            res.status(404).json({ mensaje: 'Elemento no encontrado' });
         }
     } catch (error) {
         res.status(500).json({ error: error.message });

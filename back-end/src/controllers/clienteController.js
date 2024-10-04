@@ -8,7 +8,7 @@ const getAllClients = async (req, res) => {
         const users = await Cliente.findAll();
         res.json(users);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.mensaje });
     }
 };
 
@@ -19,10 +19,10 @@ const getClientById = async (req, res) => {
         if (user) {
             res.json(user);
         } else {
-            res.status(404).json({ message: 'El Cliente ingresado no existe' });
+            res.status(404).json({ mensaje: 'El Cliente ingresado no existe' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.mensaje });
     }
 };
 
@@ -32,12 +32,12 @@ const createClient = async (req, res) => {
         // Manejar la carga de archivos
         upload.single('foto')(req, res, async (err) => {
             if (err) {
-                return res.status(400).json({ error: err.message });
+                return res.status(400).json({ error: err.mensaje });
             }
 
             const userExisting = await Cliente.findByPk(req.body.documento);
             if (userExisting) {
-                return res.status(400).json({ message: 'El Cliente ingresado ya existe' });
+                return res.status(400).json({ mensaje: 'El Cliente ingresado ya existe' });
             }
 
             if (req.body.contrasena !== '') {
@@ -47,13 +47,13 @@ const createClient = async (req, res) => {
             const rolMissing = await req.body.roles_idrol;
 
             if( rolMissing == '') {
-                return res.status(400).json({ message: 'El rol del cliente no puede estar vacío'});
+                return res.status(400).json({ mensaje: 'El rol del cliente no puede estar vacío'});
             }
 
             const rolExist = await Rol.findByPk(req.body.roles_idrol);
 
             if(!rolExist) {
-                return res.status(400).json({ message: 'El rol ingresado no existe' });
+                return res.status(400).json({ mensaje: 'El rol ingresado no existe' });
             }
 
             // Obtener el nombre del archivo de la imagen subida
@@ -63,7 +63,7 @@ const createClient = async (req, res) => {
             res.status(201).json(user);
         });
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(400).json({ error: error.mensaje });
     }
 }
 
@@ -123,13 +123,13 @@ const deleteClient = async (req, res) => {
             where: { documento: req.params.documento }
         });
         if (deleted) {
-            res.status(200).json({ message: 'Cliente eliminado correctamente' });
+            res.status(200).json({ mensaje: 'Cliente eliminado correctamente' });
             // el 204 indica que el servidor ha recibido la solicitud con éxito, pero no devuelve ningún contenido.
         } else {
-            res.status(404).json({ message: 'Cliente no encontrado' });
+            res.status(404).json({ mensaje: 'Cliente no encontrado' });
         }
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: error.mensaje });
     }
 };
 

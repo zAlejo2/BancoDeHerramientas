@@ -3,6 +3,7 @@ import useGetData from '@/hooks/useGetData';
 import useUpdate from '@/hooks/useUpdate';
 import ListComponent from '@/components/listas/ListComponent';
 import ModalComponent from '@/components/listas/Modal';
+import useDeleteData from '@/hooks/useDeleteData';
 
 const Admin = () => {
     const { data } = useGetData(['admins']);
@@ -11,6 +12,8 @@ const Admin = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { data: areasd } = useGetData(['areas']);
     const areas = areasd.areas || []; 
+    const [documento, setIdadmin] = useState(null);
+    const { deleteData, data: deleted, isLoading, error } = useDeleteData(`admins/${documento}`, '/administrador/lista');
 
     const columns = ['Documento', 'Nombre', 'Correo', 'Número', 'Tipo', 'Área', ''];
 
@@ -23,21 +26,26 @@ const Admin = () => {
             <td className="px-4 py-2">{admin.tipo}</td>
             <td className="px-4 py-2">{admin.areas_idarea}</td>
             <td className="px-4 py-2">
-                <button onClick={() => openModal(admin)} className="bg-black text-white px-4 py-2 rounded-md">
+                <button onClick={() => openModal(admin, admin.documento)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
                 </button>
             </td>
         </tr>
     );
 
-    const openModal = (admin) => {
+    const openModal = (admin, documento) => {
         setSelectedAdmin(admin);
+        setIdadmin(documento);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedAdmin(null);
+    };
+
+    const handleDelete = () => {
+        deleteData();
     };
 
     const handleInputChange = (e) => {
@@ -81,7 +89,7 @@ const Admin = () => {
                 data={data?.admins}
                 columns={columns}
                 renderRow={renderRow}
-                searchKeys={['documento', 'nombre', 'tipo', 'areas_idarea', 'correo', 'numero']}
+                searchKeys={['documento', 'nombre', 'tipo', 'areas_idarea']}
                 title="Lista Administradores"
             />
 
@@ -91,6 +99,7 @@ const Admin = () => {
                     fields={fields}
                     handleInputChange={handleInputChange}
                     handleSubmit={handleUpdate}
+                    handleDelete={handleDelete}
                     closeModal={closeModal}
                 />
             )}

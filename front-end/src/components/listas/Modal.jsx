@@ -5,6 +5,7 @@ const ModalComponent = ({
     fields, // Campos a mostrar en el formulario
     handleInputChange, // Función para manejar los cambios en los inputs
     handleSubmit, // Función para manejar el submit del formulario
+    handleDelete,
     closeModal, // Función para cerrar el modal
     children, // Para renderizar contenido adicional dentro del modal
 }) => {
@@ -64,7 +65,7 @@ const ModalComponent = ({
                         <button
                             type="button"
                             className="bg-red-600 text-white px-4 py-2 rounded-md mr-2"
-                            onClick={closeModal}
+                            onClick={handleDelete}
                         >
                             Eliminar
                         </button>

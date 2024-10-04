@@ -3,12 +3,15 @@ import useGetData from '@/hooks/useGetData';
 import useUpdate from '@/hooks/useUpdate';
 import ListComponent from '@/components/listas/ListComponent';
 import ModalComponent from '@/components/listas/Modal';
+import useDeleteData from '@/hooks/useDeleteData';
 
 const Areas = () => {
     const { data } = useGetData(['areas']);
     const { updateEntity } = useUpdate('/areas', '/areas/lista');
     const [selectedArea, setselectedArea] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [idarea, setIdarea] = useState(null);
+    const { deleteData, data: deleted, isLoading, error } = useDeleteData(`areas/${idarea}`, '/areas/lista');
 
     const columns = ['Codigo Área', 'Nombre', ''];
 
@@ -17,21 +20,26 @@ const Areas = () => {
             <td className="px-4 py-2">{area.idarea}</td>
             <td className="px-4 py-2">{area.nombre}</td>
             <td className="px-4 py-2">
-                <button onClick={() => openModal(area)} className="bg-black text-white px-4 py-2 rounded-md">
+                <button onClick={() => openModal(area, area.idarea)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
                 </button>
             </td>
         </tr>
     );
 
-    const openModal = (area) => {
+    const openModal = (area, idarea) => {
         setselectedArea(area);
+        setIdarea(idarea);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setselectedArea(null);
+    };
+
+    const handleDelete = () => {
+        deleteData();
     };
 
     const handleInputChange = (e) => {
@@ -68,6 +76,7 @@ const Areas = () => {
                     fields={fields}
                     handleInputChange={handleInputChange}
                     handleSubmit={handleUpdate}
+                    handleDelete={handleDelete}
                     closeModal={closeModal}
                 />
             )}
