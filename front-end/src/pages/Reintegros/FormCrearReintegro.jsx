@@ -1,43 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useSearchElements from "../../hooks/useSearchElements";
-import usePostData from "../../hooks/usePostData";
-import useDeleteData from "../../hooks/useDeleteData";
-import axiosInstance from '../../helpers/axiosConfig.js';
+import usePostDataFile from "@/hooks/usePostDataImage";
 import '../../assets/formAgregarEditarStyles.css'; 
 
-export const FormAgregarEditarConsumo = () => {
+export const FormCrearReintegro = () => {
     const navigate = useNavigate();
-    const { idconsumo } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
-    // const { deleteData, data, isLoading, error } = useDeleteData(`consumos/${idconsumo}`, '/consumos');
-    const [cliente, setCliente] = useState({ nombre: '', grupo: '', documento: '' });
-
-    useEffect(() => {
-        // Hacer la solicitud para obtener el consumo y los datos del cliente relacionado
-        const fetchClienteData = async () => {
-            try {
-                const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/consumos/datosCliente/${idconsumo}`);
-                const { nombre, grupo, documento } = response.data; // Ajusta el acceso según la estructura de tu respuesta
-                setCliente({ nombre, grupo, documento });
-            } catch (error) {
-                console.error('Error al obtener los datos del cliente', error);
-            }
-        };
-
-        if (idconsumo) {
-            fetchClienteData();
-        }
-    }, [idconsumo]);
-
-    // const handleDelete = () => {
-    //     deleteData();
-    // };
+    const [archivo, setFile] = useState(null);
+    const formData = new FormData();
 
     const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
-    const filteredResults = searchResults.filter((item) => item.tipo === 'consumible');
+    const filteredResults = searchResults.filter((item) => item.tipo === 'devolutivo');
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -45,25 +21,17 @@ export const FormAgregarEditarConsumo = () => {
 
     const handleAddItem = (item) => {
         setSelectedItems((prevItems) => {
-            // Verifica si el elemento ya existe en la lista
             const itemExists = prevItems.find((selectedItem) => selectedItem.idelemento === item.idelemento);
-    
             if (itemExists) {
-                // Si el elemento ya está en la lista, incrementa la cantidad actual en 1
                 return prevItems.map((selectedItem) =>
                     selectedItem.idelemento === item.idelemento
                         ? { ...selectedItem, cantidad: parseInt(selectedItem.cantidad, 10) + 1 }
                         : selectedItem
                 );
             }
-    
-            // Si el elemento no está en la lista, lo agrega con cantidad 1
-            return [
-                ...prevItems,
-                { ...item, cantidad: 1, cantidadd: 0, observaciones: "", checked: false }
-            ];
+            return [...prevItems, { ...item, cantidad: 1, observaciones: "", checked: false }];
         });
-    };    
+    };
 
     const handleQuantityChange = (idelemento, quantity) => {
         setSelectedItems((prevItems) =>
@@ -85,36 +53,38 @@ export const FormAgregarEditarConsumo = () => {
         );
     };
 
-    const handleDeleteSelected = () => {
-        setSelectedItems((prevItems) =>
-            prevItems.filter((item) => !item.checked)
-        );
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
     };
 
-    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones, tipo }) => ({
+    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones }) => ({
         idelemento,
         cantidad,
         observaciones,
-        tipo
     }));
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             if (filteredResults.length > 0) {
-                handleAddItem(filteredResults[0]); // Agregar el primer elemento de la búsqueda
+                handleAddItem(filteredResults[0]);
             }
         }
     };
 
-    const handleSave = usePostData(`consumos/addElements/${idconsumo}`, () => {}, { elementos }, {},`/consumos`);
+    formData.append('elementos', JSON.stringify(elementos));
+    if (archivo) {
+        formData.append('archivo', archivo);
+    }
+
+    const handleSave = usePostDataFile('bajas', formData, '/bajas')
 
     return (
         <div className="form-container">
-            <h1 className="text-center my-2 mb-8 text-xl font-bold">Consumo de {cliente.documento} (Nombre: {cliente.nombre} --- Grupo: {cliente.grupo})</h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Registrar Reintegro</h1>
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
-                        Busca el elemento que deseas agregar al consumo
+                        Busca el elemento que deseas reintegrar
                     </label>
                     <input
                         type="text"
@@ -147,7 +117,6 @@ export const FormAgregarEditarConsumo = () => {
                             <tr>
                                 <th>Código</th>
                                 <th>Descripción</th>
-                                <th>Dispo</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
                                 <th></th>
@@ -158,7 +127,6 @@ export const FormAgregarEditarConsumo = () => {
                                 <tr key={item.idelemento}>
                                     <td>{item.idelemento}</td>
                                     <td>{item.descripcion}</td>
-                                    <td>{item.disponibles - item.minimo}</td>
                                     <td>
                                         <input className="input"
                                             type="number"
@@ -193,6 +161,11 @@ export const FormAgregarEditarConsumo = () => {
                                     </td>
                                 </tr>
                             ))}
+                            <tr>
+                                <td colSpan="5">
+                                    <input type="file" onChange={handleFileChange}/>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -209,7 +182,7 @@ export const FormAgregarEditarConsumo = () => {
                         className="consume-button"
                         onClick={()=>navigate("inicio")}
                     >
-                        Cancelar                  
+                        Cancelar 
                     </button>
                 </div>
             </div>

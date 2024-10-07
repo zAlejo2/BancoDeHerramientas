@@ -16,6 +16,8 @@ import { CgReorder } from "react-icons/cg";
 import { FaRegHandPointUp } from "react-icons/fa6";
 import { PiMapPinAreaFill } from "react-icons/pi";
 import { MdHistoryToggleOff } from "react-icons/md";
+import { HiSortDescending } from "react-icons/hi";
+import { RiUserReceived2Fill } from "react-icons/ri";
 
 export const Menu = ({ children }) => {
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
@@ -34,6 +36,14 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
+            name: "Prestamos Es", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Formulario", to: "/consumos" }, 
+                // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
             name: "Consumos", 
             to: "/consumos", 
             subMenu: [
@@ -42,11 +52,10 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Prestamos Es", 
-            to: "/consumos", 
+            name: "Encargos", 
+            to: "/Encargos", 
             subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
-                // { name: "Encargos", to: "/admin/encargos" }
+                { name: "Formulario", to: "/Encargos" },
             ]
         },
         { 
@@ -66,11 +75,19 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Bajas", 
-            to: "/consumos", 
+            name: "Clientes", 
+            to: "/clientes", 
             subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
-                // { name: "Encargos", to: "/admin/encargos" }
+                { name: "Registrar Cliente", to: "/usuarios/formulario" }, 
+                { name: "Lista", to: "/usuarios/lista" }
+            ]
+        },
+        { 
+            name: "Grupos", 
+            to: "/roles", 
+            subMenu: [
+                { name: "Registrar Grupo", to: "/roles/formulario" }, 
+                { name: "Lista", to: "/roles/lista" }
             ]
         },
         { 
@@ -90,22 +107,6 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Clientes", 
-            to: "/clientes", 
-            subMenu: [
-                { name: "Registrar Cliente", to: "/usuarios/formulario" }, 
-                { name: "Lista", to: "/usuarios/lista" }
-            ]
-        },
-        { 
-            name: "Grupos", 
-            to: "/roles", 
-            subMenu: [
-                { name: "Registrar Grupo", to: "/roles/formulario" }, 
-                { name: "Lista", to: "/roles/lista" }
-            ]
-        },
-        { 
             name: "Admin", 
             to: "/admin", 
             subMenu: [
@@ -114,10 +115,19 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Encargos", 
-            to: "/Encargos", 
+            name: "Reintegros", 
+            to: "/reintegros", 
             subMenu: [
-                { name: "Formulario", to: "/Encargos" },
+                { name: "Registrar Reintegro", to: "/reintegros" }, 
+                { name: "Lista", to: "/reintegros/lista" }
+            ]
+        },
+        { 
+            name: "Traspasos", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Registrar Traspaso", to: "/consumos" }, 
+                { name: "Lista", to: "/admin/encargos" }
             ]
         },
         { 
@@ -252,7 +262,8 @@ function Icon({ name, ...props }) {
         "Prestamos Es": <GiReturnArrow {...props} />,
         "Moras": <AiOutlineAlert {...props} />,
         "Daños": <MdManageHistory {...props} />,
-        "Bajas": <PiImageBroken  {...props} />,             
+        "Reintegros": <HiSortDescending  {...props} />,
+        "Traspasos": <RiUserReceived2Fill  {...props} />,                          
         "Lista ": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
         "Registrar Elemento": <List {...props}/>,

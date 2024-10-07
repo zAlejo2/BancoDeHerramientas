@@ -26,6 +26,7 @@ import Danos from '@/pages/Daños/ListaDanos';
 import HistorialDanos from '@/pages/Daños/HistorialDanos';
 import HistorialTodo from '@/pages/Historial/HistorialTodo';
 import Areas from '@/pages/Areas/ListaAreas';
+import { FormCrearReintegro } from '@/pages/Reintegros/FormCrearReintegro';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -226,6 +227,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <HistorialTodo/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/reintegros',
+            element: (
+                <ProtectedRoute>
+                    <FormCrearReintegro/>
                 </ProtectedRoute>
             )
         },
