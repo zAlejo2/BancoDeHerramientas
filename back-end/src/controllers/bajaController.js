@@ -5,6 +5,7 @@ import upload from '../middlewares/archivoBajaMiddleware.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
+// Registrar reintegro
 const createReintegro = async (req, res) => {
     try {
         upload.single('archivo')(req, res, async (err) => {
@@ -59,4 +60,34 @@ const createReintegro = async (req, res) => {
     }
 };
 
-export { createReintegro };
+// Obtener todos los registros de las bajas 
+const getAllReintegros = async (req, res) => {
+    try {
+        const { area } = req.user;
+        const reintegros = await Baja.findAll({
+            include: [
+              {
+                model: Elemento,
+                where: { areas_idarea: area },  
+                attributes: ['idelemento', 'descripcion']
+              }
+            ],
+            order: [['fecha', 'DESC']],
+            where: { tipo: 'reintegro' }
+          });
+        const reintegroFormateado = reintegros.map(reintegro => {
+            const fechaAccion = formatFecha(reintegro.fecha, 5);
+            return {
+              ...reintegro.dataValues,
+              fecha: fechaAccion
+            };
+          });
+      
+          res.json(reintegroFormateado); 
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ mensaje: 'Error al obtener los reintegros, por favor vuelva a intentarlo'})
+    }
+}
+
+export { createReintegro, getAllReintegros};

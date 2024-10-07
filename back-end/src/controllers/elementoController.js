@@ -62,7 +62,6 @@ const getElementByName = async (req, res) => {
     }
 };
 
-
 // Crear un nuevo elemento
 const createElement = async (req, res) => {
     upload.single('foto')(req, res, async (err) => {
