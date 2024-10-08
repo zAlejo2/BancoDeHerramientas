@@ -28,6 +28,8 @@ import HistorialTodo from '@/pages/Historial/HistorialTodo';
 import Areas from '@/pages/Areas/ListaAreas';
 import { FormCrearReintegro } from '@/pages/Reintegros/FormCrearReintegro';
 import Reintegros from '@/pages/Reintegros/ListaReintegros';
+import Traspasos from '@/pages/Traspasos/ListaTraspasos';
+import { FormCrearTraspaso } from '@/pages/Traspasos/FormCrearTraspaso';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -244,6 +246,22 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <Reintegros/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/traspasos',
+            element: (
+                <ProtectedRoute>
+                    <FormCrearTraspaso/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/traspasos/lista',
+            element: (
+                <ProtectedRoute>
+                    <Traspasos/>
                 </ProtectedRoute>
             )
         },

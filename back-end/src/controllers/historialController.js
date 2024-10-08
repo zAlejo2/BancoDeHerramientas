@@ -4,7 +4,7 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 // REGISTRAR UN HISTORIAL
-const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, elementoId, Cantidad, Observaciones, Estado, Accion) => {
+const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, elementoId, descripcion, Cantidad, Observaciones, Estado, Accion) => {
     try{
 
         await Historial.create({
@@ -14,6 +14,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
             admin_id: adminId,
             cliente_id: clienteId,
             elemento_id: elementoId,
+            elemento_descripcion: descripcion,
             cantidad: Cantidad,
             observaciones: Observaciones,
             estado: Estado,

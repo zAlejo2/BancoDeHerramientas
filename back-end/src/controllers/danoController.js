@@ -38,7 +38,7 @@ const returnDano = async (req, res) => {
                 elementos_idelemento: idelemento
             }
         });
-        createRecord(area, 'daño', iddano, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'finalizado', 'REPONER TOTAL ELEMENTO EN DAÑO');
+        createRecord(area, 'daño', iddano, adminId, documento, idelemento, elemento.descripcion, cantidadDevuelta, observaciones, 'finalizado', 'REPONER TOTAL ELEMENTO EN DAÑO');
       } else if  (dano.cantidad !== cantidadDevuelta) {
           await Elemento.update(
             {
@@ -51,7 +51,7 @@ const returnDano = async (req, res) => {
             { cantidad: dano.cantidad - cantidadDevuelta },
             { where: { iddano: iddano}}
           );
-          createRecord(area, 'daño', iddano, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'daño', 'REPONER PARTE ELEMENTO EN DAÑO');
+          createRecord(area, 'daño', iddano, adminId, documento, idelemento, elemento.descripcion, cantidadDevuelta, observaciones, 'daño', 'REPONER PARTE ELEMENTO EN DAÑO');
       } else if (dano.cantidad<cantidadDevuelta || cantidadDevuelta<1) {
           return res.status(400).json({ mensaje: 'La cantidad de devolución no puede ser mayor a la cantidad a dano ni meno a 1', error})
       } 

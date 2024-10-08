@@ -96,7 +96,7 @@ const addElements = async (req, res) => {
                 },
                 { where: { idelemento } }
             );
-            createRecord(area, 'consumo', consumo.idconsumo, adminId, consumo.clientes_documento, idelemento, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE CONSUMO');
+            createRecord(area, 'consumo', consumo.idconsumo, adminId, consumo.clientes_documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE CONSUMO');
         }
         return res.status(201).json({ mensaje: 'Elementos agregados al consumo con éxito' });
 
@@ -186,9 +186,10 @@ const recordConsumption = async (cantidad, observaciones, idelemento, documento,
         { where: { idelemento } }
     );
 
-    createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, idelemento, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO');
+    createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, idelemento, elemento.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO');
 };
 
+//Obtener datos del cliente para mostrar en el consumo
 const clienteData = async (req, res) => { 
     try {
         const {idconsumo} = req.params;

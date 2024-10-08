@@ -6,7 +6,14 @@ import upload from '../middlewares/fotoElementoMiddleware.js';
 const getAllElements = async (req, res) => {
     try {
         const area = req.area;
-        const elements = await Elemento.findAll({where: { areas_idarea: area}});
+        const elements = await Elemento.findAll({
+            where: {
+                areas_idarea: area,
+                cantidad: {
+                    [Sequelize.Op.gt]: 0 // Esto indica que cantidad debe ser mayor que 0
+                }
+            }
+        });        
         res.json(elements);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -38,6 +45,9 @@ const getElementByName = async (req, res) => {
 
         const elements = await Elemento.findAll({
             where: {
+                cantidad: {
+                    [Sequelize.Op.gt]: 0 // Esto indica que cantidad debe ser mayor que 0
+                },
                 areas_idarea: area,
                 [Sequelize.Op.or]: [
                     // Si el parámetro es un id, busca por idelemento
@@ -165,7 +175,7 @@ const deleteElement = async (req, res) => {
         } else {
             res.status(404).json({ mensaje: 'Elemento no encontrado' });
         }
-    } catch (error) {
+    } catch (error) {console.log(error)
         res.status(500).json({ error: error.message });
     }
 };

@@ -124,10 +124,10 @@ export const Menu = ({ children }) => {
         },
         { 
             name: "Traspasos", 
-            to: "/consumos", 
+            to: "/traspasos", 
             subMenu: [
-                { name: "Registrar Traspaso", to: "/consumos" }, 
-                { name: "Lista", to: "/admin/encargos" }
+                { name: "Registrar Traspaso", to: "/traspasos" }, 
+                { name: "Lista", to: "/traspasos/lista" }
             ]
         },
         { 

@@ -38,7 +38,7 @@ const returnMora = async (req, res) => {
               elementos_idelemento: idelemento
           }
       });
-      createRecord(area, 'mora', idmora, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'finalizado', 'DEVOLVER TOTAL ELEMENTO EN MORA');
+      createRecord(area, 'mora', idmora, adminId, documento, idelemento, elemento.descripcion, cantidadDevuelta, observaciones, 'finalizado', 'DEVOLVER TOTAL ELEMENTO EN MORA');
     } else if  (mora.cantidad !== cantidadDevuelta) {
         await Elemento.update(
           {
@@ -51,7 +51,7 @@ const returnMora = async (req, res) => {
           { cantidad: mora.cantidad - cantidadDevuelta },
           { where: { idmora: idmora}}
         );
-        createRecord(area, 'mora', idmora, adminId, documento, idelemento, cantidadDevuelta, observaciones, 'mora', 'DEVOLVER PARTE ELEMENTO EN MORA');
+        createRecord(area, 'mora', idmora, adminId, documento, idelemento, elemento.descripcion, cantidadDevuelta, observaciones, 'mora', 'DEVOLVER PARTE ELEMENTO EN MORA');
     } else if (mora.cantidad<cantidadDevuelta || cantidadDevuelta<1) {
         return res.status(400).json({ mensaje: 'La cantidad de devolución no puede ser mayor a la cantidad a mora ni meno a 1', error})
     } 

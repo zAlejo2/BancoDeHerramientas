@@ -5,11 +5,12 @@ import useSearchElements from "../../hooks/useSearchElements";
 import usePostDataFile from "@/hooks/usePostDataImage";
 import '../../assets/formAgregarEditarStyles.css'; 
 
-export const FormCrearReintegro = () => {
+export const FormCrearTraspaso = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
     const [archivo, setFile] = useState(null);
+    const [documento, setNumber] = useState('');
     const formData = new FormData();
 
     const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
@@ -58,6 +59,10 @@ export const FormCrearReintegro = () => {
         setFile(e.target.files[0]);
     };
 
+    const handleDocumentoChange = (e) => {
+        setNumber(e.target.value);    
+    };    
+
     const elementos = selectedItems.map(({ idelemento, cantidad, observaciones }) => ({
         idelemento,
         cantidad,
@@ -73,19 +78,21 @@ export const FormCrearReintegro = () => {
     };
 
     formData.append('elementos', JSON.stringify(elementos));
-    if (archivo) {
+    if (archivo || documento) {
+        const doc = parseFloat(documento);
         formData.append('archivo', archivo);
+        formData.append('documento', doc);
     }
 
-    const handleSave = usePostDataFile('bajas', formData, '/reintegros/lista')
+    const handleSave = usePostDataFile('bajas/traspasos', formData, '/traspasos/lista');
 
     return (
         <div className="form-container">
-            <h1 className="text-center my-2 mb-8 text-xl font-bold">Registrar Reintegro</h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Registrar Traspaso</h1>
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
-                        Busca el elemento que deseas reintegrar
+                        Busca el elemento al que deseas cambiar de cuentadante
                     </label>
                     <input
                         type="text"
@@ -164,9 +171,14 @@ export const FormCrearReintegro = () => {
                                     </td>
                                 </tr>
                             ))}
+                            <tr><td colSpan="6"><label className="font-bold"> Ingrese los siguentes datos para hacer el traspaso del elemento</label></td></tr>
                             <tr>
-                                <td colSpan="6">
-                                    <input type="file" onChange={handleFileChange}/>
+                                <td colSpan="3">
+                                    <input type="file" onChange={handleFileChange} required/>
+                                </td>
+                                <td colSpan="3">
+                                    <label> Documento Cuentadante: </label>
+                                    <input type="number" onChange={handleDocumentoChange} value={documento} required/>
                                 </td>
                             </tr>
                         </tbody>
