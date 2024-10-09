@@ -1,0 +1,71 @@
+
+
+.container{
+    text-align: flex;
+    align-items: center;
+    
+  }
+
+  .container6{
+    display: center;
+    height: 30px;
+    width: 80px;
+    margin-left: 40px;
+    margin-top: 10px; /* Espacio entre la búsqueda y los resultados */
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    background-color: #000000;
+  }
+  
+  .input4{
+    display: block;
+    border-radius: 5px;
+    color: #000000;
+    background-color: #ccc7c7;
+  }
+
+  .input3{
+    display: center;
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #000000;
+    border-radius: 5px;
+    margin-top: 5px;
+  }
+  
+
+  .input1 {
+    display: block;
+    border-radius: 5px;
+    color: #000000;
+    background-color: #ccc7c7;
+  }
+
+  .input2 {
+    display: block;
+    border-radius: 5px;
+    color: #0a0a0a;
+    background-color: #ccc7c7;
+  }
+
+.container5 {
+    display: center;
+    height: 30px;
+    width: 80px;
+    align-items: center;
+    border-radius: 5px;
+    cursor: pointer;
+    color: rgb(247, 247, 247);
+    background-color: #000000;
+}
+
+.contenedor7{
+  max-height: 120px; /* Ajusta la altura máxima según tus necesidades */
+  overflow-y: auto; /* Agrega una barra de desplazamiento vertical si es necesario */
+  margin-top: 10px; /* Espacio entre la búsqueda y los resultados */
+  /* border: 1px solid black; */
+  font-size: 14px;
+  border-radius: 2px;
+}

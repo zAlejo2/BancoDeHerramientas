@@ -24,6 +24,8 @@ import Moras from '@/pages/Moras/ListaMoras';
 import HistorialMoras from '@/pages/Moras/HistorialMoras';
 import Danos from '@/pages/Daños/ListaDanos';
 import HistorialDanos from '@/pages/Daños/HistorialDanos';
+import { FormCrearPoliza } from '../pages/Prestamos_Esp/FormCrearPoliza';
+import { FormRegistrarPrestamo_Es} from '../pages/Prestamos_Esp/FormRegistrarPrestamo_Es';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -178,6 +180,22 @@ export const AppRoutes = ({tokenSession}) => {
                     <Consumos/>
                 </ProtectedRoute>
             )
+        },
+        {
+            path: '/Prestamos_Esp',
+            element: (
+                <ProtectedRoute>
+                    <FormRegistrarPrestamo_Es/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/Prestamos_Esp/FormCrearPoliza',
+            element: (
+                <ProtectedRoute>
+                    <FormCrearPoliza />
+                </ProtectedRoute>
+            )                                               
         },
         {
             path: '/moras',

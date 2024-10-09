@@ -41,10 +41,10 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Prestamos Es", 
-            to: "/consumos", 
+            name: "Prestamos_Esp", 
+            to: "/prestamos_esp", 
             subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
+                { name: "Formulario", to: "/prestamos_esp" }, 
                 // { name: "Encargos", to: "/admin/encargos" }
             ]
         },
@@ -241,7 +241,7 @@ function Icon({ name, ...props }) {
         "Moras Activas": <List {...props} />,
         "Daños Pendientes": <List {...props} />,
         "Elementos Prestados": <List {...props} />,
-        "Prestamos Es": <GiReturnArrow {...props} />,
+        "Prestamos_Esp": <GiReturnArrow {...props} />,
         "Moras": <AiOutlineAlert {...props} />,
         "Daños": <MdManageHistory {...props} />,
         "Bajas": <PiImageBroken  {...props} />,             
