@@ -22,6 +22,14 @@ Administrador.init({
     type: DataTypes.ENUM('admin', 'contratista', 'practicante'),
     allowNull: false
   },
+  correo: {
+    type: DataTypes.STRING(50),
+    allowNull: false
+  },
+  numero: {
+    type: DataTypes.STRING(50),
+    allowNull: false
+  },
   areas_idarea: {
     type: DataTypes.INTEGER,
     allowNull: false,

@@ -25,6 +25,10 @@ Historial.init({
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    elemento_descripcion: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
     cantidad: {
         type: DataTypes.INTEGER,
         allowNull: true

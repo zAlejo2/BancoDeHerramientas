@@ -59,40 +59,41 @@ const PrestamosActivos = () => {
           }}
         />
       </div>
-
-      <table style={{ margin: '0 auto' }}>
-        <thead>
-          <tr>
-            <th>Documento</th>
-            <th>Nombre</th>
-            <th>Grupo</th>
-            <th>Codigo</th>
-            <th>Descripcion</th>
-            <th>Cantidad</th>
-            <th>Fecha</th>
-            <th>Observaciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredPrestamos.length > 0 ? (filteredPrestamos.map((prestamo) => (
-            <tr key={prestamo.PrestamoCorriente.documento}>
-              <td>{prestamo.PrestamoCorriente.Cliente.documento}</td>
-              <td>{prestamo.PrestamoCorriente.Cliente.nombre}</td>
-              <td>{prestamo.PrestamoCorriente.Cliente.roles_idrol}</td>
-              <td>{prestamo.Elemento.idelemento}</td>
-              <td>{prestamo.Elemento.descripcion}</td>
-              <td>{prestamo.cantidad}</td>
-              <td>{prestamo.fecha_entrega}</td>
-              <td>{prestamo.observaciones}</td>
+      <div className="max-h-[400px] max-w-[1000px] overflow-y-auto overflow-x-auto">
+        <table style={{ margin: '0 auto' }}>
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Nombre</th>
+              <th>Grupo</th>
+              <th>Codigo</th>
+              <th>Descripcion</th>
+              <th>Cantidad</th>
+              <th>Fecha</th>
+              <th>Observaciones</th>
             </tr>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan="8">No hay préstamos</TableCell>
-          </TableRow>
-        )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredPrestamos.length > 0 ? (filteredPrestamos.map((prestamo) => (
+              <tr key={prestamo.PrestamoCorriente.documento}>
+                <td>{prestamo.PrestamoCorriente.Cliente.documento}</td>
+                <td>{prestamo.PrestamoCorriente.Cliente.nombre}</td>
+                <td>{prestamo.PrestamoCorriente.Cliente.roles_idrol}</td>
+                <td>{prestamo.Elemento.idelemento}</td>
+                <td>{prestamo.Elemento.descripcion}</td>
+                <td>{prestamo.cantidad}</td>
+                <td>{prestamo.fecha_entrega}</td>
+                <td>{prestamo.observaciones}</td>
+              </tr>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan="8">No hay préstamos</TableCell>
+            </TableRow>
+          )}
+          </tbody>
+        </table>
+      </div>    
     </div>
   );
 };

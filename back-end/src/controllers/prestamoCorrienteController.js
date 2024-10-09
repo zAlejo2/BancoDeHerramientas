@@ -7,6 +7,33 @@ import { recordConsumption } from './consumoController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
+// CEDER ELEMENTOS EN UN PRESTAMO A OTRA PERSONA
+const cederElemento = async (area, adminId, idprestamo, idelemento, descripcion, documento, cantidad, observaciones) => {
+    let prestamo = await PrestamoCorriente.findOne({ where: { clientes_documento: documento }});
+    if (!prestamo) {
+        prestamo = await PrestamoCorriente.create({
+            clientes_documento: documento,
+            estado: 'actual',
+            areas_idarea: area
+        });
+    }
+    await ElementoHasPrestamoCorriente.create({
+        elementos_idelemento: idelemento,
+        prestamoscorrientes_idprestamo: prestamo.idprestamo,
+        cantidad,
+        observaciones,
+        fecha_entrega: obtenerHoraActual(),
+        estado: 'actual'
+    });
+    await ElementoHasPrestamoCorriente.destroy({
+        where: {
+            prestamoscorrientes_idprestamo: idprestamo,
+            elementos_idelemento: idelemento
+        }
+    });
+    createRecord(area,'prestamo', idprestamo, adminId, documento, idelemento, descripcion, cantidad, observaciones, 'cedido', 'CEDER ELEMENTO');
+};
+
 // CREAR UN PRESTAMO
 const createLoan = async (req, res) => {
     try {
@@ -62,6 +89,10 @@ const findLoanElements = async (req, res) => {
 
     try {
         const loanExisting = await PrestamoCorriente.findOne({ where: { idprestamo: idprestamo, estado: 'actual', areas_idarea: area} });
+        const cliente = await Cliente.findOne({ where: {documento:loanExisting.clientes_documento}});
+        const nombre = cliente.nombre;
+        const documento = cliente.documento;
+        const grupo = cliente.roles_idrol;
         if (loanExisting) {
             let idprestamo = loanExisting.idprestamo;
             const loanElements = await ElementoHasPrestamoCorriente.findAll({ where: { prestamoscorrientes_idprestamo: idprestamo, estado: 'actual' }});
@@ -77,7 +108,7 @@ const findLoanElements = async (req, res) => {
 
             const elementos = await Promise.all(elementosEnPrestamo);
 
-            return res.status(200).json({ idprestamo, elementos });
+            return res.status(200).json({ idprestamo, elementos, documento, nombre, grupo });
         } else {
             return res.status(404).json({ mensaje: 'Préstamo no encontrado' });
         }
@@ -128,13 +159,13 @@ const addOrUpdate = async (req, res) => {
                             elementos_idelemento: elementoExistente.elementos_idelemento,
                         }
                     });
-                    createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elemento.idelemento, cantidadEliminar, elementoExistente.observaciones, 'finalizado', 'ELIMINAR ELEMENTO');
+                    createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elemento.idelemento, elemento.descripcion, cantidadEliminar, elementoExistente.observaciones, 'finalizado', 'ELIMINAR ELEMENTO');
                 }
             }
         }
 
         for (let elemento of elementos) {
-            const { idelemento, cantidad, cantidadd, observaciones, estado } = elemento;
+            const { idelemento, cantidad, cantidadd, observaciones, estado, cedido } = elemento; 
 
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento, areas_idarea: area }});
             if (!elementoEncontrado) {
@@ -145,7 +176,7 @@ const addOrUpdate = async (req, res) => {
             if (cantidad <= 0) {
                 return res.status(400).json({ mensaje: `La cantidad de préstamo no puede ser 0 ni menor que éste`});
             } else if (cantidadd < 0 || cantidadd > cantidad) {
-                return res.status(400).json({ mensaje: `La cantidad de devolución no puede ser menor a 1 ni mayor a la cantidad prestada`})
+                return res.status(400).json({ mensaje: `La cantidad de devolución no puede ser menor a 0 ni mayor a la cantidad prestada`})
             }
 
             const elementoEnPrestamo = await ElementoHasPrestamoCorriente.findOne({
@@ -185,7 +216,7 @@ const addOrUpdate = async (req, res) => {
                                     elementos_idelemento: idelemento,
                                 }
                             });
-                            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidad, observaciones, 'finalizado', 'DEVOLVER ELEMENTO (total)');
+                            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'finalizado', 'DEVOLVER ELEMENTO (total)');
                         }
                     } else if (estado == 'mora') {
                         if (cantidadNueva != 0) {
@@ -203,7 +234,7 @@ const addOrUpdate = async (req, res) => {
                                     elementos_idelemento: idelemento,
                                 }
                             });
-                            createRecord(area, 'mora', mora.idmora, adminId, mora.clientes_documento, mora.elementos_idelemento, mora.cantidad, mora.observaciones, 'mora', 'ENVIAR A MORA');
+                            createRecord(area, 'mora', mora.idmora, adminId, mora.clientes_documento, mora.elementos_idelemento, elementoEncontrado.descripcion, mora.cantidad, mora.observaciones, 'mora', 'ENVIAR A MORA');
                         }
                     } else if (estado == 'dano') {
                         if (cantidadNueva != 0) {
@@ -221,7 +252,7 @@ const addOrUpdate = async (req, res) => {
                                     elementos_idelemento: idelemento,
                                 }
                             });
-                            createRecord(area, 'daño', dano.iddano, adminId, dano.clientes_documento, dano.elementos_idelemento, dano.cantidad, dano.observaciones, 'daño', 'REPORTAR DAÑO');
+                            createRecord(area, 'daño', dano.iddano, adminId, dano.clientes_documento, dano.elementos_idelemento, elementoEncontrado.descripcion, dano.cantidad, dano.observaciones, 'daño', 'REPORTAR DAÑO');
                         }
                     } else if (estado == 'consumo') {
                         if (cantidadNueva != 0) {
@@ -232,6 +263,23 @@ const addOrUpdate = async (req, res) => {
                                     elementos_idelemento: idelemento,
                                 }
                             });
+                        }
+                    } else if (estado == 'cedido') {
+                        if (cantidadNueva != 0) {
+                            const persona = await Cliente.findOne({ where: {documento: cedido}});
+                            if(!persona) {
+                                return res.status(404).json({ mensaje: `El documento ${cedido}, al cual desea ceder elementos, no existe` });
+                            } else if (cedido == prestamo.clientes_documento) {
+                                return res.status(400).json({ mensaje: 'No puedes ceder elementos al cliente que actualmente los tiene'})
+                            }
+                            const cedidos = await cederElemento(area, adminId, idprestamo, idelemento, elementoEncontrado.descripcion, cedido, cantidadNueva, observaciones);
+                            await Elemento.update(
+                                {
+                                    disponibles: elementoEncontrado.disponibles + diferencia,
+                                    estado: elementoEncontrado.disponibles + diferencia <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                                },
+                                { where: { idelemento } }
+                            );
                         }
                     } else {
                         await ElementoHasPrestamoCorriente.update(
@@ -247,7 +295,7 @@ const addOrUpdate = async (req, res) => {
                             { where: { idelemento } }
                         );
                         if (cantidadd != 0) {
-                            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidadd, observaciones, 'actual', 'DEVOLVER ELEMENTO (parte)'); 
+                            createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, elementoEncontrado.descripcion, cantidadd, observaciones, 'actual', 'DEVOLVER ELEMENTO (parte)'); 
                         }
                     }
                 } else {
@@ -266,7 +314,7 @@ const addOrUpdate = async (req, res) => {
                         },
                         { where: { idelemento } }
                     ); 
-                    createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, cantidad, observaciones, 'actual', 'CAMBIAR CANTIDAD'); 
+                    createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'actual', 'CAMBIAR CANTIDAD'); 
                 }
 
             } else {
@@ -295,7 +343,7 @@ const addOrUpdate = async (req, res) => {
                     },
                     { where: { idelemento } }
                 );
-                createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, idelemento, cantidad, observaciones, 'actual', 'PRESTAR ELEMENTO'); 
+                createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'actual', 'PRESTAR ELEMENTO'); 
             }
 
         }

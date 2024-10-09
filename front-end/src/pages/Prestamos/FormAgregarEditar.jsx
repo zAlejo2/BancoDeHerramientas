@@ -1,15 +1,24 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { useParams } from "react-router-dom";
+import Swal from 'sweetalert2';
 import useSearchElements from "../../hooks/useSearchElements";
 import usePostData from "../../hooks/usePostData.jsx";
 import axiosInstance from "../../helpers/axiosConfig.js";
 import '../../assets/formAgregarEditarStyles.css'; 
+import { radioGroupClasses } from "@mui/material";
 
 export const FormAgregarEditarPrestamo = () => {
     const { idprestamo } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
+    const [documento, setDocumento] = useState('');
+    const [nombre, setNombre] = useState('');
+    const [grupo, setGrupo] = useState('');
+
+    const toggleEstado = (item, estadoDeseado) => {
+        return item.estado === estadoDeseado ? { ...item, estado: 'actual' } : { ...item, estado: estadoDeseado };
+    };
 
     const handleReturnAll = () => {
         setSelectedItems((prevItems) =>
@@ -25,7 +34,7 @@ export const FormAgregarEditarPrestamo = () => {
         setSelectedItems((prevItems) =>
             prevItems.map((item) =>
                 item.fecha_entregaFormato // Solo para los elementos con fecha de entrega
-                    ? { ...item, estado: 'mora' } // Actualiza `cantidadd` con el valor de `cantidad`
+                    ? toggleEstado(item, 'mora')
                     : item
             )
         );
@@ -34,8 +43,8 @@ export const FormAgregarEditarPrestamo = () => {
     const handleDanoAll = () => {
         setSelectedItems((prevItems) =>
             prevItems.map((item) =>
-                item.fecha_entregaFormato // Solo para los elementos con fecha de entrega
-                    ? { ...item, estado: 'dano' } // Actualiza `cantidadd` con el valor de `cantidad`
+                item.fecha_entregaFormato
+                    ? toggleEstado(item, 'dano')
                     : item
             )
         );
@@ -44,20 +53,53 @@ export const FormAgregarEditarPrestamo = () => {
     const handleConsumoAll = () => {
         setSelectedItems((prevItems) =>
             prevItems.map((item) =>
-                item.fecha_entregaFormato && item.tipo == 'consumo'// Solo para los elementos con fecha de entrega
-                    ? { ...item, estado: 'consumo' } // Actualiza `cantidadd` con el valor de `cantidad`
+                item.fecha_entregaFormato && item.tipo == 'consumible'// Solo para los elementos con fecha de entrega
+                    ? toggleEstado(item, 'consumo')
                     : item
             )
         );
+    };
+
+    const handleCederAll = () => {
+        Swal.fire({
+            title: 'Ceder todos los elementos',
+            input: 'text',
+            inputPlaceholder: 'Documento de la persona a ceder elementos',
+            showCancelButton: true,
+            confirmButtonText: 'Ceder',
+            confirmButtonColor: '#007BFF',
+            cancelButtonText: 'Cancelar',
+            cancelButtonColor: '#81d4fa',
+            preConfirm: (cedido) => {
+                if (!cedido) {
+                    Swal.showValidationMessage('Debe ingresar un documento.');
+                }
+                return cedido;
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const cedidoDocumento = result.value;
+    
+                setSelectedItems((prevItems) =>
+                    prevItems.map((item) =>
+                        item.fecha_entregaFormato
+                            ? { ...item, manualStatus: 'cedido', estado: 'cedido', cedido: cedidoDocumento }
+                            : item
+                    )
+                );
+            }
+        });
     };
     
     useEffect(() => {
         const fetchExistingLoan = async () => {
             try {
                 const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/prestamos/${idprestamo}/elementos`, { documento: idprestamo });
-                const { elementos } = response.data;
-
-                setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado, tipo }) => ({
+                const { elementos, documento, nombre, grupo } = response.data;
+                setDocumento(documento);
+                setNombre(nombre);
+                setGrupo(grupo);
+                setSelectedItems(elementos.map(({ elemento, cantidad, observaciones, fecha_entregaFormato, fecha_devolucionFormato, estado }) => ({
                     idelemento: elemento.idelemento,
                     descripcion: elemento.descripcion,
                     cantidad,
@@ -66,7 +108,9 @@ export const FormAgregarEditarPrestamo = () => {
                     fecha_entregaFormato,
                     fecha_devolucionFormato,
                     estado,
-                    tipo: elemento.tipo
+                    tipo: elemento.tipo,
+                    cedido: 0,
+                    dispoTotal : elemento.disponibles - elemento.minimo
                 })));
             } catch (error) {
                 console.error('Error al obtener el préstamo existente:', error);
@@ -158,23 +202,55 @@ export const FormAgregarEditarPrestamo = () => {
     };
 
     const handleManualStatusChange = (idelemento, status) => {
-        setSelectedItems((prevItems) => {
-            const updatedItems = prevItems.map((item) =>
-                item.idelemento === idelemento
-                    ? { ...item, manualStatus: status, estado: status }  // Update manual status and set state
-                    : item
-            );
-            return updatedItems;
-        });
+        if (status === 'cedido') {
+            Swal.fire({
+                title: 'Ceder elemento',
+                input: 'text',
+                inputPlaceholder: 'Documento de la a ceder el elemento',
+                showCancelButton: true,
+                confirmButtonText: 'Ceder',
+                confirmButtonColor: '#007BFF',
+                cancelButtonText: 'Cancelar',
+                cancelButtonColor: '#81d4fa',
+                preConfirm: (cedido) => {
+                    if (!cedido) {
+                        Swal.showValidationMessage('Debe ingresar un documento');
+                    }
+                    return cedido;
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    setSelectedItems((prevItems) =>
+                        prevItems.map((item) =>
+                            item.idelemento === idelemento
+                                ? { ...item, manualStatus: status, estado: status, cedido: result.value }
+                                : item
+                        )
+                    );
+                }
+            });
+        } else {
+            // Si no es "cedido", actualizamos normalmente el estado
+            setSelectedItems((prevItems) => {
+                const updatedItems = prevItems.map((item) =>
+                    item.idelemento === idelemento
+                        ? { ...item, manualStatus: status, estado: status }
+                        : item
+                );
+                return updatedItems;
+            });
+        }
     };
     
+    
 
-    const elementos = selectedItems.map(({ idelemento, cantidad, cantidadd, observaciones, estado }) => ({
+    const elementos = selectedItems.map(({ idelemento, cantidad, cantidadd, observaciones, estado, cedido }) => ({
         idelemento,
         cantidad,
         cantidadd,
         observaciones,
-        estado
+        estado,
+        cedido
     }));
 
     const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},'/inicio');
@@ -189,7 +265,7 @@ export const FormAgregarEditarPrestamo = () => {
     
     return (
         <div className="form-container">
-            <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario de Prestamo</h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Préstamo Activo de {documento} (Nombre: {nombre} --- Grupo: {grupo})</h1>
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
@@ -220,12 +296,13 @@ export const FormAgregarEditarPrestamo = () => {
                     </div>
                 </div>
 
-                <div className="table-container">
+                <div className="table-container max-h-[210px] overflow-y-auto overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
                         <thead>
                             <tr>
                                 <th>Código</th>
                                 <th>Descripción</th>
+                                <th>Dispo</th>
                                 <th>Cantidad P</th>
                                 <th>Fecha</th>
                                 <th>Observaciones</th>
@@ -240,6 +317,7 @@ export const FormAgregarEditarPrestamo = () => {
                                 <tr key={item.idelemento}>
                                     <td>{item.idelemento}</td>
                                     <td>{item.descripcion}</td>
+                                    <td>{item.fecha_entregaFormato ? item.dispoTotal : item.disponibles - item.minimo}</td>
                                     <td>
                                     <input className="input"
                                             type="number"
@@ -271,7 +349,7 @@ export const FormAgregarEditarPrestamo = () => {
                                             min="1"
                                         />               
                                     </td>
-                                    <td>{item.fecha_entregaFormato ? item.estado : ''}</td>
+                                    <td>{item.fecha_entregaFormato && item.cedido != 0  && item.estado == 'cedido' ? item.estado +' a  '+ item.cedido : item.fecha_entregaFormato ? item.estado : ''}</td>
                                     <td>
                                     <select
                                             value={item.manualStatus || item.estado} // Default to automatic status if no manual status
@@ -282,10 +360,9 @@ export const FormAgregarEditarPrestamo = () => {
                                             <option></option>
                                             <option value="mora">mora</option>
                                             <option value="dano">daño</option>
-                                            <option value="baja">baja</option>
-                                            <option value="persona">pasar</option>
-                                            <option disabled={item.tipo == 'prestamo'} value="consumo">consumo</option>
-                                        </select> 
+                                            <option value="cedido">ceder</option>
+                                            <option disabled={item.tipo == 'devolutivo'} value="consumo">consumo</option>
+                                    </select> 
                                     </td>
                                     <td>
                                         <button 
@@ -341,14 +418,15 @@ export const FormAgregarEditarPrestamo = () => {
                         className="consume-button"
                         onClick={handleConsumoAll} // Cambiar la función
                     >
-                        Consumo Todo
+                        Consumir Todo
                     </button>
                     <button
                         type="button"
                         className="consume-button"
-                        onClick={handleConsumoAll} // Cambiar la función
+                        onClick={handleCederAll} // Cambiar la función
+                        disabled={selectedItems.length<1}
                     >
-                        Pasar Todo
+                        Ceder Todo
                     </button>
                 </div>
             </div>

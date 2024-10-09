@@ -48,7 +48,7 @@ const Consumos = () => {
   return (
     <div style={{ textAlign: 'center' }}><br/>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <h1 style={{ fontSize: '25px', fontWeight: 'bold', marginRight: '10px' }}>Historial Consumos</h1>
+        <h1 style={{ fontSize: '25px', fontWeight: 'bold', marginRight: '10px' }}>Lista Consumos</h1>
         <input
           ref={inputRef}
           type="text"
@@ -63,42 +63,43 @@ const Consumos = () => {
           }}
         />
       </div>
-
-      <table style={{ margin: '0 auto' }}>
-        <thead>
-          <tr>
-            <th>Documento</th>
-            <th>Nombre</th>
-            <th>Grupo</th>
-            <th>Codigo</th>
-            <th>Descripcion</th>
-            <th>Cantidad</th>
-            <th>Fecha</th>
-            <th>Observaciones</th>
-            <th>Admin</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredconsumos.length > 0 ? (filteredconsumos.map((consumo) => (
-            <tr key={consumo.Consumo.documento}>
-              <td>{consumo.Consumo.Cliente.documento}</td>
-              <td>{consumo.Consumo.Cliente.nombre}</td>
-              <td>{consumo.Consumo.Cliente.roles_idrol}</td>
-              <td>{consumo.Elemento.idelemento}</td>
-              <td>{consumo.Elemento.descripcion}</td>
-              <td>{consumo.cantidad}</td>
-              <td>{consumo.fecha}</td>
-              <td>{consumo.observaciones}</td>
-              <td>{consumo.administradores_documento}</td>
+      <div className="max-h-[400px] max-w-[1000px] overflow-y-auto overflow-x-auto">
+        <table style={{ margin: '0 auto' }}>
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Nombre</th>
+              <th>Grupo</th>
+              <th>Codigo</th>
+              <th>Descripcion</th>
+              <th>Cantidad</th>
+              <th>Fecha</th>
+              <th>Observaciones</th>
+              <th>Admin</th>
             </tr>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan="9">No hay consumos</TableCell>
-          </TableRow>
-        )}
-        </tbody>
+          </thead>
+          <tbody>
+            {filteredconsumos.length > 0 ? (filteredconsumos.map((consumo) => (
+              <tr key={consumo.Consumo.documento}>
+                <td>{consumo.Consumo.Cliente.documento}</td>
+                <td>{consumo.Consumo.Cliente.nombre}</td>
+                <td>{consumo.Consumo.Cliente.roles_idrol}</td>
+                <td>{consumo.Elemento.idelemento}</td>
+                <td>{consumo.Elemento.descripcion}</td>
+                <td>{consumo.cantidad}</td>
+                <td>{consumo.fecha}</td>
+                <td>{consumo.observaciones}</td>
+                <td>{consumo.administradores_documento}</td>
+              </tr>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan="9">No hay consumos</TableCell>
+            </TableRow>
+          )}
+          </tbody>
       </table>
+      </div>
     </div>
   );
 };

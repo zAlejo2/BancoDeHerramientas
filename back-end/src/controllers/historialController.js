@@ -3,7 +3,8 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 
 const obtenerHoraActual = () => ajustarHora(new Date());
 
-const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, elementoId, Cantidad, Observaciones, Estado, Accion) => {
+// REGISTRAR UN HISTORIAL
+const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, elementoId, descripcion, Cantidad, Observaciones, Estado, Accion) => {
     try{
 
         await Historial.create({
@@ -13,6 +14,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
             admin_id: adminId,
             cliente_id: clienteId,
             elemento_id: elementoId,
+            elemento_descripcion: descripcion,
             cantidad: Cantidad,
             observaciones: Observaciones,
             estado: Estado,
@@ -24,6 +26,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
     }      
 };
 
+// OBTENER TODOS LOS REGISTROS DEL HISTORIAL
 const getAllRecord = async (req, res) => {
     try {
         const area = req.area; 
@@ -46,7 +49,7 @@ const getAllRecord = async (req, res) => {
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Desconocido', // Añade el nombre del cliente
+                cliente_nombre: cliente ? cliente.nombre : 'Nadie', // Añade el nombre del cliente
                 elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };

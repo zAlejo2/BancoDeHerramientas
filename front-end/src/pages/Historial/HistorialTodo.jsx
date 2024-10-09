@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import useGetData from '@/hooks/useGetData';
 import ListComponent from '@/components/listas/ListComponent';
-
-const HistorialDanos = () => {
+// FALTA QUE FILTRE SOLO POR PRESTAMOS
+const HistorialTodo = () => {
     const { data } = useGetData(['historial']);
-    const filteredData = data?.historial ? data.historial.filter(historial => historial.tipo_entidad === 'daño') : [];
+    const filteredData = data?.historial ? data.historial.filter(historial => historial.tipo_entidad != '') : [];
 
-    const columns = ['Código Daño', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
+    const columns = ['ID', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
 
     const renderRow = (historial) => (
         <tr key={historial.id_historial} className="border-b">
@@ -31,10 +31,10 @@ const HistorialDanos = () => {
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['entidad_id', 'cliente_id', 'cliente_nombre', 'elemento_id', 'elemento_nombre', 'cantidad', 'observaciones', 'estado', 'accion', 'admin_id', 'fecha_accion']}
-                title="Historial Daños"
+                title="Historial"
             />
         </div>
     );
 };
 
-export default HistorialDanos;
+export default HistorialTodo;

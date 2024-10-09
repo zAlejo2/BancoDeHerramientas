@@ -274,6 +274,7 @@ export {
     Area,
     Administrador,
     AdminSesion,
+    Baja,
     Cliente,
     Rol,
     Elemento,

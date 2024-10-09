@@ -15,6 +15,9 @@ import { PiImageBroken } from "react-icons/pi";
 import { CgReorder } from "react-icons/cg";
 import { FaRegHandPointUp } from "react-icons/fa6";
 import { PiMapPinAreaFill } from "react-icons/pi";
+import { MdHistoryToggleOff } from "react-icons/md";
+import { HiSortDescending } from "react-icons/hi";
+import { RiUserReceived2Fill } from "react-icons/ri";
 
 export const Menu = ({ children }) => {
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
@@ -33,19 +36,26 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Consumos", 
-            to: "/consumos", 
-            subMenu: [
-                { name: "Registrar Consumo", to: "/consumos" }, 
-                { name: "Historial Consumos", to: "/consumos/historial" }
-            ]
-        },
-        { 
             name: "Prestamos_Esp", 
             to: "/prestamos_esp", 
             subMenu: [
                 { name: "Formulario", to: "/prestamos_esp" }, 
                 // { name: "Encargos", to: "/admin/encargos" }
+            ]
+        },
+        { 
+            name: "Consumos", 
+            to: "/consumos", 
+            subMenu: [
+                { name: "Registrar Consumo", to: "/consumos" }, 
+                { name: "Lista Consumos", to: "/consumos/historial" }
+            ]
+        },
+        { 
+            name: "Encargos", 
+            to: "/Encargos", 
+            subMenu: [
+                { name: "Formulario", to: "/Encargos" },
             ]
         },
         { 
@@ -65,11 +75,19 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Bajas", 
-            to: "/consumos", 
+            name: "Clientes", 
+            to: "/clientes", 
             subMenu: [
-                { name: "Formulario", to: "/consumos" }, 
-                // { name: "Encargos", to: "/admin/encargos" }
+                { name: "Registrar Cliente", to: "/usuarios/formulario" }, 
+                { name: "Lista", to: "/usuarios/lista" }
+            ]
+        },
+        { 
+            name: "Grupos", 
+            to: "/roles", 
+            subMenu: [
+                { name: "Registrar Grupo", to: "/roles/formulario" }, 
+                { name: "Lista", to: "/roles/lista" }
             ]
         },
         { 
@@ -84,24 +102,8 @@ export const Menu = ({ children }) => {
             name: "Areas", 
             to: "/areas", 
             subMenu: [
-                { name: "Formulario", to: "/areas/formulario" }, 
-                // { name: "Encargos", to: "/alertas/encargos" }
-            ]
-        },
-        { 
-            name: "Clientes", 
-            to: "/clientes", 
-            subMenu: [
-                { name: "Registrar Cliente", to: "/usuarios/formulario" }, 
-                { name: "Lista", to: "/usuarios/lista" }
-            ]
-        },
-        { 
-            name: "Roles", 
-            to: "/roles", 
-            subMenu: [
-                { name: "Registrar Rol", to: "/roles/formulario" }, 
-                { name: "Lista", to: "/roles/lista" }
+                { name: "Registrar Área", to: "/areas/formulario" }, 
+                { name: "Lista", to: "/areas/lista" }
             ]
         },
         { 
@@ -113,10 +115,26 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Encargos", 
-            to: "/Encargos", 
+            name: "Reintegros", 
+            to: "/reintegros", 
             subMenu: [
-                { name: "Formulario", to: "/Encargos" },
+                { name: "Registrar Reintegro", to: "/reintegros" }, 
+                { name: "Lista", to: "/reintegros/lista" }
+            ]
+        },
+        { 
+            name: "Traspasos", 
+            to: "/traspasos", 
+            subMenu: [
+                { name: "Registrar Traspaso", to: "/traspasos" }, 
+                { name: "Lista", to: "/traspasos/lista" }
+            ]
+        },
+        { 
+            name: "Historial", 
+            to: "/historial", 
+            subMenu: [
+                { name: "Historial Completo", to: "/historial" },
             ]
         }
     ];
@@ -228,13 +246,13 @@ function Icon({ name, ...props }) {
         "Encargos": <CgReorder {...props} />,
         "Areas": <PiMapPinAreaFill {...props} />,
         "Clientes": <UserIcon {...props} />,
-        "Roles": <FaRegHandPointUp{...props} />,
+        "Grupos": <FaRegHandPointUp{...props} />,
         "Admin": <SettingsIcon {...props} />,
         "Elementos": <MdOutlineConstruction {...props} />,
         "List": <List {...props} />,
         "Formulario": <List {...props} />,
         "Lista": <List {...props} />,
-        "Historial Consumos": <List {...props}/>,
+        "Lista Consumos": <List {...props}/>,
         "Historial Prestamos": <List {...props}/>,
         "Historial Moras": <List {...props} />,
         "Historial Daños": <List {...props} />,
@@ -244,14 +262,17 @@ function Icon({ name, ...props }) {
         "Prestamos_Esp": <GiReturnArrow {...props} />,
         "Moras": <AiOutlineAlert {...props} />,
         "Daños": <MdManageHistory {...props} />,
-        "Bajas": <PiImageBroken  {...props} />,             
+        "Reintegros": <HiSortDescending  {...props} />,
+        "Traspasos": <RiUserReceived2Fill  {...props} />,                          
         "Lista ": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
         "Registrar Elemento": <List {...props}/>,
         "Registrar Consumo": <List {...props}/>,
         "Registrar Cliente": <List {...props}/>,
-        "Registrar Rol": <List {...props}/>,
-        "Registrar Admin": <List {...props}/>
+        "Registrar Grupo": <List {...props}/>,
+        "Registrar Admin": <List {...props}/>,
+        "Historial": <MdHistoryToggleOff {...props}/>,
+        "Historial Completo": <List {...props}/>
     };
-    return icons[name] || <XIcon {...props} />;
+    return icons[name] || <List {...props} />;
 }

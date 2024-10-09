@@ -21,7 +21,6 @@ export const FormClientes = () => {
 
     const onSubmit = () => {
         handleFormReset();
-        navigate("/", { replace: true });
     };
 
     // Convert inputs to FormData
@@ -42,7 +41,7 @@ export const FormClientes = () => {
         foto: { required: true },
     };
 
-    const { handleSubmit, errors, handleChange } = useValidatedPostDataImage("clients", onSubmit, formData, validations);
+    const { handleSubmit, errors, handleChange } = useValidatedPostDataImage("clients", onSubmit, formData, validations, '/usuarios/formulario');
     
     const handleInputChange = (event) => {
         const { name, value, files } = event.target;
@@ -130,7 +129,7 @@ export const FormClientes = () => {
     return (
         <Forms>
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Clientes</h1>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto" onSubmit={handleSubmit}>
                 {inputs1.map(input => (
                     <div key={input.id}>
                     <Input

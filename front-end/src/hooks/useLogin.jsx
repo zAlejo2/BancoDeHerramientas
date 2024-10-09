@@ -18,7 +18,7 @@ const useLogin = (url, onSubmit, inputs) => {
                 icon: "success",
                 iconColor: '#007BFF',
                 showConfirmButton: false,
-                timer: 2500,
+                timer: 1500,
             }).then(() => {
                 onSubmit();
                 setLoader(false);

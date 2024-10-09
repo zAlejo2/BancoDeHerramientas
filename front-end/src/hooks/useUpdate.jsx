@@ -19,15 +19,13 @@ const useUpdate = (baseUrl, redirectUrl) => {
                 title: 'Actualización exitosa',
                 text: `La información ha sido actualizado correctamente.`,
                 iconColor: 'black',
-                timer: 2000,
+                timer: 1500,
                 showConfirmButton: false,
             }).then(() => {
-                console.log('SweetAlert mostrada');
                 setTimeout(() => {
                     navigate(redirectUrl);
-                }, 2000);           
-            });
-
+                }, 1500);           
+            }).then(()=>{ location.reload(); })
             return response.data;
         } catch (err) {
             const mensaje = err.response?.data?.mensaje || "Error inesperado";
@@ -39,7 +37,6 @@ const useUpdate = (baseUrl, redirectUrl) => {
                 confirmButtonColor: '#FC3F3F',
                 confirmButtonText: 'Ok',
             });
-
             setError(`Error al actualizar`);
         } finally {
             setLoading(false);

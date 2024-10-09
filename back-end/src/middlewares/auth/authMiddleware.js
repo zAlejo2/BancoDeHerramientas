@@ -7,7 +7,7 @@ const secret = config.jwt.secret;
 const authenticate = (req, res, next) => {
 
   if (req.header('Authorization') == undefined) {
-    return res.status(401).json({ message: 'Debes Iniciar Sesión para acceder a este sitio' });
+    return res.status(401).json({ mensaje: 'Debes Iniciar Sesión para acceder a este sitio' });
   } 
     
   const token = req.header('Authorization').replace('Bearer ', '');
@@ -17,18 +17,18 @@ const authenticate = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'No puedes acceder a este sitio, inténtalo mas tarde' });
+    res.status(401).json({ mensaje: 'No puedes acceder a este sitio, inténtalo mas tarde' });
   }
 };
 
 const verifyType = (tipoPermitido) => {
   return (req, res, next) => {
-    const { type } = req.user;
+    const { type } = req.user; 
 
     if (tipoPermitido.includes(type)) {
       next();
     } else {
-      res.status(403).json({ message: 'Este tipo de usuario no tiene autorización' });
+      return res.status(403).json({ mensaje: 'Este tipo de usuario no tiene autorización' });
     }
   };
 };
@@ -40,7 +40,7 @@ const verifyRole = (rolesPermitidos) => {
     if (rolesPermitidos.includes(role)) {
       next();
     } else {
-      res.status(403).json({ message: 'Acceso denegado, no tienes el rol adecuado' });
+      return res.status(403).json({ mensaje: 'Acceso denegado, no tienes el rol adecuado' });
     }
   };
 };
@@ -48,7 +48,7 @@ const verifyRole = (rolesPermitidos) => {
 const verifyArea = (req, res, next) => {
   const { area } = req.user; 
   if (!area) {
-      return res.status(403).json({ message: 'No se ha podido verificar el área del usuario' });
+      return res.status(403).json({ mensaje: 'No se ha podido verificar el área del usuario' });
   }
   req.area = area;
   next();

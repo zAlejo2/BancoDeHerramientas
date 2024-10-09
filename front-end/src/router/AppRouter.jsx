@@ -24,6 +24,12 @@ import Moras from '@/pages/Moras/ListaMoras';
 import HistorialMoras from '@/pages/Moras/HistorialMoras';
 import Danos from '@/pages/Daños/ListaDanos';
 import HistorialDanos from '@/pages/Daños/HistorialDanos';
+import HistorialTodo from '@/pages/Historial/HistorialTodo';
+import Areas from '@/pages/Areas/ListaAreas';
+import { FormCrearReintegro } from '@/pages/Reintegros/FormCrearReintegro';
+import Reintegros from '@/pages/Reintegros/ListaReintegros';
+import Traspasos from '@/pages/Traspasos/ListaTraspasos';
+import { FormCrearTraspaso } from '@/pages/Traspasos/FormCrearTraspaso';
 import { FormCrearPoliza } from '../pages/Prestamos_Esp/FormCrearPoliza';
 import { FormRegistrarPrestamo_Es} from '../pages/Prestamos_Esp/FormRegistrarPrestamo_Es';
 
@@ -122,6 +128,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <FormAreas />
+                </ProtectedRoute>
+            ),
+        },
+        {
+            path: '/areas/lista',
+            element: (
+                <ProtectedRoute>
+                    <Areas />
                 </ProtectedRoute>
             ),
         },
@@ -226,6 +240,46 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <HistorialDanos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/historial',
+            element: (
+                <ProtectedRoute>
+                    <HistorialTodo/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/reintegros',
+            element: (
+                <ProtectedRoute>
+                    <FormCrearReintegro/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/reintegros/lista',
+            element: (
+                <ProtectedRoute>
+                    <Reintegros/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/traspasos',
+            element: (
+                <ProtectedRoute>
+                    <FormCrearTraspaso/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/traspasos/lista',
+            element: (
+                <ProtectedRoute>
+                    <Traspasos/>
                 </ProtectedRoute>
             )
         },

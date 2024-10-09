@@ -5,8 +5,9 @@ const ModalComponent = ({
     fields, // Campos a mostrar en el formulario
     handleInputChange, // Función para manejar los cambios en los inputs
     handleSubmit, // Función para manejar el submit del formulario
+    handleDelete,
     closeModal, // Función para cerrar el modal
-    title = "Modificar", // Título del modal
+    children, // Para renderizar contenido adicional dentro del modal
 }) => {
 
     const onSubmit = (e) => {
@@ -17,9 +18,8 @@ const ModalComponent = ({
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex justify-center items-center">
             <div className="bg-white p-8 rounded-lg w-2/3">
-                <h2 className="text-xl font-bold mb-4">{title}</h2>
                 <form onSubmit={onSubmit}>
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-4 gap-2">
                         {fields.map(({ label, name, type, readOnly, options }, index) => (
                             <div key={index}>
                                 <label className="block mb-1">{label}</label>
@@ -32,7 +32,7 @@ const ModalComponent = ({
                                         disabled={readOnly}
                                     >
                                         <option value="" disabled>Selecciona {label}</option>
-                                        {options.map((option, idx) => (
+                                        {options && options.map((option, idx) => (
                                             <option key={idx} value={option.value}>
                                                 {option.label}
                                             </option>
@@ -52,19 +52,29 @@ const ModalComponent = ({
                         ))}
                     </div>
 
+                    {/* Renderiza los children adicionales, como la imagen y el campo de archivo */}
+                    <div className="grid grid-cols-4 gap-2">{children}</div>
+
                     <div className="flex justify-end mt-4">
                         <button
-                            type="button"
-                            className="bg-gray-600 text-white px-4 py-2 rounded-md mr-2"
-                            onClick={closeModal}
-                        >
-                            Cancelar
-                        </button>
-                        <button
                             type="submit"
-                            className="bg-black text-white px-4 py-2 rounded-md"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-md  mr-2"
                         >
                             Guardar Cambios
+                        </button>
+                        <button
+                            type="button"
+                            className="bg-red-600 text-white px-4 py-2 rounded-md mr-2"
+                            onClick={handleDelete}
+                        >
+                            Eliminar
+                        </button>
+                        <button
+                            type="button"
+                            className="bg-black text-white px-4 py-2 rounded-md mr-2"
+                            onClick={closeModal}
+                        >
+                            Volver
                         </button>
                     </div>
                 </form>

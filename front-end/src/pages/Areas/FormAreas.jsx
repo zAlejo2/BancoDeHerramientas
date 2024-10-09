@@ -6,17 +6,13 @@ import { Forms } from "../../layout/Forms";
 import { useNavigate } from 'react-router-dom';
 
 export const FormAreas = () => {
-    const initialData = { idarea: "", nombre: "" };
+    const initialData = { nombre: "" };
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
 
     // Definición de validaciones
     const validations = {
         idarea: [
-            {
-                validate: value => value.trim() !== "",
-                message: "El nombre del área es obligatorio."
-            }
         ],
         nombre: [
             {
@@ -47,14 +43,6 @@ export const FormAreas = () => {
     const handleSubmit = usePostData("areas", onSubmit, inputs, validations);
 
     const inputs1 = [
-        { 
-            id: 1, 
-            type: 'text', 
-            name: 'idarea', 
-            placeholder: 'Ingrese el id del área', 
-            value: inputs.idarea, 
-            required: true 
-        },
         { 
             id: 2, 
             type: 'text', 

@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
 
 export const FormAdmin = () => {
-    const initialData = { documento: "", contrasena: "", nombre: "", tipo: "", areas_idarea: "" };
+    const initialData = { documento: "", contrasena: "", nombre: "", tipo: "", areas_idarea: "", correo: "", numero: ""};
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
     const urls = ["areas"];
@@ -77,8 +77,24 @@ export const FormAdmin = () => {
             id: 3, 
             type: 'text', 
             name: 'nombre', 
-            placeholder: 'Ingrese la disponibilidad del administrador', 
+            placeholder: 'Ingrese el nombre del administrador', 
             value: inputs.nombre, 
+            required: true 
+        },
+        { 
+            id: 4, 
+            type: 'text', 
+            name: 'correo', 
+            placeholder: 'Ingrese el correo del administrador', 
+            value: inputs.correo, 
+            required: true 
+        },
+        { 
+            id: 5, 
+            type: 'text', 
+            name: 'numero', 
+            placeholder: 'Ingrese el número del administrador', 
+            value: inputs.numero, 
             required: true 
         },
     ];
@@ -98,12 +114,12 @@ export const FormAdmin = () => {
         navigate("/admin", { replace: true });
     };
 
-    const handleSubmit = usePostData("admins", onSubmit, inputs, validations);
+    const handleSubmit = usePostData("admins", onSubmit, inputs, validations, '/administrador/formulario');
     
     return (
         <Forms>
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Administradores</h1>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleSubmit}>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto max-h-[900px]" onSubmit={handleSubmit}>
                 {inputs1.map(input => (
                     <Input key={input.id} type={input.type} name={input.name} placeholder={input.placeholder} required={input.required} value={input.value} handleInputChange={handleInputChange} />
                 ))}
@@ -115,15 +131,15 @@ export const FormAdmin = () => {
                     options={[
                         {
                             value: "admin",
-                            label: "admin",
+                            label: "Admin",
                         },
                         {
                             value: "practicante",
-                            label: "practicante",
+                            label: "Practicante",
                         },
                         {
                             value: "contratista",
-                            label: "contratista",
+                            label: "Contratista",
                         },
                     ]}                
                 />

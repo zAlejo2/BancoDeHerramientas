@@ -49,32 +49,57 @@ const Moras = () => {
 
   const handleReturnMora = (idmora, idelemento, cantidad, observaciones, documento) => {
     Swal.fire({
-      title: '¿Estás seguro de que quieres finalizar la mora?',
-      text: "No podrás revertir esta acción",
-      icon: 'warning',
-      iconColor: '#3085d6',
+      title: 'Ingrese los detalles de la devolución de la mora',
+      html: `
+          <input type="number" id="cantidad" class="swal2-input border-1 border-gray-400" placeholder="Cantidad devuelta">
+          <input type="text" id="observaciones" class="swal2-input border-1 border-gray-400" placeholder="Observaciones">
+      `,
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
+      confirmButtonText: 'Devolver',
+      confirmButtonColor: '#007BFF',
+      cancelButtonText: 'Cancelar',
       cancelButtonColor: '#81d4fa',
-      confirmButtonText: 'Sí, devolverlo'
+      preConfirm: () => {
+          const cantidadDevuelta = document.getElementById('cantidad').value;
+          const observaciones = document.getElementById('observaciones').value;
+
+          if (!cantidadDevuelta || cantidadDevuelta < 1) {
+              Swal.showValidationMessage('Debe ingresar una cantidad válida.');
+          }
+
+          return { cantidadDevuelta, observaciones };
+      }
     }).then((result) => {
       if (result.isConfirmed) {
-        axiosInstance.post('moras/return', {idmora, idelemento, cantidad, observaciones, documento})
-          .then(response => {
-            if (response.status === 200) {
-              setFilteredmoras((prevMoras) => prevMoras.filter(mora => mora.idmora !== idmora));
-            }
-          })
-          .catch(error => {
-            Swal.fire(
-              'Error!',
-              'Hubo un problema al devolver el elemento.',
-              'error'
-            );
-          });
+          const { cantidadDevuelta, observaciones } = result.value;
+          const cantidadNum = Number(cantidadDevuelta);
+
+          if (cantidadNum > cantidad || cantidadNum < 1) {
+              return Swal.fire({
+                  icon: "error",
+                  title: "La cantidad a devolver no puede ser mayor que la cantidad en mora ni menor que 1",
+                  text: "Por favor verifique los datos.",
+                  confirmButtonColor: '#FC3F3F'
+              });
+          }
+
+          axiosInstance.post('moras/return', { idmora, idelemento, cantidadDevuelta: cantidadNum, observaciones, documento })
+              .then(response => {
+                  if (response.status === 200) {
+                      location.reload();
+                  }
+              })
+              .catch(error => {
+                  Swal.fire(
+                      'Hubo un problema al devolver el elemento.',
+                      'Por favor recargue la página y vuelva a intentarlo',
+                      'error'
+                  );
+              });
       }
     });
   }
+
   return (
     <div style={{ textAlign: 'center' }}><br/>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
@@ -93,44 +118,45 @@ const Moras = () => {
           }}
         />
       </div>
-
-      <table style={{ margin: '0 auto' }}>
-        <thead>
-          <tr>
-            <th>Documento</th>
-            <th>Nombre</th>
-            <th>Grupo</th>
-            <th>Codigo</th>
-            <th>Descripcion</th>
-            <th>Cantidad</th>
-            <th>Fecha</th>
-            <th>Observaciones</th>
-            <th>Devolver</th>
-          </tr>
-        </thead>
-        <tbody>
-          {filteredmoras.length > 0 ? (filteredmoras.map((mora) => (
-            <tr key={mora.idmora}>
-              <td>{mora.Cliente.documento}</td>
-              <td>{mora.Cliente.nombre}</td>
-              <td>{mora.Cliente.roles_idrol}</td>
-              <td>{mora.Elemento.idelemento}</td>
-              <td>{mora.Elemento.descripcion}</td>
-              <td>{mora.cantidad}</td>
-              <td>{mora.fecha}</td>
-              <td>{mora.observaciones}</td>
-              <td><button onClick={() => handleReturnMora(mora.idmora, mora.Elemento.idelemento, mora.cantidad, mora.observaciones, mora.Cliente.documento)}>
-                <FaCheck/>
-              </button></td>
+      <div className="max-h-[400px] max-w-[1000px] overflow-y-auto overflow-x-auto">
+        <table style={{ margin: '0 auto' }}>
+          <thead>
+            <tr>
+              <th>Documento</th>
+              <th>Nombre</th>
+              <th>Grupo</th>
+              <th>Codigo</th>
+              <th>Descripcion</th>
+              <th>Cantidad</th>
+              <th>Fecha</th>
+              <th>Observaciones</th>
+              <th>Devolver</th>
             </tr>
-          ))
-        ) : (
-          <TableRow>
-            <TableCell colSpan="9">No hay moras</TableCell>
-          </TableRow>
-        )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {filteredmoras.length > 0 ? (filteredmoras.map((mora) => (
+              <tr key={mora.idmora}>
+                <td>{mora.Cliente.documento}</td>
+                <td>{mora.Cliente.nombre}</td>
+                <td>{mora.Cliente.roles_idrol}</td>
+                <td>{mora.Elemento.idelemento}</td>
+                <td>{mora.Elemento.descripcion}</td>
+                <td>{mora.cantidad}</td>
+                <td>{mora.fecha}</td>
+                <td>{mora.observaciones}</td>
+                <td><button onClick={() => handleReturnMora(mora.idmora, mora.Elemento.idelemento, mora.cantidad, mora.observaciones, mora.Cliente.documento)}>
+                  <FaCheck/>
+                </button></td>
+              </tr>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell colSpan="9">No hay moras</TableCell>
+            </TableRow>
+          )}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
