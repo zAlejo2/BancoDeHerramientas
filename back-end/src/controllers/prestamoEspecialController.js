@@ -154,7 +154,7 @@ const createPrestamoEspecial = async (req, res) => {
                     },
                     { where: { idelemento } }
                 );
-                createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'actual', 'PRESTAMO ESPECIAL ELEMENTO'); 
+                createRecord(area,'prestamo', idprestamo, adminId, prestamoEspecial.clientes_documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'actual', 'PRESTAMO ESPECIAL ELEMENTO'); 
             }
             
             const elementosDelPrestamo = await ElementoHasPrestamoEspecial.findAll({ where: { prestamosespeciales_idprestamo: prestamoEspecial.idprestamo }});
