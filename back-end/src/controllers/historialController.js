@@ -49,7 +49,7 @@ const getAllRecord = async (req, res) => {
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Nadie', // Añade el nombre del cliente
+                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
                 elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };

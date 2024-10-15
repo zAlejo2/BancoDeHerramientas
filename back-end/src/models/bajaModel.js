@@ -58,6 +58,10 @@ Baja.init ({
     idadmin: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    estado: {
+        type: DataTypes.ENUM('des', 'hab'),
+        allowNull: false
     } 
 },  {
     sequelize,

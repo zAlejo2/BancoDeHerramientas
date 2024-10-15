@@ -290,7 +290,7 @@ export const FormAgregarEditarPrestamo = () => {
                                 className="search-result-item"
                                 onClick={() => handleAddItem(item)}
                             >
-                                <span className="search-result-text">{item.descripcion}</span>
+                                <span className="search-result-text">{item.descripcion}</span><span>Ubicación: {item.ubicacion}</span>
                             </div>
                         ))}
                     </div>
@@ -433,6 +433,3 @@ export const FormAgregarEditarPrestamo = () => {
         </div>
     );
 };
-
-
-// {item.fecha_entregaFormato ? item.estado : ''}

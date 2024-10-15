@@ -14,8 +14,12 @@ const createReintegro = async (req, res) => {
             }
             // Parsear elementos desde JSON
             const elementos = JSON.parse(req.body.elementos);
-
+            const archivo = req.file ? req.file.filename : null;
             const { area, id: adminId } = req.user;
+
+            if (!archivo) {
+                return res.status(400).json({mensaje: 'El archivo es obligatorio'});
+            }
 
             for (let elemento of elementos) {
                 const { idelemento, cantidad, observaciones } = elemento; 
@@ -33,8 +37,6 @@ const createReintegro = async (req, res) => {
                     return res.status(400).json({ mensaje: `La cantidad de reintegro supera la cantidad total del elemento` });
                 }
 
-                const archivo = req.file ? req.file.filename : null;
-
                 const reintegro = await Baja.create({
                     elementos_idelemento: idelemento,
                     tipo: 'reintegro',
@@ -43,7 +45,8 @@ const createReintegro = async (req, res) => {
                     areas_idarea: area,
                     fecha: obtenerHoraActual(),
                     idadmin: adminId,
-                    archivo
+                    archivo,
+                    estado: 'des'
                 });
 
                 await Elemento.update(
@@ -60,7 +63,7 @@ const createReintegro = async (req, res) => {
             return res.status(200).json({ mensaje: 'Elementos reintegrados con éxito' });
         });
     } catch (error) {
-        console.log(error);
+        console.log(error);console.log('hola')
         return res.status(500).json({ mensaje: 'Error inesperado, intente recargar la página'});
     }
 };
@@ -75,11 +78,20 @@ const createTraspaso = async (req, res) => {
             // Parsear elementos desde JSON
             const elementos = JSON.parse(req.body.elementos);
             const documento = req.body.documento;
+            const archivo = req.file ? req.file.filename : null;
             const { area, id: adminId } = req.user;
+
+            if (!documento) {
+                return res.status(400).json({mensaje: 'Debes ingresar el documento del cuentadante a transferir el elemento'});
+            }
 
             const cuentadante = await Cliente.findOne({ where: {documento: documento}});
             if (!cuentadante) {
                 return res.status(404).json({ mensaje: 'La persona a la que intenta hacer el traspaso no se encuentra registrada'});
+            }
+
+            if (!archivo) {
+                return res.status(400).json({mensaje: 'El archivo es obligatorio'});
             }
 
             for (let elemento of elementos) {
@@ -98,8 +110,6 @@ const createTraspaso = async (req, res) => {
                     return res.status(400).json({ mensaje: `La cantidad de traspaso supera la cantidad total del elemento` });
                 }
 
-                const archivo = req.file ? req.file.filename : null;
-
                 const traspaso = await Baja.create({
                     elementos_idelemento: idelemento,
                     tipo: 'traspaso',
@@ -109,7 +119,8 @@ const createTraspaso = async (req, res) => {
                     fecha: obtenerHoraActual(),
                     idadmin: adminId,
                     archivo,
-                    clientes_documento: documento
+                    clientes_documento: documento, 
+                    estado: 'hab'
                 });
 
                 await Elemento.update(
@@ -121,7 +132,7 @@ const createTraspaso = async (req, res) => {
                     { where: { idelemento } }
                 );
 
-                createRecord(area, 'baja', traspaso.idbaja, adminId, 0, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'TRASPASO');
+                createRecord(area, 'baja', traspaso.idbaja, adminId, documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'TRASPASO');
             }
             return res.status(200).json({ mensaje: 'Elementos traspasados con éxito' });
         });
@@ -198,52 +209,47 @@ const returnTraspaso = async (req, res) => {
             if (err) {
                 return res.status(400).json({ error: err.mensaje });
             }
-            // Parsear elementos desde JSON
-            const elementos = JSON.parse(req.body.elementos);
+            const archivo = req.file ? req.file.filename : null;   
             const { area, id: adminId } = req.user;
+            const { observaciones, traspaso } = req.body;
+            const parsedTraspaso = JSON.parse(traspaso); // Parsear el JSON recibido
+            const { elementos_idelemento, cantidad } = parsedTraspaso; // Desestructurar desde el objeto parseado
 
-            for (let elemento of elementos) {
-                const { idelemento, cantidad, observaciones } = elemento; 
-
-                if (cantidad <= 0) {
-                    return res.status(400).json({ mensaje: `La cantidad no puede ser 0 ni menor que éste`});
-                }
-
-                const elementoEncontrado = await Elemento.findOne({ where: { idelemento , areas_idarea: area, tipo: 'devolutivo'}});
-                if (!elementoEncontrado) {
-                    return res.status(404).json({ mensaje: `Elemento con el ID ${idelemento} no encontrado en el inventario` });
-                }
-
-                if (cantidad > elementoEncontrado.cantidad) {
-                    return res.status(400).json({ mensaje: `La cantidad de traspaso supera la cantidad total del elemento` });
-                }
-
-                const archivo = req.file ? req.file.filename : null;
-
-                const traspaso = await Baja.create({
-                    elementos_idelemento: idelemento,
-                    tipo: 'traspaso',
-                    cantidad,
-                    observaciones,
-                    areas_idarea: area,
-                    fecha: obtenerHoraActual(),
-                    idadmin: adminId,
-                    archivo
-                });
-
-                await Elemento.update(
-                    {
-                        disponibles: elementoEncontrado.disponibles + cantidad,
-                        cantidad: elementoEncontrado.cantidad + cantidad,
-                        estado: elementoEncontrado.disponibles + cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
-                    },
-                    { where: { idelemento } }
-                );
-
-                createRecord(area, 'baja', traspaso.idbaja, adminId, 0, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'REGRESO ELEMENTO');
+            const elementoEncontrado = await Elemento.findOne({ where: { idelemento: elementos_idelemento, areas_idarea: area, tipo: 'devolutivo'}});
+            if (!elementoEncontrado) {
+                return res.status(404).json({ mensaje: `No puedes tranferir este elemento, debes volver a registrarlo` });
             }
-            return res.status(200).json({ mensaje: 'Elementos traspasados con éxito' });
+            if (!archivo) {
+                return res.status(400).json({mensaje: 'El archivo es obligatorio'});
+            }
+
+            const traspasoBanco = await Baja.create({
+                elementos_idelemento: elementos_idelemento,
+                tipo: 'traspaso',
+                cantidad: cantidad,
+                observaciones: observaciones,
+                areas_idarea: area,
+                fecha: obtenerHoraActual(),
+                idadmin: adminId,
+                clientes_documento: 0,
+                archivo: archivo,
+                estado: 'des'
+            });
+
+            await Baja.update({ estado: 'des'}, { where: {idbaja: parsedTraspaso.idbaja }});
+
+            await Elemento.update(
+                {
+                    disponibles: elementoEncontrado.disponibles + cantidad,
+                    cantidad: elementoEncontrado.cantidad + cantidad,
+                    estado: elementoEncontrado.disponibles + cantidad <= elementoEncontrado.minimo ? 'agotado' : 'disponible'
+                },
+                { where: { idelemento: elementos_idelemento } }
+            );
+            
+            createRecord(area, 'baja', traspasoBanco.idbaja, adminId, 0, elementos_idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'TRASPASO BANCO');
         });
+        return res.status(200).json({ mensaje: 'Elemento transferido al banco con éxito'})
     } catch (error) {
         console.log(error);
         return res.status(500).json({ mensaje: 'Error inesperado, intente recargar la página'});

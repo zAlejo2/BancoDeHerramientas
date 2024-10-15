@@ -77,7 +77,7 @@ export const FormCrearReintegro = () => {
         formData.append('archivo', archivo);
     }
 
-    const handleSave = usePostDataFile('bajas', formData, '/reintegros/lista')
+    const handleSave = usePostDataFile('bajas/reintegros', formData, '/reintegros/lista')
 
     return (
         <div className="form-container">
