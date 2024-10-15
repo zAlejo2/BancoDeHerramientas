@@ -37,6 +37,7 @@ const InputPrestamo = () => {
 
     return (
             <form onSubmit={handleSubmit} className="flex flex-col items-center">
+                <div style={{ display: 'flex', justifyContent: 'center'}}>
                 <input
                     type="text"
                     name="documento"
@@ -46,6 +47,7 @@ const InputPrestamo = () => {
                     required
                     style={{border:'2px solid black', width: '400px', height: '60px', fontSize: '42px', textAlign: 'center', caretColor: "transparent"}}
                 />
+                <button type="submit" style={{ backgroundColor: 'black', borderRadius: '3px', marginLeft: '20px', marginTop: '5px', height: '50px', color: 'white', padding: '15px'}}>Buscar</button></div>
             </form>
     );
 };

@@ -10,7 +10,7 @@ const createReintegro = async (req, res) => {
     try {
         upload.single('archivo')(req, res, async (err) => {
             if (err) {
-                return res.status(400).json({ error: err.mensaje });
+                return res.status(400).json({ mensaje: 'Error desconcoido con el archivo'});
             }
             // Parsear elementos desde JSON
             const elementos = JSON.parse(req.body.elementos);
@@ -67,7 +67,7 @@ const createReintegro = async (req, res) => {
         return res.status(500).json({ mensaje: 'Error inesperado, intente recargar la página'});
     }
 };
-// RECORDAR PONER OBLIGARTORIO EL ARCHIVO Y EL DOCUMENTO EN EL TRASPASO
+
 // Registrar traspaso
 const createTraspaso = async (req, res) => {
     try {

@@ -31,7 +31,7 @@ PrestamoEspecial.init({
         type: DataTypes.DATE,
         allowNull: false
     },
-    documento: {
+    archivo: {
         type: DataTypes.STRING(100),
         allowNull: true
     },

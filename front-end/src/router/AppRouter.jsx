@@ -30,7 +30,6 @@ import { FormCrearReintegro } from '@/pages/Reintegros/FormCrearReintegro';
 import Reintegros from '@/pages/Reintegros/ListaReintegros';
 import Traspasos from '@/pages/Traspasos/ListaTraspasos';
 import { FormCrearTraspaso } from '@/pages/Traspasos/FormCrearTraspaso';
-import { FormCrearPoliza } from '../pages/Prestamos_Esp/FormCrearPoliza';
 import { FormRegistrarPrestamo_Es} from '../pages/Prestamos_Esp/FormRegistrarPrestamo_Es';
 
 export const AppRoutes = ({tokenSession}) => {
@@ -202,14 +201,6 @@ export const AppRoutes = ({tokenSession}) => {
                     <FormRegistrarPrestamo_Es/>
                 </ProtectedRoute>
             )
-        },
-        {
-            path: '/Prestamos_Esp/FormCrearPoliza',
-            element: (
-                <ProtectedRoute>
-                    <FormCrearPoliza />
-                </ProtectedRoute>
-            )                                               
         },
         {
             path: '/moras',
