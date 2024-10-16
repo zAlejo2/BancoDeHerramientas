@@ -20,6 +20,7 @@ import consumoRoutes from './routes/consumoRouter.js';
 import moraRoutes from './routes/moraRouter.js';
 import danoRoutes from './routes/danoRouter.js';
 import bajaRoutes from './routes/bajaRouter.js';
+import encargoRoutes from './routes/encargoRouter.js';
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use('/api/consumos', consumoRoutes);
 app.use('/api/moras', moraRoutes);
 app.use('/api/danos', danoRoutes);
 app.use('/api/bajas', bajaRoutes);
+app.use('/api/encargos', encargoRoutes);
 
 // Configurar la carpeta 'uploads' como estática
 const __filename = fileURLToPath(import.meta.url);

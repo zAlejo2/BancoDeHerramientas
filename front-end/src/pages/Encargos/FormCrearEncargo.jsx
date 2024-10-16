@@ -7,37 +7,19 @@ import useDeleteData from "../../hooks/useDeleteData";
 import axiosInstance from '../../helpers/axiosConfig.js';
 import '../../assets/formAgregarEditarStyles.css'; 
 
-export const FormAgregarEditarConsumo = () => {
+export const FormCrearEncargo = () => {
     const navigate = useNavigate();
     const { idconsumo } = useParams();
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
     // const { deleteData, data, isLoading, error } = useDeleteData(`consumos/${idconsumo}`, '/consumos');
-    const [cliente, setCliente] = useState({ nombre: '', grupo: '', documento: '' });
 
-    useEffect(() => {
-        // Hacer la solicitud para obtener el consumo y los datos del cliente relacionado
-        const fetchClienteData = async () => {
-            try {
-                const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/consumos/datosCliente/${idconsumo}`);
-                const { nombre, grupo, documento } = response.data; // Ajusta el acceso según la estructura de tu respuesta
-                setCliente({ nombre, grupo, documento });
-            } catch (error) {
-                console.error('Error al obtener los datos del cliente', error);
-            }
-        };
-
-        if (idconsumo) {
-            fetchClienteData();
-        }
-    }, [idconsumo]);
 
     // const handleDelete = () => {
     //     deleteData();
     // };
 
     const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
-    const filteredResults = searchResults.filter((item) => item.tipo === 'consumible');
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -100,21 +82,21 @@ export const FormAgregarEditarConsumo = () => {
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            if (filteredResults.length > 0) {
-                handleAddItem(filteredResults[0]); // Agregar el primer elemento de la búsqueda
+            if (searchResults.length > 0) {
+                handleAddItem(searchResults[0]); // Agregar el primer elemento de la búsqueda
             }
         }
     };
 
-    const handleSave = usePostData(`consumos/addElements/${idconsumo}`, () => {}, { elementos }, {},`/consumos`);
+    const handleSave = usePostData(`encargos`, () => {}, { elementos }, {},`/encargos/elegirarea`);
 
     return (
         <div className="form-container">
-            <h1 className="text-center my-2 mb-8 text-xl font-bold">Consumo de {cliente.documento} (Nombre: {cliente.nombre} --- Grupo: {cliente.grupo})</h1>
+            <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Encargo</h1>
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
-                        Busca el elemento que deseas agregar al consumo
+                        Busca el elemento que deseas agregar al encargo
                     </label>
                     <input
                         type="text"
@@ -129,14 +111,13 @@ export const FormAgregarEditarConsumo = () => {
                     {searchLoading && <p>Cargando...</p>}
                     {searchError && <p>Error: {searchError}</p>}
                     <div className="search-results">
-                        {Array.isArray(filteredResults) && filteredResults.map((item) => (
+                        {Array.isArray(searchResults) && searchResults.map((item) => (
                             <div
                                 key={item.idelemento}
                                 className="search-result-item"
                                 onClick={() => handleAddItem(item)}
                             >
                                 <span className="search-result-text">{item.descripcion}</span><span>Ubicación: {item.ubicacion}</span>
-
                             </div>
                         ))}
                     </div>

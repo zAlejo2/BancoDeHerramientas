@@ -34,23 +34,13 @@ ElementoHasEncargo.init({
       type: DataTypes.STRING(200),
       allowNull: true
   },
-  fecha_pedido: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-  },
-  fecha_reclamo: {
-      type: DataTypes.DATE,
-      allowNull: false
-  },
   fecha_devolucion: {
     type: DataTypes.DATE,
-    allowNull: true,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
-},
+    allowNull: true
+  },
   estado: {
-      type: DataTypes.ENUM('pendiente', 'reclamado', 'finalizado', 'cancelado'),
-      allowNull: false
+    type: DataTypes.ENUM('pendiente', 'aceptado'),
+    allowNull: false
   }
 }, {
   sequelize,

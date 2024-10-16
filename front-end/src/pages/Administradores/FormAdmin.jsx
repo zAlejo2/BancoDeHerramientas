@@ -8,12 +8,9 @@ import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
 
 export const FormAdmin = () => {
-    const initialData = { documento: "", contrasena: "", nombre: "", tipo: "", areas_idarea: "", correo: "", numero: ""};
+    const initialData = { documento: "", contrasena: "", nombre: "", tipo: "", correo: "", numero: ""};
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
-    const urls = ["areas"];
-    const { data } = useGetData(urls);
-    const areas = data.areas || [];
 
     const validations = {
         documento: [
@@ -47,12 +44,6 @@ export const FormAdmin = () => {
                 validate: value => value.trim() !== "",
                 message: "El tipo es obligatorio."
             }
-        ],
-        areas_idarea: [
-            {
-                validate: value => value.trim() !== "",
-                message: "El área es obligatoria."
-            }
         ]
     };
 
@@ -83,7 +74,7 @@ export const FormAdmin = () => {
         },
         { 
             id: 4, 
-            type: 'text', 
+            type: 'email', 
             name: 'correo', 
             placeholder: 'Ingrese el correo del administrador', 
             value: inputs.correo, 
@@ -91,7 +82,7 @@ export const FormAdmin = () => {
         },
         { 
             id: 5, 
-            type: 'text', 
+            type: 'number', 
             name: 'numero', 
             placeholder: 'Ingrese el número del administrador', 
             value: inputs.numero, 
@@ -142,13 +133,6 @@ export const FormAdmin = () => {
                             label: "Contratista",
                         },
                     ]}                
-                />
-                <Select
-                    label="Área"
-                    name="areas_idarea"
-                    value={inputs.areas_idarea}
-                    onChange={handleInputChange}
-                    options={areas.map(area => ({ value: area.idarea, label: area.nombre }))}
                 />
                 <div className={inputs1.length % 2 === 0 ? "md:col-span-2" : "flex items-center justify-center mt-6"}>
                     <Button type={'submit'} name={'Enviar'} />

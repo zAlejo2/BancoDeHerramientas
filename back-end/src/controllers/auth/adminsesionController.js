@@ -58,4 +58,4 @@ const terminarSesion = async (documento) => {
     }
 };
 
-export { nuevaSesion, terminarSesion, ajustarHora, formatFecha };
+export { nuevaSesion, terminarSesion, ajustarHora, formatFecha, obtenerHoraActual };

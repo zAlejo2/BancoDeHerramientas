@@ -4,7 +4,8 @@ import bcrypt from 'bcryptjs';
 // Obtener todos los Administradores
 const getAllAdmins = async (req, res) => {
     try {
-        const admins = await Administrador.findAll();
+        const { area } = req.user;
+        const admins = await Administrador.findAll({where: {areas_idarea: area}});
         res.json(admins);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -28,6 +29,7 @@ const getAdminById = async (req, res) => {
 // Crear un nuevo Administrador
 const createAdmin = async (req, res) => {
     try {
+        const { area } = req.user;
         const adminExisting = await Administrador.findByPk(req.body.documento);
 
         if(!adminExisting) { 
@@ -35,7 +37,7 @@ const createAdmin = async (req, res) => {
                 req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
             }
 
-            const registro = await Administrador.create(req.body);
+            const registro = await Administrador.create({...req.body, areas_idarea: area});
                 
             res.status(201).json(registro);
         } else {
@@ -49,6 +51,7 @@ const createAdmin = async (req, res) => {
 // Actualizar un Administrador
 const updateAdmin = async (req, res) => {
     try {
+        const { area } = req.user;
         const admin = await Administrador.findByPk(req.params.documento);
 
         if (!admin) {
@@ -62,7 +65,7 @@ const updateAdmin = async (req, res) => {
         }
 
         const [updated] = await Administrador.update(req.body, {
-            where: { documento: req.params.documento }
+            where: { documento: req.params.documento, areas_idarea: area }
         });
 
         if (updated) {
@@ -79,8 +82,9 @@ const updateAdmin = async (req, res) => {
 // Eliminar un Administrador
 const deleteAdmin = async (req, res) => {
     try {
+        const { area } = req.user;
         const deleted = await Administrador.destroy({
-            where: { documento: req.params.documento }
+            where: { documento: req.params.documento, areas_idarea: area }
         });
         if (deleted) {
             res.status(200).json({ mensaje: 'Administrador eliminado correctamente' });

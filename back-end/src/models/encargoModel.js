@@ -41,7 +41,15 @@ Encargo.init({
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
-    }
+    },
+    fecha_pedido: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    fecha_reclamo: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
 }, {
     sequelize,
     modelName: 'Encargo',

@@ -31,6 +31,8 @@ import Reintegros from '@/pages/Reintegros/ListaReintegros';
 import Traspasos from '@/pages/Traspasos/ListaTraspasos';
 import { FormCrearTraspaso } from '@/pages/Traspasos/FormCrearTraspaso';
 import { FormRegistrarPrestamo_Es} from '../pages/Prestamos_Esp/FormRegistrarPrestamo_Es';
+import { FormElegirArea } from '@/pages/Encargos/FormElegirArea';
+import { FormCrearEncargo } from '@/pages/Encargos/FormCrearEncargo';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -271,6 +273,22 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute>
                     <Traspasos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/encargos/elegirarea',
+            element: (
+                <ProtectedRoute>
+                    <FormElegirArea/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/encargos/elementos/:idarea',
+            element: (
+                <ProtectedRoute>
+                    <FormCrearEncargo/>
                 </ProtectedRoute>
             )
         },
