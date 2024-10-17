@@ -180,4 +180,40 @@ const deleteElement = async (req, res) => {
     }
 };
 
-export { getAllElements, getElementById, getElementByName, createElement, updateElement, deleteElement };
+// Obtener un elemento por su nombre para instructores por el problema del area
+const getElementByNameInstructor = async (req, res) => {
+    try {
+        const searchParam = req.params.descripcion.toLowerCase();
+
+        // Verifica si el parámetro es un número (posible id)
+        const isId = !isNaN(searchParam);
+
+        const elements = await Elemento.findAll({
+            where: {
+                cantidad: {
+                    [Sequelize.Op.gt]: 0 // Esto indica que cantidad debe ser mayor que 0
+                },
+                [Sequelize.Op.or]: [
+                    // Si el parámetro es un id, busca por idelemento
+                    isId ? { idelemento: searchParam } : null,
+                    // Siempre busca por la descripción
+                    Sequelize.where(
+                        Sequelize.fn('LOWER', Sequelize.col('descripcion')),
+                        'LIKE',
+                        `%${searchParam}%`
+                    )
+                ].filter(Boolean)
+            }
+        });
+
+        if (elements.length > 0) {
+            res.json(elements);
+        } else {
+            res.status(404).json({ message: 'El elemento buscado no se encuentra' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+export { getAllElements, getElementById, getElementByName, createElement, updateElement, deleteElement, getElementByNameInstructor };

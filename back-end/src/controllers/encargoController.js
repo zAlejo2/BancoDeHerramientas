@@ -9,10 +9,14 @@ const obtenerHoraActual = () => ajustarHora(new Date());
 const createEncargo = async (req, res) => {
     try {
         const {id: clientes_documento } = req.user;
-        const { correo, numero, elementos, areas_idarea, fecha_reclamo } = req.body;
+        const { correo, numero, elementos, fecha_reclamo, areas_idarea } = req.body;
         const clienteExists = await Cliente.findOne({where: {documento: clientes_documento}});
         if (!clienteExists) {
             return res.status(400).json({ mensaje: 'La persona no se encuentra registrada'})
+        }
+
+        if (!numero || !correo || !fecha_reclamo || !elementos) {
+            return res.status(400).json({ mensaje: 'Debes ingresar todos los datos'})
         }
 
         const encargo = await Encargo.create({
