@@ -43,7 +43,7 @@ const FormElegirArea = () => {
                 type="submit"
                 className="w-full bg-black hover:bg-black-700 text-white font-bold py-3 rounded-lg transition duration-300 ease-in-out"
             >
-                Registrar
+                Elegir
             </button>
         </form>
     );

@@ -1,25 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
-import useSearchElements from "../../hooks/useSearchElements";
+import useSearchElements from "../../hooks/useSearchElementsInstructor";
 import usePostData from "../../hooks/usePostData";
-import useDeleteData from "../../hooks/useDeleteData";
 import axiosInstance from '../../helpers/axiosConfig.js';
 import '../../assets/formAgregarEditarStyles.css'; 
 
 export const FormCrearEncargo = () => {
     const navigate = useNavigate();
-    const { idconsumo } = useParams();
+    const { idarea } = useParams();
+    const [areas, setAreas] = useState([]);
+    const areas_idarea = idarea; 
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedItems, setSelectedItems] = useState([]);
-    // const { deleteData, data, isLoading, error } = useDeleteData(`consumos/${idconsumo}`, '/consumos');
-
-
-    // const handleDelete = () => {
-    //     deleteData();
-    // };
+    const [numero, setNumber] = useState();
+    const [correo, setCorreo] = useState();
+    const [fecha_reclamo, setFecha] = useState();
 
     const { data: searchResults = [], error: searchError, loading: searchLoading } = useSearchElements(searchTerm);
+    const filteredResults = searchResults.filter((item) => item.areas_idarea == idarea);
+
+    useEffect(() => {
+        const fetchAreas = async () => {
+            try {
+                const response = await axiosInstance.get(`${import.meta.env.VITE_API_URL}/areas`); 
+                setAreas(response.data);
+            } catch (error) {
+                console.error("Error al obtener áreas:", error);
+            }
+        };
+
+        fetchAreas();
+    }, []);
+
+    // Buscar el área correspondiente
+    const areaEncontrada = areas.length > 0 ? areas.find(area => area.idarea === Number(areas_idarea)) : null;
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
@@ -27,32 +42,26 @@ export const FormCrearEncargo = () => {
 
     const handleAddItem = (item) => {
         setSelectedItems((prevItems) => {
-            // Verifica si el elemento ya existe en la lista
             const itemExists = prevItems.find((selectedItem) => selectedItem.idelemento === item.idelemento);
-    
             if (itemExists) {
-                // Si el elemento ya está en la lista, incrementa la cantidad actual en 1
                 return prevItems.map((selectedItem) =>
                     selectedItem.idelemento === item.idelemento
                         ? { ...selectedItem, cantidad: parseInt(selectedItem.cantidad, 10) + 1 }
                         : selectedItem
                 );
             }
-    
-            // Si el elemento no está en la lista, lo agrega con cantidad 1
-            return [
-                ...prevItems,
-                { ...item, cantidad: 1, cantidadd: 0, observaciones: "", checked: false }
-            ];
+            return [...prevItems, { ...item, cantidad: 1, cantidadd: 0, observaciones: "", checked: false }];
         });
     };    
 
+    const handleNumeroChange = (e) => setNumber(e.target.value); 
+    const handleCorreoChange = (e) => setCorreo(e.target.value); 
+    const handleFechaChange = (e) => setFecha(e.target.value); 
+
     const handleQuantityChange = (idelemento, quantity) => {
-        setSelectedItems((prevItems) =>
+        setSelectedItems((prevItems) => 
             prevItems.map((item) =>
-                item.idelemento === idelemento
-                    ? { ...item, cantidad: quantity }
-                    : item
+                item.idelemento === idelemento ? { ...item, cantidad: quantity } : item
             )
         );
     };
@@ -60,35 +69,26 @@ export const FormCrearEncargo = () => {
     const handleObservationsChange = (idelemento, observations) => {
         setSelectedItems((prevItems) =>
             prevItems.map((item) =>
-                item.idelemento === idelemento
-                    ? { ...item, observaciones: observations }
-                    : item
+                item.idelemento === idelemento ? { ...item, observaciones: observations } : item
             )
         );
     };
 
-    const handleDeleteSelected = () => {
-        setSelectedItems((prevItems) =>
-            prevItems.filter((item) => !item.checked)
-        );
-    };
-
-    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones, tipo }) => ({
+    const elementos = selectedItems.map(({ idelemento, cantidad, observaciones }) => ({
         idelemento,
         cantidad,
-        observaciones,
-        tipo
+        observaciones
     }));
 
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            if (searchResults.length > 0) {
-                handleAddItem(searchResults[0]); // Agregar el primer elemento de la búsqueda
+            if (filteredResults.length > 0) {
+                handleAddItem(filteredResults[0]);
             }
         }
     };
 
-    const handleSave = usePostData(`encargos`, () => {}, { elementos }, {},`/encargos/elegirarea`);
+    const handleSave = usePostData(`encargos`, () => {}, { elementos, numero, areas_idarea, correo, fecha_reclamo }, {},`/encargos/elegirarea`);
 
     return (
         <div className="form-container">
@@ -96,7 +96,7 @@ export const FormCrearEncargo = () => {
             <div className="container">
                 <div className="search-results-container">
                     <label htmlFor="search" className="block text-neutral-500">
-                        Busca el elemento que deseas agregar al encargo
+                        Busca y selecciona los elementos que deseas agregar al encargo
                     </label>
                     <input
                         type="text"
@@ -111,7 +111,7 @@ export const FormCrearEncargo = () => {
                     {searchLoading && <p>Cargando...</p>}
                     {searchError && <p>Error: {searchError}</p>}
                     <div className="search-results">
-                        {Array.isArray(searchResults) && searchResults.map((item) => (
+                        {Array.isArray(filteredResults) && filteredResults.map((item) => (
                             <div
                                 key={item.idelemento}
                                 className="search-result-item"
@@ -123,13 +123,42 @@ export const FormCrearEncargo = () => {
                     </div>
                 </div>
 
-                <div className="table-container max-h-[210px] overflow-y-auto overflow-x-auto">
+                <div className="table-container overflow-y-auto overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200 ">
                         <thead>
+                            <tr style={{ backgroundColor: 'black' }}>
+                                <td colSpan="6" style={{ color: 'white' }}>
+                                    <label className="font-bold">Ingrese los siguientes datos para hacer el encargo</label>
+                                </td>
+                            </tr>
                             <tr>
-                                <th>Código</th>
-                                <th>Descripción</th>
-                                <th>Dispo</th>
+                                <td colSpan="2">
+                                    <label> Lugar: {areaEncontrada ? areaEncontrada.nombre : "No encontrado"}</label>
+                                </td>
+                                <td colSpan="3">
+                                    <label> Correo: </label>
+                                    <input type="email" onChange={handleCorreoChange} value={correo} required />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colSpan="2">
+                                    <label> Fecha Reclamo: </label>
+                                    <input type="date" onChange={handleFechaChange} value={fecha_reclamo} required />
+                                </td>
+                                <td colSpan="3">
+                                    <label> Número: </label>
+                                    <input type="number" onChange={handleNumeroChange} value={numero} required />
+                                </td>
+                            </tr>
+                            <tr style={{ color: 'white' }}>.</tr>
+                            <tr style={{ color: 'black' }}>
+                                <td colSpan="6" style={{ color: 'black' }}>
+                                    <label className="font-bold">Indique las especificaciones de cada elemento</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Elemento</th>
+                                <th>Disponibles</th>
                                 <th>Cantidad</th>
                                 <th>Observaciones</th>
                                 <th></th>
@@ -138,7 +167,6 @@ export const FormCrearEncargo = () => {
                         <tbody>
                             {selectedItems.map((item) => (
                                 <tr key={item.idelemento}>
-                                    <td>{item.idelemento}</td>
                                     <td>{item.descripcion}</td>
                                     <td>{item.disponibles - item.minimo}</td>
                                     <td>
@@ -170,7 +198,7 @@ export const FormCrearEncargo = () => {
                                                 )
                                             }
                                         >
-                                            <IoClose/>
+                                            <IoClose />
                                         </button>
                                     </td>
                                 </tr>
@@ -189,7 +217,7 @@ export const FormCrearEncargo = () => {
                     <button
                         type="button"
                         className="consume-button"
-                        onClick={()=>navigate("inicio")}
+                        onClick={() => navigate("inicio")}
                     >
                         Cancelar                  
                     </button>

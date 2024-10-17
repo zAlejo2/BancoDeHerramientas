@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {jwtDecode} from 'jwt-decode';
 import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -25,120 +26,154 @@ export const Menu = ({ children }) => {
     const [openSubMenu, setOpenSubMenu] = useState(null);
     const navigate = useNavigate();
 
+    // Obtener el rol del usuario del token para poder filtrar los items del menú segun los permisos que tenga el rol
+    const token = localStorage.getItem('authToken');
+    let userRole = null;
+
+    // Decodificar el token solo si existe
+    if (token) {
+        try {
+            userRole = jwtDecode(token).role; 
+        } catch (error) {
+            console.error("Error al decodificar el token:", error);
+            navigate('/login');
+            return null; 
+        }
+    }
+    if (!userRole) {
+        navigate('/login');
+        return null; 
+    }
+
     const menuItems = [
-        { name: "Inicio", to: "/inicio" },
+        { name: "Inicio", to: "/inicio", roles: ["admin"]},
         { 
             name: "Prestamos", 
             to: "/prestamos", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Elementos Prestados", to: "/prestamos/lista" },
-                { name: "Historial Prestamos", to: "/prestamos/historial" } 
+                { name: "Elementos Prestados", to: "/prestamos/lista", roles: ["admin", "contratista", "practicante"]},
+                { name: "Historial Prestamos", to: "/prestamos/historial", roles: ["admin", "contratista", "practicante"]} 
             ]
         },
         { 
             name: "Prestamos_Esp", 
             to: "/prestamos_esp", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Formulario", to: "/prestamos_esp" }, 
+                { name: "Formulario", to: "/prestamos_esp", roles: ["admin", "contratista", "practicante"]}, 
                 // { name: "Encargos", to: "/admin/encargos" }
             ]
         },
         { 
             name: "Consumos", 
             to: "/consumos", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Registrar Consumo", to: "/consumos" }, 
-                { name: "Lista Consumos", to: "/consumos/historial" }
+                { name: "Registrar Consumo", to: "/consumos", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Lista Consumos", to: "/consumos/historial", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Encargos", 
-            to: "/Encargos", 
+            to: "/Encargos",
+            roles: ["admin", "contratista", "practicante", "instructor"],
             subMenu: [
-                { name: "Formulario", to: "/Encargos" },
+                { name: "Encargar", to: "/encargos/elegirarea", roles: ["instructor"]},
             ]
         },
         { 
             name: "Moras", 
             to: "/moras", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Moras Activas", to: "/moras" }, 
-                { name: "Historial Moras", to: "/moras/historial" }
+                { name: "Moras Activas", to: "/moras", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Historial Moras", to: "/moras/historial", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Daños", 
             to: "/danos", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Daños Pendientes", to: "/danos" }, 
-                { name: "Historial Daños", to: "/danos/historial" }
+                { name: "Daños Pendientes", to: "/danos", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Historial Daños", to: "/danos/historial", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Clientes", 
             to: "/clientes", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Registrar Cliente", to: "/usuarios/formulario" }, 
-                { name: "Lista", to: "/usuarios/lista" }
+                { name: "Registrar Cliente", to: "/usuarios/formulario", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Lista", to: "/usuarios/lista", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Grupos", 
             to: "/roles", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Registrar Grupo", to: "/roles/formulario" }, 
+                { name: "Registrar Grupo", to: "/roles/formulario", roles: ["admin", "contratista", "practicante"]}, 
                 { name: "Lista", to: "/roles/lista" }
             ]
         },
         { 
             name: "Elementos", 
             to: "/elementos", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Registrar Elemento", to: "/elementos/formulario" }, 
-                { name: "Lista", to: "/elementos/lista" }
+                { name: "Registrar Elemento", to: "/elementos/formulario", roles: ["admin", "contratista"]}, 
+                { name: "Lista", to: "/elementos/lista", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Areas", 
             to: "/areas", 
+            roles: ["admin"],
             subMenu: [
-                { name: "Registrar Área", to: "/areas/formulario" }, 
-                { name: "Lista", to: "/areas/lista" }
+                { name: "Registrar Área", to: "/areas/formulario", roles: ["admin"]}, 
+                { name: "Lista", to: "/areas/lista", roles: ["admin"]}
             ]
         },
         { 
             name: "Admin", 
             to: "/admin", 
+            roles: ["admin"],
             subMenu: [
-                { name: "Registrar Admin", to: "/administrador/formulario" }, 
-                { name: "Lista", to: "/administrador/lista" }
+                { name: "Registrar Admin", to: "/administrador/formulario", roles: ["admin"]}, 
+                { name: "Lista", to: "/administrador/lista", roles: ["admin"]}
             ]
         },
         { 
             name: "Reintegros", 
             to: "/reintegros", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Registrar Reintegro", to: "/reintegros" }, 
-                { name: "Lista", to: "/reintegros/lista" }
+                { name: "Registrar Reintegro", to: "/reintegros", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Lista", to: "/reintegros/lista", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Traspasos", 
             to: "/traspasos", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Registrar Traspaso", to: "/traspasos" }, 
-                { name: "Lista", to: "/traspasos/lista" }
+                { name: "Registrar Traspaso", to: "/traspasos", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Lista", to: "/traspasos/lista", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Historial", 
             to: "/historial", 
+            roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Historial Completo", to: "/historial" },
+                { name: "Historial Completo", to: "/historial", roles: ["admin", "contratista", "practicante"]}
             ]
         }
     ];
-
+    
+    const filteredMenuItems = menuItems.filter(item => item.roles.includes(userRole));
 
     return (
         <div className={`flex min-h-screen ${darkMode ? "dark" : ""}`}>
@@ -154,7 +189,7 @@ export const Menu = ({ children }) => {
                     </div>
                 </div>
                 <nav className="max-w-lg flex-1 p-4 space-y-2 overflow-hidden overflow-y-scroll">
-                    {menuItems.map((item) => (
+                    {filteredMenuItems.map((item) => (
                         <div key={item.name}>
                             {item.name === "Inicio" ? (
                                 <Link

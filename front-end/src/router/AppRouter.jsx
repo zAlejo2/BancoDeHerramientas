@@ -1,6 +1,7 @@
 // routes.js
 import { useRoutes, Navigate } from 'react-router-dom';
 import {ProtectedRoute} from './ProtectedRoute';
+import AccessDenied from './AccessDenied';
 import {LoginRoute} from './LoginRoute';
 import { Login } from '../pages/login/LoginPage';
 import { HomePage } from '../pages/home/Homepage';
@@ -55,7 +56,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/inicio',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <HomePage />
                 </ProtectedRoute>
             ),
@@ -63,7 +64,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/elementos/formulario',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormElementos />
                 </ProtectedRoute>
             ),
@@ -71,7 +72,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/elementos/lista',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <ElementosList />
                 </ProtectedRoute>
             ),
@@ -79,7 +80,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/roles/formulario',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista']}>
                     <FormRoles />
                 </ProtectedRoute>
             ),
@@ -87,7 +88,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/roles/lista',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista']}>
                     <Roles />
                 </ProtectedRoute>
             ),
@@ -95,7 +96,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/usuarios/formulario',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormClientes />
                 </ProtectedRoute>
             ),
@@ -103,7 +104,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/usuarios/lista',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Clientes />
                 </ProtectedRoute>
             ),
@@ -111,15 +112,15 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/prestamos/lista',
             element: (
-                <ProtectedRoute>
-                    <PrestamosActivos />
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <PrestamosActivos/>
                 </ProtectedRoute>
             ),
         },
         {
             path: '/prestamos/lista2',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <ListaElementos />
                 </ProtectedRoute>
             ),
@@ -127,7 +128,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/areas/formulario',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                     <FormAreas />
                 </ProtectedRoute>
             ),
@@ -135,7 +136,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/areas/lista',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                     <Areas />
                 </ProtectedRoute>
             ),
@@ -143,7 +144,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/administrador/formulario',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                     <FormAdmin />
                 </ProtectedRoute>
             ),
@@ -151,7 +152,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/administrador/lista',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin']}>
                     <Admin />
                 </ProtectedRoute>
             ),
@@ -159,7 +160,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/consumos',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormCrearConsumo/>
                 </ProtectedRoute>
             )
@@ -167,7 +168,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/consumos/elementos/:idconsumo',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormAgregarEditarConsumo/>
                 </ProtectedRoute>
             )
@@ -175,7 +176,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/prestamos/elementos/:idprestamo',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormAgregarEditarPrestamo/>
                 </ProtectedRoute>
             )
@@ -183,7 +184,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/prestamos/historial',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <HistorialPrestamos/>
                 </ProtectedRoute>
             )
@@ -191,7 +192,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/consumos/historial',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Consumos/>
                 </ProtectedRoute>
             )
@@ -207,7 +208,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/moras',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Moras/>
                 </ProtectedRoute>
             )
@@ -215,7 +216,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/moras/historial',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <HistorialMoras/>
                 </ProtectedRoute>
             )
@@ -223,7 +224,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/danos',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Danos/>
                 </ProtectedRoute>
             )
@@ -231,7 +232,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/danos/historial',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <HistorialDanos/>
                 </ProtectedRoute>
             )
@@ -239,7 +240,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/historial',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <HistorialTodo/>
                 </ProtectedRoute>
             )
@@ -247,7 +248,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/reintegros',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormCrearReintegro/>
                 </ProtectedRoute>
             )
@@ -255,7 +256,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/reintegros/lista',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Reintegros/>
                 </ProtectedRoute>
             )
@@ -263,7 +264,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/traspasos',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormCrearTraspaso/>
                 </ProtectedRoute>
             )
@@ -271,7 +272,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/traspasos/lista',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Traspasos/>
                 </ProtectedRoute>
             )
@@ -279,7 +280,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/encargos/elegirarea',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['instructor']}>
                     <FormElegirArea/>
                 </ProtectedRoute>
             )
@@ -287,11 +288,15 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/encargos/elementos/:idarea',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['instructor']}>
                     <FormCrearEncargo/>
                 </ProtectedRoute>
             )
         },
+        {
+            path: '/access-denied',
+            element: <AccessDenied />,
+        },       
         {
             path: '*',  
             element: <Navigate to={tokenSession ? "/inicio" : "/login"} replace />
