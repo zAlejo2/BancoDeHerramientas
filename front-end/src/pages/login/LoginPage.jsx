@@ -75,7 +75,7 @@ export const Login = () => {
               </div><br/>
               <h1 className="text-4xl font-bold mb-4 text-white">Bienvenid@</h1><br/>
               <p className="mb-6 text-center text-white">
-                Este es un software utilizado para la gestión de préstamos de elementos de los bancos de herramientas del Sena CIAA, solo es para usuarios ya registrados.
+                Este es un software utilizado para la gestión de préstamos de elementos de los bancos de herramientas del Sena CIAA, solo para usuarios ya registrados.
               </p>
             </div>
             <div className="flex flex-col justify-center items-center p-8 md:w-1/2">

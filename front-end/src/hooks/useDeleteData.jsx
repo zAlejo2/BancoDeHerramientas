@@ -49,12 +49,16 @@ const useDeleteData = (url, ruta) => {
             } catch (error) {
                 setError(error.response ? error.response.data : 'Error de conexión');
                 const mensaje = error.response?.data?.mensaje || "Error inesperado";
-                // Mostrar una notificación de error
-                Swal.fire(
-                    'Error!',
-                    mensaje,
-                    'error'
-                );
+                Swal.fire({
+                    icon: "error",
+                    title: mensaje,
+                    text: "Por favor verifique los datos.",
+                    confirmButtonColor: '#FC3F3F',
+                    customClass: {
+                        container: 'swal2-container',
+                        popup: 'swal2-popup'
+                    }
+                })
             } finally {
                 setIsLoading(false);
             }

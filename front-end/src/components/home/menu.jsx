@@ -137,7 +137,7 @@ export const Menu = ({ children }) => {
             ]
         },
         { 
-            name: "Admin", 
+            name: "Administrador", 
             to: "/admin", 
             roles: ["admin"],
             subMenu: [
@@ -172,7 +172,7 @@ export const Menu = ({ children }) => {
             ]
         }
     ];
-    
+
     const filteredMenuItems = menuItems.filter(item => item.roles.includes(userRole));
 
     return (
@@ -282,7 +282,7 @@ function Icon({ name, ...props }) {
         "Areas": <PiMapPinAreaFill {...props} />,
         "Clientes": <UserIcon {...props} />,
         "Grupos": <FaRegHandPointUp{...props} />,
-        "Admin": <SettingsIcon {...props} />,
+        "Administrador": <SettingsIcon {...props} />,
         "Elementos": <MdOutlineConstruction {...props} />,
         "List": <List {...props} />,
         "Formulario": <List {...props} />,

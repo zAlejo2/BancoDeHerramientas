@@ -11,9 +11,13 @@ const ListComponent = ({
 
     // Filtrar los datos según el término de búsqueda
     const filteredData = data?.filter((item) =>
-        searchKeys.some((key) =>
-            item[key]?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
+        searchKeys.some((key) => {
+            // Manejo para buscar en item.Elemento.descripcion
+            if (key === 'Elemento.descripcion') {
+                return item.Elemento?.descripcion.toLowerCase().includes(searchTerm.toLowerCase());
+            }
+            return item[key]?.toString().toLowerCase().includes(searchTerm.toLowerCase());
+        })
     );
 
     return (
@@ -45,7 +49,15 @@ const ListComponent = ({
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredData?.map(renderRow)}
+                            {filteredData?.length > 0 ? (
+                                filteredData.map(renderRow)
+                            ) : (
+                                <tr>
+                                    <td colSpan={columns.length} className="text-center py-4">
+                                        No hay registros
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

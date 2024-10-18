@@ -88,7 +88,7 @@ export const FormCrearEncargo = () => {
         }
     };
 
-    const handleSave = usePostData(`encargos`, () => {}, { elementos, numero, areas_idarea, correo, fecha_reclamo }, {},`/encargos/elegirarea`);
+    const handleSave = usePostData(`encargos`, () => {}, { elementos, numero, areas_idarea, correo, fecha_reclamo }, {},`/encargos/lista`);
 
     return (
         <div className="form-container">
@@ -143,7 +143,7 @@ export const FormCrearEncargo = () => {
                             <tr>
                                 <td colSpan="2">
                                     <label> Fecha Reclamo: </label>
-                                    <input type="date" onChange={handleFechaChange} value={fecha_reclamo} required />
+                                    <input type="datetime-local" onChange={handleFechaChange} value={fecha_reclamo} required />
                                 </td>
                                 <td colSpan="3">
                                     <label> Número: </label>
@@ -217,7 +217,7 @@ export const FormCrearEncargo = () => {
                     <button
                         type="button"
                         className="consume-button"
-                        onClick={() => navigate("inicio")}
+                        onClick={() => navigate("/encargos/lista")}
                     >
                         Cancelar                  
                     </button>
