@@ -245,6 +245,14 @@ ElementoHasPrestamoCorriente.belongsTo(Elemento, {
 foreignKey: 'elementos_idelemento',
 });
 
+ElementoHasEncargo.belongsTo(Encargo, {
+    foreignKey: 'encargos_idencargo',
+});
+  
+ElementoHasEncargo.belongsTo(Elemento, {
+foreignKey: 'elementos_idelemento',
+});
+
 PrestamoCorriente.belongsTo(Cliente, {
 foreignKey: 'clientes_documento',
 });
