@@ -35,6 +35,7 @@ import { FormRegistrarPrestamo_Es} from '../pages/Prestamos_Esp/FormRegistrarPre
 import { FormElegirArea } from '@/pages/Encargos/FormElegirArea';
 import { FormCrearEncargo } from '@/pages/Encargos/FormCrearEncargo';
 import ListaEncargosCliente from '@/pages/Encargos/ListaEncargosCliente';
+import ListaEncargosAdmin from '@/pages/Encargos/ListaEncargosAdmin';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -299,6 +300,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute allowedRoles={['instructor']}>
                     <ListaEncargosCliente/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/encargos',
+            element: (
+                <ProtectedRoute allowedRoles={['admin']}>
+                    <ListaEncargosAdmin/>
                 </ProtectedRoute>
             )
         },

@@ -7,10 +7,12 @@ import ListComponent from '@/components/listas/ListComponent';
 const ListaEncargosCliente = () => {
     const { data, loading, errorData } = useGetData(['encargos']);
     const [encargos, setEncargos] = useState([]);
+    const [EncargosRechazados, setEncargosRechazados] = useState([]);
 
     useEffect(() => {
         if (data?.encargos) {
             setEncargos(data.encargos.filter(encargo => encargo.estado === 'pendiente'));
+            setEncargosRechazados(data.encargos.filter(encargo => encargo.estado === 'rechazado'));
         }
     }, [data]);
 
@@ -21,6 +23,11 @@ const ListaEncargosCliente = () => {
         try {
             await axiosInstance.delete(`${import.meta.env.VITE_API_URL}/encargos/${id}`, { data: { elemento } });
             setEncargos(prevEncargos => {
+                return prevEncargos.filter(encargo => 
+                    !(encargo.encargos_idencargo === id && encargo.elementos_idelemento === elemento)
+                );
+            });
+            setEncargosRechazados(prevEncargos => {
                 return prevEncargos.filter(encargo => 
                     !(encargo.encargos_idencargo === id && encargo.elementos_idelemento === elemento)
                 );
@@ -47,7 +54,6 @@ const ListaEncargosCliente = () => {
             <td className="px-4 py-2">{encargo.observaciones}</td>
             <td className="px-4 py-2">{encargo.fecha_reclamo}</td>
             <td className="px-4 py-2">{encargo.area_nombre}</td>
-            <td className="px-4 py-2">{encargo.estado}</td>
             <td className="px-4 py-2"><button className="bg-black text-white px-2 py-1 rounded-md" onClick={() => handleDelete(encargo.encargos_idencargo, encargo.elementos_idelemento)}>Cancelar</button></td>
         </tr>
     );
@@ -59,7 +65,16 @@ const ListaEncargosCliente = () => {
             <td className="px-4 py-2">{encargo.observaciones}</td>
             <td className="px-4 py-2">{encargo.fecha_reclamo}</td>
             <td className="px-4 py-2">{encargo.area_nombre}</td>
-            <td className="px-4 py-2">{encargo.estado}</td>
+        </tr>
+    );
+
+    const renderRowRechazados = (encargo) => (
+        <tr key={encargo.encargos_idencargo} className="border-b">
+            <td className="px-4 py-2">{encargo.Elemento.descripcion}</td>
+            <td className="px-4 py-2">{encargo.cantidad}</td>
+            <td className="px-4 py-2">{encargo.observaciones}</td>
+            <td className="px-4 py-2">{encargo.area_nombre}</td>
+            <td className="px-4 py-2"><button className="bg-black text-white px-2 py-1 rounded-md" onClick={() => handleDelete(encargo.encargos_idencargo, encargo.elementos_idelemento)}>Ok</button></td>
         </tr>
     );
 
@@ -68,7 +83,7 @@ const ListaEncargosCliente = () => {
             <div>
                 <ListComponent
                     data={encargos}
-                    columns={['Elemento', 'Cantidad', 'Observaciones', 'Fecha Reclamo', 'Lugar', 'Estado', '']}
+                    columns={['Elemento', 'Cantidad', 'Observaciones', 'Fecha Reclamo', 'Lugar', '']}
                     renderRow={renderRow}
                     searchKeys={['Elemento', 'Elemento.descripcion', 'cantidad', 'area_nombre', 'observaciones']}
                     title="Encargos Pendientes"
@@ -77,10 +92,19 @@ const ListaEncargosCliente = () => {
             <div>
                 <ListComponent
                     data={data?.encargos.filter(encargo => encargo.estado === 'aceptado')}
-                    columns={['Elemento', 'Cantidad', 'Observaciones', 'Fecha Reclamo', 'Lugar', 'Estado']}
+                    columns={['Elemento', 'Cantidad', 'Observaciones', 'Fecha Reclamo', 'Lugar']}
                     renderRow={renderRowAceptados}
                     searchKeys={['Elemento', 'Elemento.descripcion', 'cantidad', 'area_nombre', 'observaciones']}
                     title="Encargos Aceptados"
+                />
+            </div>
+            <div>
+                <ListComponent
+                    data={EncargosRechazados}
+                    columns={['Elemento', 'Cantidad', 'Observaciones', 'Lugar', '']}
+                    renderRow={renderRowRechazados}
+                    searchKeys={['Elemento', 'Elemento.descripcion', 'cantidad', 'area_nombre', 'observaciones']}
+                    title="Encargos Rechazados"
                 />
             </div>
         </div>

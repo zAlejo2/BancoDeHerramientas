@@ -39,7 +39,7 @@ ElementoHasEncargo.init({
     allowNull: true
   },
   estado: {
-    type: DataTypes.ENUM('pendiente', 'aceptado'),
+    type: DataTypes.ENUM('pendiente', 'aceptado', 'rechazado'),
     allowNull: false
   }
 }, {

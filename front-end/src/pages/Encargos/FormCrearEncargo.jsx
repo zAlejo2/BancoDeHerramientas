@@ -117,7 +117,7 @@ export const FormCrearEncargo = () => {
                                 className="search-result-item"
                                 onClick={() => handleAddItem(item)}
                             >
-                                <span className="search-result-text">{item.descripcion}</span><span>Ubicación: {item.ubicacion}</span>
+                                <span className="search-result-text">{item.descripcion}</span>
                             </div>
                         ))}
                     </div>
