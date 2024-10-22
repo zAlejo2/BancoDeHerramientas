@@ -199,9 +199,12 @@ const getAdminEncargos = async (req, res) => {
 // ADMIN NIEGA/RECHAZA EL ENCRARGO
 const rejectEncargo = async (req, res) => {
     try {
+        const { area, adminId } = req.user;
         const { idencargo } = req.params;
         const { elemento, observaciones } = req.body; 
 
+        const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}})
+        const encargoEncargo = await Encargo.findOne({ where: {idencargo: idencargo}})
         const encargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});  
         if (!encargo) {
             return res.status(400).json({ mensaje: 'El encargo que intenta rechazar no existe'});
@@ -209,6 +212,7 @@ const rejectEncargo = async (req, res) => {
         if (encargo.estado == 'pendiente') {
             await ElementoHasEncargo.update({estado: 'rechazado', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
         }
+        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'rechazado', 'RECHAZAR ENCARGO'); 
 
         res.status(200).json({mensaje: 'Encargo rechazado correctamente'})
     } catch (error) {
@@ -217,26 +221,27 @@ const rejectEncargo = async (req, res) => {
     }
 };
 
-// ADMIN ACEPTA EL ENCRARGO
-const acceptEncargo = async (req, res) => {
+// ADMIN RECLAMA EL ENCARGO
+const reclaimEncargo = async (req, res) => {
     try {
-        const { area } = req.user;
+        const { area, adminId } = req.user;
         const { idencargo } = req.params;
         const { elemento, observaciones, cantidad } = req.body; 
 
         const encargo = await Encargo.findOne({where: {idencargo: idencargo}});
         const documento = encargo.clientes_documento;
         const elementoEncargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}}); 
+        const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}});
 
         if (!elementoEncargo) {
             return res.status(400).json({ mensaje: 'El encargo que intenta aceptar no existe'});
         }
-        if (elementoEncargo.estado == 'pendiente') {
+        if (elementoEncargo.estado == 'aceptado') {
             const loanExisting = await PrestamoCorriente.findOne({
                 where: { clientes_documento: documento, estado: 'actual', areas_idarea: area }
             });
             const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}});
-            const disponibles = elementoEncontrado.disponibles - elementoEncargo.minimo;
+            const disponibles = elementoEncontrado.disponibles - elementoEncontrado.minimo;
 
             if(loanExisting) {
                 const elementoEnPrestamo = await ElementoHasPrestamoCorriente.findOne({
@@ -255,7 +260,7 @@ const acceptEncargo = async (req, res) => {
                             observaciones: observaciones,
                             fecha_entrega: obtenerHoraActual(),
                         },
-                        { where: {elementos_idelemento: elemento}}
+                        { where: {elementos_idelemento: elemento, prestamoscorrientes_idprestamo: loanExisting.idprestamo}}
                     );
                     await Elemento.update(
                         {
@@ -305,8 +310,18 @@ const acceptEncargo = async (req, res) => {
                 );
             }
             await ElementoHasEncargo.update({estado: 'aceptado', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
+        } else {
+            return res.status(400).json({mensaje: 'No puedes reclamar un encargo que no ha sido aceptado'})
+        }
+
+        await ElementoHasEncargo.destroy({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
+        const encargos = await ElementoHasEncargo.findAll({ where: {encargos_idencargo: idencargo}});
+        if (encargos.length<1) {
+            await Encargo.destroy({where: {idencargo: idencargo}});
         }
         
+        createRecord(area,'encargo', idencargo, adminId, encargo.clientes_documento, elemento, elementoEncontrado.descripcion, elementoEncargo.cantidad, observaciones, 'actual', 'RECLAMAR ENCARGO'); 
+
         return res.status(200).json({mensaje: 'Encargo aceptado correctamente'})
     } catch (error) {
         console.error(error);
@@ -314,4 +329,54 @@ const acceptEncargo = async (req, res) => {
     }
 };
 
-export { createEncargo, cancelEncargo, getInstructorEncargos, getAdminEncargos, rejectEncargo, acceptEncargo };
+// ACEPTAR EL ENCAGRGO 
+const acceptEncargo = async (req, res) => {
+    try {
+        const { area, adminId } = req.user;
+        const { idencargo } = req.params;
+        const { elemento, observaciones } = req.body; 
+
+        const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}})
+        const encargoEncargo = await Encargo.findOne({ where: {idencargo: idencargo}})
+        const encargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});  
+        if (!encargo) {
+            return res.status(400).json({ mensaje: 'El encargo que intenta aceptar no existe'});
+        }
+        if (encargo.estado == 'pendiente') {
+            await ElementoHasEncargo.update({estado: 'aceptado', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
+        }
+        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'aceptado', 'ACEPTAR ENCARGO'); 
+
+        res.status(200).json({mensaje: 'Encargo aceptado correctamente'})
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ mensaje: 'Error al aceptar el encargo, por favor vuleva a intentarlo' });
+    }
+}
+
+// CANCELAR EL ENCAGRGO QUE YA HABÍA ACEPTADO Y DEVOLVERLO A PENDIENTE
+const cancelAceptar = async (req, res) => {
+    try {
+        const { area, adminId } = req.user;
+        const { idencargo } = req.params;
+        const { elemento, observaciones } = req.body; 
+
+        const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}})
+        const encargoEncargo = await Encargo.findOne({ where: {idencargo: idencargo}})
+        const encargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});  
+        if (!encargo) {
+            return res.status(400).json({ mensaje: 'El encargo que intenta pasar a pendiente no existe'});
+        }
+        if (encargo.estado == 'aceptado') {
+            await ElementoHasEncargo.update({estado: 'pendiente', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
+        }
+        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'pendiente', 'DE ACEPTADO A PENDIENTE'); 
+
+        res.status(200).json({mensaje: 'Encargo pasado a pendientes correctamente'})
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ mensaje: 'Error al pasar a pendiente el encargo, por favor vuleva a intentarlo' });
+    }
+}
+
+export { createEncargo, cancelEncargo, getInstructorEncargos, getAdminEncargos, rejectEncargo, acceptEncargo, reclaimEncargo, cancelAceptar };

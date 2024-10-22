@@ -62,7 +62,6 @@ export const Menu = ({ children }) => {
             roles: ["admin", "contratista", "practicante"],
             subMenu: [
                 { name: "Formulario", to: "/prestamos_esp", roles: ["admin", "contratista", "practicante"]}, 
-                // { name: "Encargos", to: "/admin/encargos" }
             ]
         },
         { 
@@ -77,9 +76,18 @@ export const Menu = ({ children }) => {
         { 
             name: "Encargos", 
             to: "/Encargos",
-            roles: ["admin", "contratista", "practicante", "instructor"],
+            roles: ["instructor"],
             subMenu: [
                 { name: "Encargar", to: "/encargos/elegirarea", roles: ["instructor"]},
+                { name: "Lista", to: "/encargos/lista", roles: ["instructor"]}
+            ]
+        },
+        { 
+            name: "Encargos", 
+            to: "/Encargos",
+            roles: ["admin", "contratista", "practicante"],
+            subMenu: [
+                { name: "Lista", to: "/encargos", roles: ["admin", "contratista", "practicante"]},
             ]
         },
         { 
