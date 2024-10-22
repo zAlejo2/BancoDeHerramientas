@@ -8,29 +8,44 @@ import { recordConsumption } from './consumoController.js';
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 // CEDER ELEMENTOS EN UN PRESTAMO A OTRA PERSONA
-const cederElemento = async (area, adminId, idprestamo, idelemento, descripcion, documento, cantidad, observaciones) => {
-    let prestamo = await PrestamoCorriente.findOne({ where: { clientes_documento: documento }});
-    if (!prestamo) {
-        prestamo = await PrestamoCorriente.create({
+const cederElemento = async (area, adminId, idprestamo, idelemento, descripcion, documento, cantidadCedido, observaciones) => {
+    const cantidad = Number(cantidadCedido);
+    const prestamo = await PrestamoCorriente.findOne({ where: { clientes_documento: documento }});
+    if (prestamo) {
+        const elementoYaEnPrestamo = await ElementoHasPrestamoCorriente.findOne({where: {prestamoscorrientes_idprestamo: prestamo.idprestamo, elementos_idelemento: idelemento}});
+        if (elementoYaEnPrestamo) {
+            await ElementoHasPrestamoCorriente.update(
+                {
+                    cantidad: elementoYaEnPrestamo.cantidad + cantidad,
+                    observaciones: observaciones
+                },
+                { where: { elementos_idelemento: idelemento, prestamoscorrientes_idprestamo: prestamo.idprestamo}}
+            );
+        } else {
+            await ElementoHasPrestamoCorriente.create({
+                elementos_idelemento: idelemento,
+                prestamoscorrientes_idprestamo: prestamo.idprestamo,
+                cantidad,
+                observaciones,
+                fecha_entrega: obtenerHoraActual(),
+                estado: 'actual'
+            });
+        }
+    } else {
+        const prestamo = await PrestamoCorriente.create({
             clientes_documento: documento,
             estado: 'actual',
             areas_idarea: area
         });
+        await ElementoHasPrestamoCorriente.create({
+            elementos_idelemento: idelemento,
+            prestamoscorrientes_idprestamo: prestamo.idprestamo,
+            cantidad,
+            observaciones,
+            fecha_entrega: obtenerHoraActual(),
+            estado: 'actual'
+        });
     }
-    await ElementoHasPrestamoCorriente.create({
-        elementos_idelemento: idelemento,
-        prestamoscorrientes_idprestamo: prestamo.idprestamo,
-        cantidad,
-        observaciones,
-        fecha_entrega: obtenerHoraActual(),
-        estado: 'actual'
-    });
-    await ElementoHasPrestamoCorriente.destroy({
-        where: {
-            prestamoscorrientes_idprestamo: idprestamo,
-            elementos_idelemento: idelemento
-        }
-    });
     createRecord(area,'prestamo', idprestamo, adminId, documento, idelemento, descripcion, cantidad, observaciones, 'cedido', 'CEDER ELEMENTO');
 };
 
@@ -165,7 +180,8 @@ const addOrUpdate = async (req, res) => {
         }
 
         for (let elemento of elementos) {
-            const { idelemento, cantidad, cantidadd, observaciones, estado, cedido } = elemento; 
+            const { idelemento, cantidad, cantidadd, observaciones, estado, cedido, cantidadCedida } = elemento;
+            const cantidadCedido = Number(cantidadCedida);
 
             const elementoEncontrado = await Elemento.findOne({ where: { idelemento, areas_idarea: area }});
             if (!elementoEncontrado) {
@@ -235,6 +251,8 @@ const addOrUpdate = async (req, res) => {
                                 }
                             });
                             createRecord(area, 'mora', mora.idmora, adminId, mora.clientes_documento, mora.elementos_idelemento, elementoEncontrado.descripcion, mora.cantidad, mora.observaciones, 'mora', 'ENVIAR A MORA');
+                        } else {
+                            return res.status(400).json({mensaje: 'No puedes reportar mora del elemento si lo vas a devolver completo'})
                         }
                     } else if (estado == 'dano') {
                         if (cantidadNueva != 0) {
@@ -253,6 +271,8 @@ const addOrUpdate = async (req, res) => {
                                 }
                             });
                             createRecord(area, 'daño', dano.iddano, adminId, dano.clientes_documento, dano.elementos_idelemento, elementoEncontrado.descripcion, dano.cantidad, dano.observaciones, 'daño', 'REPORTAR DAÑO');
+                        } else {
+                            return res.status(400).json({mensaje: 'No puedes reportar daño del elemento si lo vas a devolver completo'})
                         }
                     } else if (estado == 'consumo') {
                         if (cantidadNueva != 0) {
@@ -263,6 +283,8 @@ const addOrUpdate = async (req, res) => {
                                     elementos_idelemento: idelemento,
                                 }
                             });
+                        } else {
+                            return res.status(400).json({mensaje: 'No puedes consumir el elemento si lo vas a devolver completo'})
                         }
                     } else if (estado == 'cedido') {
                         if (cantidadNueva != 0) {
@@ -272,7 +294,18 @@ const addOrUpdate = async (req, res) => {
                             } else if (cedido == prestamo.clientes_documento) {
                                 return res.status(400).json({ mensaje: 'No puedes ceder elementos al cliente que actualmente los tiene'})
                             }
-                            const cedidos = await cederElemento(area, adminId, idprestamo, idelemento, elementoEncontrado.descripcion, cedido, cantidadNueva, observaciones);
+                            if (cantidadCedido > elementoEnPrestamo.cantidad || cantidadCedido + Number(cantidadd) > elementoEnPrestamo.cantidad) {
+                                return res.status(400).json({ mensaje: 'No se puede ceder una cantidad mayor a la prestada'});
+                            }
+                            const cedidos = await cederElemento(area, adminId, idprestamo, idelemento, elementoEncontrado.descripcion, cedido, cantidadCedido, observaciones);
+                            await ElementoHasPrestamoCorriente.update(
+                                { cantidad: elementoEnPrestamo.cantidad - cantidadCedido - cantidadd },
+                                { where: {prestamoscorrientes_idprestamo: idprestamo, elementos_idelemento: idelemento }}
+                            );
+                            const elementoEnPrestamoDespuesCedido = await ElementoHasPrestamoCorriente.findOne({where: {prestamoscorrientes_idprestamo: idprestamo, elementos_idelemento: idelemento}});
+                            if ( elementoEnPrestamoDespuesCedido.cantidad < 1) {
+                                await ElementoHasPrestamoCorriente.destroy({ where: {prestamoscorrientes_idprestamo: elementoEnPrestamoDespuesCedido.prestamoscorrientes_idprestamo, elementos_idelemento: idelemento}})
+                            }
                             await Elemento.update(
                                 {
                                     disponibles: elementoEncontrado.disponibles + diferencia,
@@ -280,6 +313,8 @@ const addOrUpdate = async (req, res) => {
                                 },
                                 { where: { idelemento } }
                             );
+                        } else {
+                            return res.status(400).json({mensaje: 'No puedes ceder el elemento si lo vas a devolver completo'})
                         }
                     } else {
                         await ElementoHasPrestamoCorriente.update(

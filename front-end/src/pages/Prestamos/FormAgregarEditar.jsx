@@ -110,6 +110,7 @@ export const FormAgregarEditarPrestamo = () => {
                     estado,
                     tipo: elemento.tipo,
                     cedido: 0,
+                    cantidadCedida: 0,
                     dispoTotal : elemento.disponibles - elemento.minimo
                 })));
             } catch (error) {
@@ -205,25 +206,33 @@ export const FormAgregarEditarPrestamo = () => {
         if (status === 'cedido') {
             Swal.fire({
                 title: 'Ceder elemento',
-                input: 'text',
-                inputPlaceholder: 'Documento de la a ceder el elemento',
+                html: `
+                    <input type="number" id="cedido" class="swal2-input" placeholder="Documento de la persona a ceder">
+                    <input type="number" id="cantidadCedida" class="swal2-input" placeholder="Cantidad a ceder" min="1">
+                `,
                 showCancelButton: true,
                 confirmButtonText: 'Ceder',
                 confirmButtonColor: '#007BFF',
                 cancelButtonText: 'Cancelar',
                 cancelButtonColor: '#81d4fa',
-                preConfirm: (cedido) => {
+                preConfirm: () => {
+                    const cedido = document.getElementById('cedido').value;
+                    const cantidadCedida = document.getElementById('cantidadCedida').value;
                     if (!cedido) {
                         Swal.showValidationMessage('Debe ingresar un documento');
+                    } else if (!cantidadCedida || cantidadCedida <= 0) {
+                        Swal.showValidationMessage('Debe ingresar una cantidad válida');
                     }
-                    return cedido;
+                    return { cedido, cantidadCedida };
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
+                    const { cedido, cantidadCedida } = result.value;
+    
                     setSelectedItems((prevItems) =>
                         prevItems.map((item) =>
                             item.idelemento === idelemento
-                                ? { ...item, manualStatus: status, estado: status, cedido: result.value }
+                                ? { ...item, manualStatus: status, estado: status, cedido: cedido, cantidadCedida: cantidadCedida }
                                 : item
                         )
                     );
@@ -240,17 +249,16 @@ export const FormAgregarEditarPrestamo = () => {
                 return updatedItems;
             });
         }
-    };
-    
-    
+    };    
 
-    const elementos = selectedItems.map(({ idelemento, cantidad, cantidadd, observaciones, estado, cedido }) => ({
+    const elementos = selectedItems.map(({ idelemento, cantidad, cantidadd, observaciones, estado, cedido, cantidadCedida }) => ({
         idelemento,
         cantidad,
         cantidadd,
         observaciones,
         estado,
-        cedido
+        cedido, 
+        cantidadCedida
     }));
 
     const handleSave = usePostData(`prestamos/addElements/${idprestamo}`, () => {}, { elementos }, {},'/inicio');
@@ -349,7 +357,7 @@ export const FormAgregarEditarPrestamo = () => {
                                             min="1"
                                         />               
                                     </td>
-                                    <td>{item.fecha_entregaFormato && item.cedido != 0  && item.estado == 'cedido' ? item.estado +' a  '+ item.cedido : item.fecha_entregaFormato ? item.estado : ''}</td>
+                                    <td>{item.fecha_entregaFormato && item.cedido != 0  && item.estado == 'cedido' ? item.cantidadCedida + ' ' + item.estado +' a  '+ item.cedido : item.fecha_entregaFormato ? item.estado : ''}</td>
                                     <td>
                                     <select
                                             value={item.manualStatus || item.estado} // Default to automatic status if no manual status
