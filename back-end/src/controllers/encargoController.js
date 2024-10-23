@@ -255,7 +255,8 @@ const reclaimEncargo = async (req, res) => {
                     }
                 });
                 if (elementoEnPrestamo) {
-                    if (elementoEnPrestamo.cantidad + cantidad > disponibles) {
+                    const dispoTotal = elementoEnPrestamo.cantidad + disponibles;
+                    if (elementoEnPrestamo.cantidad + cantidad > dispoTotal) {
                         return res.status(400).json({ mensaje: 'No se puede aceptar el préstamo porque supera la cantidad disponible del elemento'})
                     }
                     await ElementoHasPrestamoCorriente.update(
@@ -275,6 +276,9 @@ const reclaimEncargo = async (req, res) => {
                     ); 
                     // createRecord(area,'prestamo', idprestamo, adminId, prestamo.clientes_documento, elementoEnPrestamo.elementos_idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'actual', 'AGREGAR ELEMENTO DESDE ENCARGO'); 
                 } else {
+                    if (cantidad > disponibles) {
+                        return res.status(400).json({ mensaje: 'No se puede aceptar el préstamo porque supera la cantidad disponible del elemento'})
+                    }
                     await ElementoHasPrestamoCorriente.create({
                         elementos_idelemento: elemento,
                         prestamoscorrientes_idprestamo: loanExisting.idprestamo,
@@ -292,6 +296,9 @@ const reclaimEncargo = async (req, res) => {
                     );
                 }
             } else  {
+                if (cantidad > disponibles) {
+                    return res.status(400).json({ mensaje: 'No se puede aceptar el préstamo porque supera la cantidad disponible del elemento'})
+                }
                 const prestamo = await PrestamoCorriente.create({
                     clientes_documento: documento,
                     estado: 'actual',
@@ -313,7 +320,6 @@ const reclaimEncargo = async (req, res) => {
                     { where: { idelemento: elemento } }
                 );
             }
-            await ElementoHasEncargo.update({estado: 'aceptado', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
         } else {
             return res.status(400).json({mensaje: 'No puedes reclamar un encargo que no ha sido aceptado'})
         }
