@@ -46,11 +46,11 @@ export const FormCrearEncargo = () => {
             if (itemExists) {
                 return prevItems.map((selectedItem) =>
                     selectedItem.idelemento === item.idelemento
-                        ? { ...selectedItem, cantidad: parseInt(selectedItem.cantidad, 10) + 1 }
+                        ? { ...selectedItem, cantidad: parseInt(selectedItem.cantidad, 10) + 1, cantidadbd: item.cantidad }
                         : selectedItem
                 );
             }
-            return [...prevItems, { ...item, cantidad: 1, cantidadd: 0, observaciones: "", checked: false }];
+            return [...prevItems, { ...item, cantidad: 1, cantidadd: 0, observaciones: "", cantidadbd: item.cantidad, checked: false }];
         });
     };    
 
@@ -168,7 +168,7 @@ export const FormCrearEncargo = () => {
                             {selectedItems.map((item) => (
                                 <tr key={item.idelemento}>
                                     <td>{item.descripcion}</td>
-                                    <td>{item.disponibles - item.minimo}</td>
+                                    <td>{item.cantidadbd - item.minimo}</td>
                                     <td>
                                         <input className="input"
                                             type="number"

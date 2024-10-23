@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import useGetData from '@/hooks/useGetData';
 import ListComponent from '@/components/listas/ListComponent';
-// FALTA QUE FILTRE SOLO POR PRESTAMOS
+
 const HistorialPrestamos = () => {
-    const { data } = useGetData(['historial']);
-    const filteredData = data?.historial ? data.historial.filter(historial => historial.tipo_entidad === 'prestamo') : [];
+    const { data } = useGetData(['historial/prestamo']);
 
     const columns = ['Código Pres', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
 
@@ -27,7 +26,7 @@ const HistorialPrestamos = () => {
     return (
         <div>
             <ListComponent
-                data={filteredData}
+                data={data['historial/prestamo']}
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['entidad_id', 'cliente_id', 'cliente_nombre', 'elemento_id', 'elemento_nombre', 'cantidad', 'observaciones', 'estado', 'accion', 'admin_id', 'fecha_accion']}

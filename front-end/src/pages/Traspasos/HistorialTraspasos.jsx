@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import useGetData from '@/hooks/useGetData';
 import ListComponent from '@/components/listas/ListComponent';
 
-const HistorialTodo = () => {
-    const { data } = useGetData(['historial']);
+const HistorialTraspasos = () => {
+    const { data } = useGetData(['historial/traspaso']);
 
-    const columns = ['ID', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
+    const columns = ['Código Mora', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
 
     const renderRow = (historial) => (
         <tr key={historial.id_historial} className="border-b">
@@ -26,14 +26,14 @@ const HistorialTodo = () => {
     return (
         <div>
             <ListComponent
-                data={data['historial']}
+                data={data['historial/traspaso']}
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['entidad_id', 'cliente_id', 'cliente_nombre', 'elemento_id', 'elemento_nombre', 'cantidad', 'observaciones', 'estado', 'accion', 'admin_id', 'fecha_accion']}
-                title="Historial"
+                title="Historial Traspasos"
             />
         </div>
     );
 };
 
-export default HistorialTodo;
+export default HistorialTraspasos;

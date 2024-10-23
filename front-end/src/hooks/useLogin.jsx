@@ -1,17 +1,24 @@
 // useLogin.js
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; 
 import axiosInstance from '../helpers/axiosConfig';
 import Swal from 'sweetalert2';
 import { useContext } from 'react';
 import { MediosContext } from '../Context';
 
-const useLogin = (url, onSubmit, inputs) => {
+const useLogin = (url, inputs) => {
     const navigate = useNavigate();
     const { setLoader, setTokenSession } = useContext(MediosContext);
 
     const aceptSubmit = async () => {
         try {
             const response = await axiosInstance.post(`${import.meta.env.VITE_API_URL}/${url}`, inputs);
+            const token = response.data.token;
+
+            // Decodificar el token para obtener el tipo de usuario
+            const decodedToken = jwtDecode(token);
+            const userType = decodedToken.type;
+
             Swal.fire({
                 title: "¡Bien!",
                 text: "Ha Iniciado Sesión.",
@@ -20,13 +27,18 @@ const useLogin = (url, onSubmit, inputs) => {
                 showConfirmButton: false,
                 timer: 1500,
             }).then(() => {
-                onSubmit();
                 setLoader(false);
-                setTokenSession(response.data.token);
-                //localStorage.setItem('authToken', response.data.token)
-                navigate("/inicio", {
-                    replace: true,
-                });
+                setTokenSession(token);
+                
+                // Redirige según el tipo de usuario
+                if (userType === 'administrador') {
+                    navigate("/inicio", { replace: true });
+                } else if (userType === 'cliente') {
+                    navigate("/encargos/lista", { replace: true });
+                } else {
+                    // Manejo de errores o redirección por defecto
+                    navigate("/inicio", { replace: true });
+                }
             });
         } catch (error) {
             const mensaje = error.response?.data?.mensaje || "Error inesperado";

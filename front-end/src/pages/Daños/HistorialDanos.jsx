@@ -3,8 +3,7 @@ import useGetData from '@/hooks/useGetData';
 import ListComponent from '@/components/listas/ListComponent';
 
 const HistorialDanos = () => {
-    const { data } = useGetData(['historial']);
-    const filteredData = data?.historial ? data.historial.filter(historial => historial.tipo_entidad === 'daño') : [];
+    const { data } = useGetData(['historial/dano']);
 
     const columns = ['Código Daño', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
 
@@ -27,7 +26,7 @@ const HistorialDanos = () => {
     return (
         <div>
             <ListComponent
-                data={filteredData}
+                data={data['historial/dano']}
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['entidad_id', 'cliente_id', 'cliente_nombre', 'elemento_id', 'elemento_nombre', 'cantidad', 'observaciones', 'estado', 'accion', 'admin_id', 'fecha_accion']}

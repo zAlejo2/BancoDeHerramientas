@@ -14,6 +14,7 @@ export const HomePage = () => {
   const { data: cantidadPrestamo } = useGetData(["prestamos/todosPrestamos"]);
   const { data: cantidadMora } = useGetData(["moras"]);
   const { data: cantidadDano } = useGetData(["danos"]);
+  const { data: cantidadEncargo } = useGetData(["encargos/admin"]);
   const { data: prestamosData, error, loading } = useGetData(["historial"]);
   const prestamos = prestamosData['historial'] || [];
   const cantidadPrestamos = cantidadPrestamo['prestamos/todosPrestamos'] || [];
@@ -21,6 +22,8 @@ export const HomePage = () => {
   const totalMoras = cantidadMoras.length;
   const cantidadDanos = cantidadDano['danos'] || [];
   const totalDanos = cantidadDanos.length;
+  const cantidadEncargos = cantidadEncargo['encargos/admin'] || [];
+  const totalEncargos = cantidadEncargos.length;
 
   // Función para obtener el préstamo con la fecha más actual
   const getLatestPrestamos = () => {
@@ -58,6 +61,8 @@ export const HomePage = () => {
                 ? totalMoras 
                 : item === "Daños"
                 ? totalDanos
+                : item === "Encargos"
+                ? totalEncargos
                 : 0} 
             </CardTitle>
               <Icon name={item} className="w-6 h-6" />

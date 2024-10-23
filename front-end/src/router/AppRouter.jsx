@@ -36,6 +36,9 @@ import { FormElegirArea } from '@/pages/Encargos/FormElegirArea';
 import { FormCrearEncargo } from '@/pages/Encargos/FormCrearEncargo';
 import ListaEncargosCliente from '@/pages/Encargos/ListaEncargosCliente';
 import ListaEncargosAdmin from '@/pages/Encargos/ListaEncargosAdmin';
+import HistorialEncargos from '@/pages/Encargos/HistorialEncargos';
+import HistorialTraspasos from '@/pages/Traspasos/HistorialTraspasos';
+import HistorialReintegros from '@/pages/Reintegros/HistorialReintegros';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -264,6 +267,14 @@ export const AppRoutes = ({tokenSession}) => {
             )
         },
         {
+            path: '/reintegros/historial',
+            element: (
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <HistorialReintegros/>
+                </ProtectedRoute>
+            )
+        },
+        {
             path: '/traspasos',
             element: (
                 <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
@@ -276,6 +287,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Traspasos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/traspasos/historial',
+            element: (
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <HistorialTraspasos/>
                 </ProtectedRoute>
             )
         },
@@ -308,6 +327,14 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute allowedRoles={['admin']}>
                     <ListaEncargosAdmin/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/encargos/historial',
+            element: (
+                <ProtectedRoute allowedRoles={['admin']}>
+                    <HistorialEncargos/>
                 </ProtectedRoute>
             )
         },

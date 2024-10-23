@@ -88,6 +88,7 @@ export const Menu = ({ children }) => {
             roles: ["admin", "contratista", "practicante"],
             subMenu: [
                 { name: "Lista", to: "/encargos", roles: ["admin", "contratista", "practicante"]},
+                { name: "Historial Encargos", to: "/encargos/historial", roles: ["admin", "contratista", "practicante"]},
             ]
         },
         { 
@@ -159,7 +160,8 @@ export const Menu = ({ children }) => {
             roles: ["admin", "contratista", "practicante"],
             subMenu: [
                 { name: "Registrar Reintegro", to: "/reintegros", roles: ["admin", "contratista", "practicante"]}, 
-                { name: "Lista", to: "/reintegros/lista", roles: ["admin", "contratista", "practicante"]}
+                { name: "Lista", to: "/reintegros/lista", roles: ["admin", "contratista", "practicante"]},
+                { name: "Historial Reintegros", to: "/reintegros/historial", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
@@ -168,7 +170,8 @@ export const Menu = ({ children }) => {
             roles: ["admin", "contratista", "practicante"],
             subMenu: [
                 { name: "Registrar Traspaso", to: "/traspasos", roles: ["admin", "contratista", "practicante"]}, 
-                { name: "Lista", to: "/traspasos/lista", roles: ["admin", "contratista", "practicante"]}
+                { name: "Lista", to: "/traspasos/lista", roles: ["admin", "contratista", "practicante"]},
+                { name: "Historial Traspasos", to: "/traspasos/historial", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
@@ -292,9 +295,7 @@ function Icon({ name, ...props }) {
         "Grupos": <FaRegHandPointUp{...props} />,
         "Administrador": <SettingsIcon {...props} />,
         "Elementos": <MdOutlineConstruction {...props} />,
-        "List": <List {...props} />,
         "Formulario": <List {...props} />,
-        "Lista": <List {...props} />,
         "Lista Consumos": <List {...props}/>,
         "Historial Prestamos": <List {...props}/>,
         "Historial Moras": <List {...props} />,
@@ -307,7 +308,6 @@ function Icon({ name, ...props }) {
         "Daños": <MdManageHistory {...props} />,
         "Reintegros": <HiSortDescending  {...props} />,
         "Traspasos": <RiUserReceived2Fill  {...props} />,                          
-        "Lista ": <List {...props} />,
         "Prestamos": <HandCoins {...props} />,
         "Registrar Elemento": <List {...props}/>,
         "Registrar Consumo": <List {...props}/>,

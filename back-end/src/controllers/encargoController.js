@@ -1,4 +1,3 @@
-import { id } from 'date-fns/locale';
 import { Op } from 'sequelize';
 import { Encargo, ElementoHasEncargo, Cliente, Elemento, Area, PrestamoCorriente, ElementoHasPrestamoCorriente } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
@@ -43,7 +42,7 @@ const createEncargo = async (req, res) => {
                 await Encargo.destroy({where: {idencargo: idencargo}});
                 return res.status(404).json({ mensaje: `Elemento no encontrado en el inventario` });
             }
-            const dispoTotal = elementoEncontrado.disponibles - elementoEncontrado.minimo;
+            const dispoTotal = elementoEncontrado.cantidad - elementoEncontrado.minimo;
             
             if (existeEncargos) {
                 const idDeEncargos = existeEncargos.map((encargo) => encargo.idencargo);
@@ -176,7 +175,12 @@ const getAdminEncargos = async (req, res) => {
                     model: Elemento,
                     attributes: ['descripcion']
                 }
-            ]
+            ],
+            where: {
+                estado: {
+                    [Op.ne]: 'rechazado'  // `Op.ne` significa "no igual"
+                }
+            }
         });
 
         const encargosFormateados = encargos.map(encargo => {
@@ -199,7 +203,7 @@ const getAdminEncargos = async (req, res) => {
 // ADMIN NIEGA/RECHAZA EL ENCRARGO
 const rejectEncargo = async (req, res) => {
     try {
-        const { area, adminId } = req.user;
+        const { area, id: adminId } = req.user;
         const { idencargo } = req.params;
         const { elemento, observaciones } = req.body; 
 
@@ -224,7 +228,7 @@ const rejectEncargo = async (req, res) => {
 // ADMIN RECLAMA EL ENCARGO
 const reclaimEncargo = async (req, res) => {
     try {
-        const { area, adminId } = req.user;
+        const { area, id: adminId } = req.user;
         const { idencargo } = req.params;
         const { elemento, observaciones, cantidad } = req.body; 
 
@@ -332,7 +336,7 @@ const reclaimEncargo = async (req, res) => {
 // ACEPTAR EL ENCAGRGO 
 const acceptEncargo = async (req, res) => {
     try {
-        const { area, adminId } = req.user;
+        const { area, id: adminId } = req.user;
         const { idencargo } = req.params;
         const { elemento, observaciones } = req.body; 
 
@@ -357,7 +361,7 @@ const acceptEncargo = async (req, res) => {
 // CANCELAR EL ENCAGRGO QUE YA HABÍA ACEPTADO Y DEVOLVERLO A PENDIENTE
 const cancelAceptar = async (req, res) => {
     try {
-        const { area, adminId } = req.user;
+        const { area, id: adminId } = req.user;
         const { idencargo } = req.params;
         const { elemento, observaciones } = req.body; 
 
@@ -370,7 +374,7 @@ const cancelAceptar = async (req, res) => {
         if (encargo.estado == 'aceptado') {
             await ElementoHasEncargo.update({estado: 'pendiente', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
         }
-        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'pendiente', 'DE ACEPTADO A PENDIENTE'); 
+        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'pendiente', 'CNACELAR ENCARGO ACEPTADO'); 
 
         res.status(200).json({mensaje: 'Encargo pasado a pendientes correctamente'})
     } catch (error) {

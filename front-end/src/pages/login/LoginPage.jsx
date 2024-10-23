@@ -43,22 +43,8 @@ export const Login = () => {
         });
     };
 
-    const onSubmit = () => {
-        navigate("/inicio", { replace: true });
-    };
-
     // Usa la función validateInputs para validar los datos antes de enviar
-    const handleSubmit = useLogin("login", onSubmit, inputs, validations);
-
-    const toggleColorTheme = () => {
-        if (colorTheme === 'white') {
-            setColorTheme('gray');
-        } else if (colorTheme === 'gray') {
-            setColorTheme('black');
-        } else {
-            setColorTheme('white');
-        }
-    };
+    const handleSubmit = useLogin("login", inputs, validations);
 
     return (
         <div 

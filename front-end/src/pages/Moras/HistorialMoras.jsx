@@ -3,8 +3,7 @@ import useGetData from '@/hooks/useGetData';
 import ListComponent from '@/components/listas/ListComponent';
 
 const HistorialMoras = () => {
-    const { data } = useGetData(['historial']);
-    const filteredData = data?.historial ? data.historial.filter(historial => historial.tipo_entidad === 'mora') : [];
+    const { data } = useGetData(['historial/mora']);
 
     const columns = ['Código Mora', 'Documento', 'Nombre', 'Elemento', 'Descripcion', 'Cantidad', 'Observaciones', 'Estado', 'Acción', 'Fecha', 'Admin'];
 
@@ -27,7 +26,7 @@ const HistorialMoras = () => {
     return (
         <div>
             <ListComponent
-                data={filteredData}
+                data={data['historial/mora']}
                 columns={columns}
                 renderRow={renderRow}
                 searchKeys={['entidad_id', 'cliente_id', 'cliente_nombre', 'elemento_id', 'elemento_nombre', 'cantidad', 'observaciones', 'estado', 'accion', 'admin_id', 'fecha_accion']}
