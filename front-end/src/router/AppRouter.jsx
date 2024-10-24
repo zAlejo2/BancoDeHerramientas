@@ -39,6 +39,8 @@ import ListaEncargosAdmin from '@/pages/Encargos/ListaEncargosAdmin';
 import HistorialEncargos from '@/pages/Encargos/HistorialEncargos';
 import HistorialTraspasos from '@/pages/Traspasos/HistorialTraspasos';
 import HistorialReintegros from '@/pages/Reintegros/HistorialReintegros';
+import OlvidarContrasena from '@/pages/OlvidarContrasena/OlvidarContrasena';
+import NuevaContrasena from '@/pages/OlvidarContrasena/NuevaContrasena';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -336,6 +338,18 @@ export const AppRoutes = ({tokenSession}) => {
                 <ProtectedRoute allowedRoles={['admin']}>
                     <HistorialEncargos/>
                 </ProtectedRoute>
+            )
+        },
+        {
+            path: '/olvidar-contrasena',
+            element: (
+                <OlvidarContrasena/>
+            )
+        },
+        {
+            path: '/restablecer-contrasena/:token',
+            element: (
+                <NuevaContrasena/>
             )
         },
         {

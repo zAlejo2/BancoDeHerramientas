@@ -80,7 +80,7 @@ const usePostData = (url, onSubmit, inputs, validations, ruta) => {
             icon: 'warning',
             iconColor: '#007BFF',
             showCancelButton: true,
-                confirmButtonColor: '#007BFF',
+            confirmButtonColor: '#007BFF',
             cancelButtonColor: '#81d4fa',
             confirmButtonText: 'Sí, estoy seguro!',
             cancelButtonText: 'Cancelar',

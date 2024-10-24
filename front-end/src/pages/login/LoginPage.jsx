@@ -16,31 +16,26 @@ export const Login = () => {
 
     // Define las validaciones
     const validations = {
-        documento: [
-            {
-                validate: value => value.trim() !== "",
-                message: "El número de documento es obligatorio."
-            },
-            {
-                validate: value => /^[0-9]+$/.test(value),
-                message: "El número de documento debe contener solo números."
-            }
-        ],
-        contrasena: [
-            {
-                validate: value => value.trim() !== "",
-                message: "La contraseña es obligatoria."
-            }
-        ]
+      documento: [
+          { validate: value => value.trim() !== "", message: "El número de documento es obligatorio." },
+          { validate: value => /^[0-9]+$/.test(value), message: "El número de documento debe contener solo números." }
+      ],
+      contrasena: [
+          { validate: value => value.trim() !== "", message: "La contraseña es obligatoria." }
+      ]
     };
 
-    const { validateInputs } = useValidation(inputs, validations); // Aplica las validaciones
+    const { validateInputs } = useValidation(inputs, validations);
 
     const handleInputChange = (event) => {
         setInputs({
             ...inputs,
             [event.target.name]: event.target.value,
         });
+    };
+
+    const handleForgotPassword = () => {
+      navigate('/olvidar-contrasena'); // Cambia esta ruta según tu configuración
     };
 
     // Usa la función validateInputs para validar los datos antes de enviar
@@ -93,9 +88,11 @@ export const Login = () => {
                     value={inputs.contrasena}
                   />
                 </div>
-                <Button type="submit" className="w-full py-2 rounded-full">Enviar</Button>
+                <Button type="submit" className="w-full py-2 rounded-lg text-1xl">Iniciar sesión</Button>
+                <p className="mt-4 text-center text-gray-700 cursor-pointer text-2s" onClick={handleForgotPassword}>
+                  ¿Olvidaste tu contraseña?
+                </p>
               </form>
-              {/* <button onClick={toggleColorTheme} className="mt-4 px-4 py-2 rounded bg-blue-500 text-white">Cambiar Tema</button> */}
             </div>
           </div>
         </div>
