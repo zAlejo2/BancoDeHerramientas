@@ -1,17 +1,18 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import { Cliente, Administrador, Rol } from '../../models/index.js';
 import nodemailer from 'nodemailer';
+import config from '../../config/config.js';
+import { Cliente, Administrador, Rol } from '../../models/index.js';
 
 const sendRecoveryEmail = async (email, link) => {
     // Configurar el transportador de nodemailer
     const transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 587, // Usar 587 para conexiones seguras
+        host: config.email.host,
+        port: config.email.port, // Usar 587 para conexiones seguras
         secure: false, // true para 465, false para otros puertos
         auth: {
-            user: 'manugiga525@gmail.com',
-            pass: 'eycb aagj vpav omdk',
+            user: config.email.user,
+            pass: config.email.pass,
         },
     });
     
@@ -63,7 +64,7 @@ const solicitarNuevaContrasena = async (req, res) => {
             correo: usuario.correo,
             documento: usuario.documento,
             date: Date.now(),
-        }, process.env.JWT_SECRET_RESTABLECER_CONTRASENA, { expiresIn: '3m' }); // Expira en 1 hora
+        }, config.jwt.secretnewcontrasena, { expiresIn: '10m' }); // Expira en 1 hora
 
         if (token) {
             const recoveryLink = `http://localhost:5173/restablecer-contrasena/${token}`;
@@ -86,7 +87,7 @@ const resetContrasena = async (req, res) => {
             return res.status(400).json({ mensaje: 'La contraseña está vacía, por favor ingresa la nueva contraseña'})
         }
         // Verifica el token
-        jwt.verify(token, process.env.JWT_SECRET_RESTABLECER_CONTRASENA, async (err, decoded) => {
+        jwt.verify(token, config.jwt.secretnewcontrasena, async (err, decoded) => {
             if (err) {
                 return res.status(403).json({ mensaje: "Se ha vencido el tiempo para usar este link, debes volver a solicitar uno" });
             }
