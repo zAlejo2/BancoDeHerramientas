@@ -131,7 +131,7 @@ const Elementos = () => {
                             <img
                                 src={`${import.meta.env.VITE_IMAGENES_URL}/${selectedElement.foto}`}
                                 alt={`Foto de ${selectedElement.descripcion}`}
-                                className="h-32 w-32 object-cover"
+                                className="h-40 w-auto object-cover"
                             />
                         </div>
                     )}

@@ -6,6 +6,7 @@ import { Select } from "../../components/forms/elements/select";
 import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
 import useValidatedPostDataImage from "@/hooks/useValidatePostDataImage";
+import ImportarExcel from "../../components/forms/elements/importarExcel";
 
 export const FormClientes = () => {
     const initialData = { documento: "", nombre: "", correo: "", contrasena: "", fechaInicio: "", fechaFin: "", observaciones: "", numero: ""};
@@ -127,6 +128,7 @@ export const FormClientes = () => {
 
 
     return (
+        <div>
         <Forms>
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Clientes</h1>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto" onSubmit={handleSubmit}>
@@ -144,7 +146,7 @@ export const FormClientes = () => {
                 </div>
                 ))}
                 <Select
-                    label="Tipo de Rol"
+                    label="grupo"
                     name="roles_idrol"
                     value={inputs.roles_idrol}
                     onChange={handleInputChange}
@@ -155,5 +157,7 @@ export const FormClientes = () => {
                 </div>
             </form>
         </Forms>
+        <ImportarExcel/>
+        </div>
     );
 };

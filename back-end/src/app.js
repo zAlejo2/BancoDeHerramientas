@@ -22,6 +22,7 @@ import danoRoutes from './routes/danoRouter.js';
 import bajaRoutes from './routes/bajaRouter.js';
 import encargoRoutes from './routes/encargoRouter.js';
 import olvidarContrasena from './routes/auth/olvidarContraseñaRouter.js';
+import importarExcel from './routes/excelRouter.js';
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use('/api/danos', danoRoutes);
 app.use('/api/bajas', bajaRoutes);
 app.use('/api/encargos', encargoRoutes);
 app.use('/api/olvidar-contrasena', olvidarContrasena);
+app.use('/api/importar-excel', importarExcel);
 
 // Configurar la carpeta 'uploads' como estática
 const __filename = fileURLToPath(import.meta.url);

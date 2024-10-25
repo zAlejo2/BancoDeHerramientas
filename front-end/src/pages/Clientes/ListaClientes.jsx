@@ -140,7 +140,7 @@ const Clientes = () => {
                             <img
                                 src={`${import.meta.env.VITE_IMAGENES_URL}/${selectedClient.foto}`}
                                 alt={`Foto de ${selectedClient.nombre}`}
-                                className="h-100 w-auto object-cover"
+                                className="h-40 w-auto object-cover"
                             />
                         </div>
                     )}
