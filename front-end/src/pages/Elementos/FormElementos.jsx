@@ -6,6 +6,7 @@ import { Select } from "../../components/forms/elements/select";
 import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
 import useValidatedPostDataImage from "@/hooks/useValidatePostDataImage";
+import { ImportarExcelElemento } from "@/components/forms/elements/importarExcel";
 
 export const FormElementos = () => {
     const initialData = { descripcion: "", cantidad: "", disponibles: "", ubicacion: "", tipo: "", estado: "", areas_idarea: "", foto: "", observaciones: "", minimo: "" };
@@ -119,6 +120,7 @@ export const FormElementos = () => {
     ];
 
     return (
+        <div>
         <Forms>
             <h1 className="text-center my-2 mb-8 text-xl font-bold">Formulario Elementos</h1>
             <form className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto max-h-[900px]" onSubmit={handleSubmit}>
@@ -160,6 +162,8 @@ export const FormElementos = () => {
                 </div>
             </form>
         </Forms>
+        <ImportarExcelElemento/>
+        </div>
     );
 };
 

@@ -69,7 +69,7 @@ const NuevaContrasena = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen">
-            <form onSubmit={handleSubmit} className='shadow-lg text-3xl p-10'>
+            <form onSubmit={handleSubmit} className='shadow-lg text-3xl p-10 border border-neutral-400/40 m-4 p-6 shadow-lg shadow-[#1565c023] rounded-lg'>
                 <h1 className='font-bold m-1'>Restablecer Contraseña</h1>
                 <div className='m-5'>
                     <Label htmlFor="documento">Nueva Contraseña</Label>

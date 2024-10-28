@@ -6,7 +6,7 @@ import { Select } from "../../components/forms/elements/select";
 import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
 import useValidatedPostDataImage from "@/hooks/useValidatePostDataImage";
-import ImportarExcel from "../../components/forms/elements/importarExcel";
+import {ImportarExcelCliente} from "../../components/forms/elements/importarExcel";
 
 export const FormClientes = () => {
     const initialData = { documento: "", nombre: "", correo: "", contrasena: "", fechaInicio: "", fechaFin: "", observaciones: "", numero: ""};
@@ -157,7 +157,7 @@ export const FormClientes = () => {
                 </div>
             </form>
         </Forms>
-        <ImportarExcel/>
+        <ImportarExcelCliente/>
         </div>
     );
 };
