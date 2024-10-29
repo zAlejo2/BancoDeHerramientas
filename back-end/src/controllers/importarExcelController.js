@@ -1,13 +1,14 @@
 import ExcelJS from 'exceljs';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
+import fs from 'fs'; 
 import sequelize from '../db/connection.js';
 import { Cliente, Rol, Elemento } from '../models/index.js';
 
 const uploadExcelClienteData = async (req, res) => {
     const t = await sequelize.transaction();
+    const filePath = req.file.path; 
     try {
-        const filePath = req.file.path;
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(filePath);
         const worksheet = workbook.worksheets[0];
@@ -29,10 +30,15 @@ const uploadExcelClienteData = async (req, res) => {
         });
 
         const errors = [];
+        const seenDocuments = new Set(); // Para rastrear documentos ya procesados
+
         // Validación preliminar: busca documentos inválidos
         const invalidItems = jsonData.filter(item => !item.documento || isNaN(item.documento));
 
         if (invalidItems.length > 0) {
+            fs.unlink(filePath, (err) => { // Elimina el archivo si hay errores
+                if (err) console.error('Error al eliminar el archivo:', err);
+            });
             return res.status(400).json({ mensaje: 'Hay algún (o algunos) cliente sin documento, el documento es requerido y debe ser un número', invalidItems });
         }
         const existingClientes = await Cliente.findAll({ where: { documento: jsonData.map(item => item.documento) } });
@@ -53,6 +59,13 @@ const uploadExcelClienteData = async (req, res) => {
             const existeRol = roleMap[item.roles_idrol];
             const existeCliente = clienteMap[item.documento];
             // Validaciones
+
+            // Verificar si el documento ya ha sido procesado
+            if (seenDocuments.has(item.documento)) {
+                errorMessages.push(`El documento ${item.documento} se encuentra más de una vez`);
+            } else {
+                seenDocuments.add(item.documento); // Agregar al conjunto si no se ha procesado
+            }
 
             // Validar que el cliente no se encuentre ya registrado
             if (existeCliente) {
@@ -137,6 +150,9 @@ const uploadExcelClienteData = async (req, res) => {
 
         if (errors.length > 0) {
             await t.rollback();
+            fs.unlink(filePath, (err) => { // Elimina el archivo si hay errores
+                if (err) console.error('Error al eliminar el archivo:', err);
+            });
             return res.status(400).json({ mensaje: 'Errores en los datos', errors });
         }
 
@@ -146,15 +162,18 @@ const uploadExcelClienteData = async (req, res) => {
     } catch (error) {
         console.error(error);
         await t.rollback();
+        fs.unlink(filePath, (err) => { // Elimina el archivo en caso de error
+            if (err) console.error('Error al eliminar el archivo:', err);
+        });
         return res.status(500).json({ mensaje: 'Error al procesar el archivo' });
     }
 };
 
 const uploadExcelElementoData = async (req, res) => {
     const t = await sequelize.transaction();
+    const filePath = req.file.path;
     try {
         const { area } = req.user;
-        const filePath = req.file.path;
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(filePath);
         const worksheet = workbook.worksheets[0];
@@ -177,6 +196,9 @@ const uploadExcelElementoData = async (req, res) => {
         // Validar que todos los elementos tengan descripción
         const missingDescriptions = jsonData.filter(item => !item.descripcion || typeof item.descripcion !== 'string');
         if (missingDescriptions.length > 0) {
+            fs.unlink(filePath, (err) => { // Elimina el archivo si hay errores
+                if (err) console.error('Error al eliminar el archivo:', err);
+            });
             return res.status(400).json({ 
                 mensaje: 'Algunos elementos no tienen descripción', 
                 invalidItems: missingDescriptions 
@@ -211,7 +233,7 @@ const uploadExcelElementoData = async (req, res) => {
             }
 
             if (!item.tipo || (item.tipo !== 'devolutivo' && item.tipo !== 'consumible')) {
-                errorMessages.push(`El tipo del elemento ${item.decripcion} no puede estar vacío y solo puede ser "devolutivo" o "consumible".`);
+                errorMessages.push(`El tipo del elemento ${item.descripcion} no puede estar vacío y solo puede ser "devolutivo" o "consumible".`);
             }
 
             if (!item.ubicacion) {
@@ -265,6 +287,9 @@ const uploadExcelElementoData = async (req, res) => {
 
         if (errors.length > 0) {
             await t.rollback();
+            fs.unlink(filePath, (err) => { // Elimina el archivo si hay errores
+                if (err) console.error('Error al eliminar el archivo:', err);
+            });
             return res.status(400).json({ mensaje: 'Errores en los datos', errors });
         }
 
@@ -274,6 +299,9 @@ const uploadExcelElementoData = async (req, res) => {
     } catch (error) {
         console.error(error);
         await t.rollback();
+        fs.unlink(filePath, (err) => { // Elimina el archivo en caso de error
+            if (err) console.error('Error al eliminar el archivo:', err);
+        });
         return res.status(500).json({ mensaje: 'Error al procesar el archivo' });
     }
 };

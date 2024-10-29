@@ -1,6 +1,7 @@
 import { Cliente, Rol } from '../models/index.js';
 import upload from '../middlewares/fotoClienteMiddleware.js';
 import bcrypt from 'bcryptjs';
+import validator from 'validator';
 
 // Obtener todos los Clientes
 const getAllClients = async (req, res) => {
@@ -58,6 +59,9 @@ const createClient = async (req, res) => {
 
             // Obtener el nombre del archivo de la imagen subida
             const foto = req.file ? req.file.filename : null;
+            if(rolExist.descripcion !== 'instructor' && req.body.contrasena) {
+                return res.status(400).json({ mensaje: 'Solo si es instructor puede registrar contraseña' });
+            }
 
             const user = await Cliente.create({ ...req.body, foto });
             res.status(201).json(user);
@@ -115,7 +119,6 @@ const updateClient = async (req, res) => {
     }
 };
 
-
 // Eliminar un Cliente
 const deleteClient = async (req, res) => {
     try {
@@ -133,4 +136,59 @@ const deleteClient = async (req, res) => {
     }
 };
 
-export { getAllClients, getClientById, createClient, updateClient, deleteClient };
+// Obtener la info de un cliente
+const getInfoClient = async (req, res) => {
+    try {
+        const { id: clienteId } = req.user;
+        const user = await Cliente.findOne({ where: {documento: clienteId}});
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: error.mensaje });
+    }
+}
+
+// Obtener la info de un cliente
+const changeCorreoClient = async (req, res) => {
+    try {
+        const { id: clienteId } = req.user;
+        let correo = req.body.correo;
+        // Validar el formato del correo
+        if (typeof correo !== 'string') {
+            correo = String(correo); // Convertir a cadena si es necesario
+        }
+        if (!correo || !validator.isEmail(correo)) {
+            return res.status(400).json({mensaje: 'El correo no puede estar vacío y debe tener un formato válido'})
+        }
+        const user = await Cliente.update({correo: correo},{ where: {documento: clienteId}});
+        if (user) {
+            return res.status(200).json({mensaje: 'Correo actualizado correctamente'});
+        } else {
+            return res.status(400).json({mensaje: 'Cliente no encontrado'})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: error.mensaje });
+    }
+}
+
+// Obtener la info de un cliente
+const changeContrasenaClient = async (req, res) => {
+    try {
+        const { id: clienteId } = req.user;
+        let contrasena = req.body.contrasena
+        if (contrasena == '' || contrasena == undefined || contrasena == null) {
+            return res.status(400).json({mensaje: 'No puedes enviar una contraseña vacía'});
+        } 
+        contrasena = await bcrypt.hash(contrasena, 10);
+        const user = await Cliente.update({ contrasena: contrasena}, { where: {documento: clienteId}});
+        if (user) {
+            return res.status(200).json({mensaje: 'Contraseña actualizada correctamente'});
+        } else {
+            return res.status(400).json({mensaje: 'Cliente no encontrado'})
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.mensaje });
+    }
+}
+
+export { getAllClients, getClientById, createClient, updateClient, deleteClient, getInfoClient, changeContrasenaClient, changeCorreoClient };

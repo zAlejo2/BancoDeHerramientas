@@ -105,7 +105,7 @@ const ImportarExcelCliente = () => {
                     </ul>
                     <li className="mt-2">Las observaciones no son obligatorias, puedes dejar la casilla vacía</li>
                     <li className="mt-2">Si el cliente NO es instructor la casilla de contraseña TIENE que dejarse vacía</li>
-                    <li className="mt-2">El resto de los datos es OBLIGATORIO para el registro de todos los clientes</li>
+                    <li className="mt-2">El resto de los datos son OBLIGATORIOS para el registro de todos los clientes</li>
                     <li className="mt-2">Si corrige algún error en el excel recuerde que debe guardar los cambios en el archivo, luego recargar la página e ingresar el archivo nuevamente</li>
                     <li className="mt-2">El sistema le notificará si comete algún error en el registro. Si el sistema no permite hacer el registro y tampoco le especifica el problema  revise su conexión a internet, su aún no funciona intente reiniciar la página o iniciar sesión de nuevo</li>
                 </ul>
@@ -201,22 +201,20 @@ const ImportarExcelElemento = () => {
                 <ul className="list-disc pl-5">
                     <li className="mb-1">TIENE que ser un archivo excel (.xlsx)</li>
                     <li className="mb-1">SOLO puede tener una hoja de cálculo y debe ser la primera (Hoja1)</li>
-                    <li className="mb-1">NO puede tener títulos (ej: nombre, correo...)</li>
+                    <li className="mb-1">NO puede tener títulos (ej: descripcion, cantidad...)</li>
                     <li className="mt-2">La información debe estar de la siguiente manera:</li>
                     <ul className="list-decimal pl-5"><br/>
-                        <li>En la columna A: número de documento</li>
-                        <li>En la columna B: nombre completo</li>
-                        <li>En la columna C: correo</li>
-                        <li>En la columna D: número de contacto</li>
-                        <li>En la columna E: contraseña (ÚNICAMENTE si es instructor)</li>
-                        <li>En la columna F: fecha de inicio (día/mes/año)</li>
-                        <li>En la columna G: fecha fin (día/mes/año)</li>
-                        <li>En la columna H: el Código Grupo (puedes consultarlo en el apartado de Grupos/Lista)</li>
-                        <li>En la columna I: observaciones</li>
+                        <li>En la columna A: descripción (nombre del elemento)</li>
+                        <li>En la columna B: disponibles</li>
+                        <li>En la columna C: cantidad</li>
+                        <li>En la columna D: ubicación</li>
+                        <li>En la columna E: tipo (consumible o devolutivo)</li>
+                        <li>En la columna F: estado (disponible o agotado)</li>
+                        <li>En la columna G: cantidad minima</li>
+                        <li>En la columna H: observaciones</li>
                     </ul>
                     <li className="mt-2">Las observaciones no son obligatorias, puedes dejar la casilla vacía</li>
-                    <li className="mt-2">Si el cliente NO es instructor la casilla de contraseña TIENE que dejarse vacía</li>
-                    <li className="mt-2">El resto de los datos es OBLIGATORIO para el registro de todos los clientes</li>
+                    <li className="mt-2">El resto de los datos son OBLIGATORIOS para el registro de todos los elementos</li>
                     <li className="mt-2">Si corrige algún error en el excel recuerde que debe guardar los cambios en el archivo, luego recargar la página e ingresar el archivo nuevamente</li>
                     <li className="mt-2">El sistema le notificará si comete algún error en el registro. Si el sistema no permite hacer el registro y tampoco le especifica el problema  revise su conexión a internet, su aún no funciona intente reiniciar la página o iniciar sesión de nuevo</li>
                 </ul>
