@@ -147,11 +147,12 @@ const getInfoClient = async (req, res) => {
     }
 }
 
-// Obtener la info de un cliente
+// Instructor acmbia su correo o número
 const changeCorreoClient = async (req, res) => {
     try {
         const { id: clienteId } = req.user;
         let correo = req.body.correo;
+        const numero = req.body.numero;
         // Validar el formato del correo
         if (typeof correo !== 'string') {
             correo = String(correo); // Convertir a cadena si es necesario
@@ -159,7 +160,7 @@ const changeCorreoClient = async (req, res) => {
         if (!correo || !validator.isEmail(correo)) {
             return res.status(400).json({mensaje: 'El correo no puede estar vacío y debe tener un formato válido'})
         }
-        const user = await Cliente.update({correo: correo},{ where: {documento: clienteId}});
+        const user = await Cliente.update({correo: correo, numero: numero},{ where: {documento: clienteId}});
         if (user) {
             return res.status(200).json({mensaje: 'Correo actualizado correctamente'});
         } else {
@@ -171,7 +172,7 @@ const changeCorreoClient = async (req, res) => {
     }
 }
 
-// Obtener la info de un cliente
+// Instructor cambia su contraseña
 const changeContrasenaClient = async (req, res) => {
     try {
         const { id: clienteId } = req.user;

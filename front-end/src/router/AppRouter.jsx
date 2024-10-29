@@ -41,6 +41,8 @@ import HistorialTraspasos from '@/pages/Traspasos/HistorialTraspasos';
 import HistorialReintegros from '@/pages/Reintegros/HistorialReintegros';
 import OlvidarContrasena from '@/pages/OlvidarContrasena/OlvidarContrasena';
 import NuevaContrasena from '@/pages/OlvidarContrasena/NuevaContrasena';
+import PerfilCliente from '@/pages/Perfiles/PerfilCliente';
+import PerfilAdmin from '@/pages/Perfiles/PerfilAdmin';
 
 export const AppRoutes = ({tokenSession}) => {
     return useRoutes([
@@ -350,6 +352,22 @@ export const AppRoutes = ({tokenSession}) => {
             path: '/restablecer-contrasena/:token',
             element: (
                 <NuevaContrasena/>
+            )
+        },
+        {
+            path: '/perfil-cliente',
+            element: (
+                <ProtectedRoute allowedRoles={['instructor']}>
+                    <PerfilCliente/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/perfil-Admin',
+            element: (
+                <ProtectedRoute allowedRoles={['admin']}>
+                    <PerfilAdmin/>
+                </ProtectedRoute>
             )
         },
         {

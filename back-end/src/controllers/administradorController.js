@@ -1,5 +1,6 @@
-import { Administrador } from '../models/index.js';
+import { Administrador, Area } from '../models/index.js';
 import bcrypt from 'bcryptjs';
+import validator from 'validator';
 
 // Obtener todos los Administradores
 const getAllAdmins = async (req, res) => {
@@ -97,4 +98,62 @@ const deleteAdmin = async (req, res) => {
     }
 };
 
-export { getAllAdmins, getAdminById, createAdmin, updateAdmin, deleteAdmin };
+// Obtener la info de un admin
+const getInfoAdmin = async (req, res) => {
+    try {
+        const { id: adminId } = req.user;
+        const user = await Administrador.findOne({ where: {documento: adminId}});
+        const area = await Area.findOne({where: {idarea: user.areas_idarea}});
+        const administrador = {...user.dataValues, area: area.nombre};
+        res.json(administrador);
+    } catch (error) {
+        res.status(500).json({ error: error.mensaje });
+    }
+}
+
+// Admin acmbia su correo o número
+const changeCorreoAdmin = async (req, res) => {
+    try {
+        const { id: adminId } = req.user;
+        let correo = req.body.correo;
+        const numero = req.body.numero;
+        // Validar el formato del correo
+        if (typeof correo !== 'string') {
+            correo = String(correo); // Convertir a cadena si es necesario
+        }
+        if (!correo || !validator.isEmail(correo)) {
+            return res.status(400).json({mensaje: 'El correo no puede estar vacío y debe tener un formato válido'})
+        }
+        const user = await Administrador.update({correo: correo, numero: numero},{ where: {documento: adminId}});
+        if (user) {
+            return res.status(200).json({mensaje: 'Correo actualizado correctamente'});
+        } else {
+            return res.status(400).json({mensaje: 'Admin no encontrado'})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ error: error.mensaje });
+    }
+}
+
+// Admin cambia su contraseña
+const changeContrasenaAdmin = async (req, res) => {
+    try {
+        const { id: adminId } = req.user;
+        let contrasena = req.body.contrasena
+        if (contrasena == '' || contrasena == undefined || contrasena == null) {
+            return res.status(400).json({mensaje: 'No puedes enviar una contraseña vacía'});
+        } 
+        contrasena = await bcrypt.hash(contrasena, 10);
+        const user = await Administrador.update({ contrasena: contrasena}, { where: {documento: adminId}});
+        if (user) {
+            return res.status(200).json({mensaje: 'Contraseña actualizada correctamente'});
+        } else {
+            return res.status(400).json({mensaje: 'Admin no encontrado'})
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.mensaje });
+    }
+}
+
+export { getAllAdmins, getAdminById, createAdmin, updateAdmin, deleteAdmin, getInfoAdmin, changeContrasenaAdmin, changeCorreoAdmin };

@@ -26,6 +26,14 @@ export const Menu = ({ children }) => {
     const [openSubMenu, setOpenSubMenu] = useState(null);
     const navigate = useNavigate();
 
+    const Perfil = () => {
+        navigate('/Perfil-Admin'); // Redirige a "/Perfil-Admin"
+      };
+
+      const Perfil2 = () => {
+        navigate('/Perfil-Cliente'); // Redirige a "/Perfil-Admin"
+      };
+
     // Obtener el rol del usuario del token para poder filtrar los items del menú segun los permisos que tenga el rol
     const token = localStorage.getItem('authToken');
     let userRole = null;
@@ -184,7 +192,13 @@ export const Menu = ({ children }) => {
         }
     ];
 
+    const perfiles = [
+        { key: 1, name: "Mi Perfil", to: "/Perfil-Cliente", roles: ["instructor"]},
+        { key: 2, name: "Mi Perfil", to: "/Perfil-Admin", roles: ["admin", "contratista", "practicante"]},
+    ];
+
     const filteredMenuItems = menuItems.filter(item => item.roles.includes(userRole));
+    const filteredPerfiles = perfiles.filter(item => item.roles.includes(userRole));
 
     return (
         <div className={`flex min-h-screen ${darkMode ? "dark" : ""}`}>
@@ -264,10 +278,14 @@ export const Menu = ({ children }) => {
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                                <DropdownMenuItem>
-                                    <UserIcon className="w-4 h-4 mr-2" />
-                                    <span>Perfil</span>
-                                </DropdownMenuItem>
+                                {filteredPerfiles.map((item) => ( 
+                                    <DropdownMenuItem key={item.key}>
+                                    <UserIcon className="w-4 h-4 mr-2"/>
+                                    <button className="rounded-md  py-1" onClick={() => navigate(item.to)}>
+                                        {item.name}
+                                    </button>
+                                    </DropdownMenuItem>
+                                ))}
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem className="text-destructive">
                                     <LogoutButton>
