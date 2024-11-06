@@ -82,8 +82,10 @@ const PerfilAdmin = () => {
     <div className="flex justify-center items-center m-6">
       <div className="bg-white border border-neutral-200/40 shadow-lg shadow-[#1565c023] rounded-lg p-8 w-[32rem]">
         <h2 className="text-2xl font-bold mb-4 text-center">Mi Perfil</h2>
+        <hr color="black" size="5"/><br></br>
+    
         <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
+          <div >
             <span className="font-semibold">Nombre:</span><br />
             <span>{Admin.nombre}</span>
           </div>
@@ -120,6 +122,8 @@ const PerfilAdmin = () => {
             />
           </div>
         </div>
+        
+        <hr color="black" size="5"/>
 
         <div className="flex justify-between mt-6 space-x-3">
           <button className="bg-black text-white rounded-md w-full py-1 px-1" onClick={Cambiarcontraseña}>

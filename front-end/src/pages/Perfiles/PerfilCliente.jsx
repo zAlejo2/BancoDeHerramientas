@@ -83,6 +83,9 @@ const PerfilCliente = () => {
     <div className="flex justify-center items-center m-6">
       <div className="bg-white border border-neutral-200/40 shadow-lg shadow-[#1565c023] rounded-lg p-8 w-[32rem]">
         <h2 className="text-2xl font-bold mb-4 text-center">Mi Perfil</h2>
+
+        <hr color="black" size="5"/><br></br>
+
         <div className="flex justify-center mb-4">
           <img src={`${import.meta.env.VITE_IMAGENES_URL}/${cliente.foto}`} alt="Foto del cliente" className="rounded-full w-24 h-24" />
         </div>
@@ -124,6 +127,8 @@ const PerfilCliente = () => {
             />
           </div>
         </div>
+
+        <hr color="black" size="8"/><br></br>
 
         <div className="flex justify-between mt-6 space-x-2">
           <button className="bg-black text-white rounded-md w-full py-1 px-1" onClick={Cambiarcontraseña}>
