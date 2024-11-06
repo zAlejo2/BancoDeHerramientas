@@ -29,6 +29,11 @@ const createRole = async (req, res) => {
     try {
 
         const { descripcion } = req.body;
+
+        const existingRol = await Rol.findOne({ where: {descripcion}});
+        if (existingRol) {
+            return res.status(400).json({ mensaje: 'El grupo que intenta crear ya existe'})
+        }
         const rolMax = await Rol.findOne({
             order: [['idrol', 'DESC']],
             attributes: ['idrol'],

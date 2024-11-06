@@ -6,7 +6,10 @@ import validator from 'validator';
 const getAllAdmins = async (req, res) => {
     try {
         const { area } = req.user;
-        const admins = await Administrador.findAll({where: {areas_idarea: area}});
+        let admins = await Administrador.findAll({where: {areas_idarea: area}});
+        if (area == 0) {
+            admins = await Administrador.findAll();
+        }
         res.json(admins);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -31,6 +34,7 @@ const getAdminById = async (req, res) => {
 const createAdmin = async (req, res) => {
     try {
         const { area } = req.user;
+        const areaFormSupervisor = req.body.areas_idarea;
         const adminExisting = await Administrador.findByPk(req.body.documento);
 
         if(!adminExisting) { 
@@ -38,14 +42,18 @@ const createAdmin = async (req, res) => {
                 req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
             }
 
-            const registro = await Administrador.create({...req.body, areas_idarea: area});
+            if (area == 0) {
+                await Administrador.create({...req.body, areas_idarea: areaFormSupervisor});
+            } else {
+                await Administrador.create({...req.body, areas_idarea: area});
+            }
                 
-            res.status(201).json(registro);
+            res.status(200).json({mensaje: 'Administrador registrado correctamente'});
         } else {
             res.status(400).json({ mensaje: 'El Administrador que intenta crear ya existe' });
         }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: error.message });
     }
 }; 
 
@@ -54,6 +62,7 @@ const updateAdmin = async (req, res) => {
     try {
         const { area } = req.user;
         const admin = await Administrador.findByPk(req.params.documento);
+        let updated;
 
         if (!admin) {
             return res.status(404).json({ mensaje: 'Administrador no encontrado' });
@@ -65,18 +74,25 @@ const updateAdmin = async (req, res) => {
             return res.status(400).json({ mensaje: 'No se ha hecho ningún cambio en el Administrador' });
         }
 
-        const [updated] = await Administrador.update(req.body, {
-            where: { documento: req.params.documento, areas_idarea: area }
-        });
+        if (area == 0) {
+            [updated] = await Administrador.update(req.body, {
+                where: { documento: req.params.documento }
+            });
+        } else {
+            [updated] = await Administrador.update(req.body, {
+                where: { documento: req.params.documento, areas_idarea: area }
+            });
+        }
 
         if (updated) {
             const updatedUser = await Administrador.findByPk(req.params.documento);
             res.json(updatedUser);
         } else {
-            res.status(404).json({ mensaje: 'Error al actualizar el Administrador, por favor vuelva a intentarlo' });
+            res.status(500).json({ mensaje: 'Error al actualizar el Administrador, por favor vuelva a intentarlo' });
         }
     } catch (error) {
-        res.status(400).json({ error: error.message });
+        console.log(error)
+        res.status(500).json({ error: 'Error inesperado, vuelva a intentarlo' });
     }
 };
 
@@ -84,15 +100,19 @@ const updateAdmin = async (req, res) => {
 const deleteAdmin = async (req, res) => {
     try {
         const { area } = req.user;
-        const deleted = await Administrador.destroy({
-            where: { documento: req.params.documento, areas_idarea: area }
-        });
-        if (deleted) {
-            res.status(200).json({ mensaje: 'Administrador eliminado correctamente' });
-            // el 204 indica que el servidor ha recibido la solicitud con éxito, pero no devuelve ningún contenido.
-        } else {
-            res.status(404).json({ mensaje: 'Administrador no encontrado' });
+        
+        if (area == 0) {
+            await Administrador.destroy({
+                where: { documento: req.params.documento }
+            });
+        } else  {
+            await Administrador.destroy({
+                where: { documento: req.params.documento, areas_idarea: area }
+            });
         }
+
+        res.status(200).json({ mensaje: 'Administrador eliminado correctamente' });
+
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -123,6 +143,9 @@ const changeCorreoAdmin = async (req, res) => {
         }
         if (!correo || !validator.isEmail(correo)) {
             return res.status(400).json({mensaje: 'El correo no puede estar vacío y debe tener un formato válido'})
+        }
+        if (!numero) {
+            return res.status(400).json({mensaje: 'El número no puede estar vacío y debe tener un formato válido'})
         }
         const user = await Administrador.update({correo: correo, numero: numero},{ where: {documento: adminId}});
         if (user) {

@@ -21,6 +21,10 @@ Historial.init({
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    cliente_nombre: {
+        type: DataTypes.STRING(100),
+        allowNull: true
+    },
     elemento_id: {
         type: DataTypes.INTEGER,
         allowNull: true

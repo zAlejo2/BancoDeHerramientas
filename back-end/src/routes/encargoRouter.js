@@ -4,13 +4,13 @@ import { authenticate, verifyType, verifyRole, verifyArea } from '../middlewares
 
 const router = Router();
 
-router.get('/', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']), getInstructorEncargos);
+router.get('/', authenticate, verifyType(['cliente']), verifyRole(['instructor']), getInstructorEncargos);
 router.get('/admin', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), verifyArea, getAdminEncargos);
-router.post('/', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']), createEncargo);
-router.post('/aceptar/:idencargo', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']), verifyArea, acceptEncargo);
-router.post('/reclamar/:idencargo', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']), verifyArea, reclaimEncargo);
-router.post('/rechazar/:idencargo', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']), verifyArea, rejectEncargo);
-router.post('/cancel-aceptar/:idencargo', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']),verifyArea, cancelAceptar);
-router.delete('/:idencargo', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']), cancelEncargo);
+router.post('/', authenticate, verifyType(['cliente']), verifyRole(['instructor']), createEncargo);
+router.post('/aceptar/:idencargo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), verifyArea, acceptEncargo);
+router.post('/reclamar/:idencargo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), verifyArea, reclaimEncargo);
+router.post('/rechazar/:idencargo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), verifyArea, rejectEncargo);
+router.post('/cancel-aceptar/:idencargo', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']),verifyArea, cancelAceptar);
+router.delete('/:idencargo', authenticate, verifyType(['cliente']), verifyRole(['instructor']), cancelEncargo);
 
 export default router;

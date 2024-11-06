@@ -9,11 +9,13 @@ export function MediosContextProvider({ children }) {
     const [admin, setAdmin] = useState(false);
     const [tokenSession, setTokenSessionState] = useState(localStorage.getItem('authToken'));
     const [role, setRole] = useState(null);
+    const [area, setArea] = useState(null);
 
     useEffect(() => {
         if (tokenSession) {
             const decodedToken = jwtDecode(tokenSession);
-            setRole(decodedToken.role); // Cambia 'role' por el nombre correcto en tu token
+            setRole(decodedToken.role);
+            setArea(decodedToken.area); // Cambia 'role' por el nombre correcto en tu token
         }
         setLoader(false);
     }, [tokenSession]); // Ejecutar cuando tokenSession cambie
@@ -24,9 +26,11 @@ export function MediosContextProvider({ children }) {
             localStorage.setItem('authToken', token);
             const decodedToken = jwtDecode(token);
             setRole(decodedToken.role); // Cambia 'role' por el nombre correcto
+            setArea(decodedToken.area); 
         } else {
             localStorage.removeItem('authToken');
             setRole(null);
+            setArea(null);
         }
     };
 
@@ -42,6 +46,7 @@ export function MediosContextProvider({ children }) {
                 tokenSession,
                 setTokenSession,
                 role,
+                area
             }}
         >
             {children}

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useContext } from 'react';
+import { MediosContext } from '@/Context';
 import {jwtDecode} from 'jwt-decode';
 import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -21,40 +23,31 @@ import { HiSortDescending } from "react-icons/hi";
 import { RiUserReceived2Fill } from "react-icons/ri";
 
 export const Menu = ({ children }) => {
+    const { role } = useContext(MediosContext); 
     const [selectedMenu, setSelectedMenu] = useState("Inicio");
     const [darkMode, setDarkMode] = useState(false);
     const [openSubMenu, setOpenSubMenu] = useState(null);
     const navigate = useNavigate();
 
-    const Perfil = () => {
-        navigate('/Perfil-Admin'); // Redirige a "/Perfil-Admin"
-      };
-
-      const Perfil2 = () => {
-        navigate('/Perfil-Cliente'); // Redirige a "/Perfil-Admin"
-      };
-
-    // Obtener el rol del usuario del token para poder filtrar los items del menú segun los permisos que tenga el rol
-    const token = localStorage.getItem('authToken');
-    let userRole = null;
-
-    // Decodificar el token solo si existe
-    if (token) {
-        try {
-            userRole = jwtDecode(token).role; 
-        } catch (error) {
-            console.error("Error al decodificar el token:", error);
-            navigate('/login');
-            return null; 
+    const getTitle = () => {
+        switch (role) {
+            case 'admin':
+                return 'Administrador';
+            case 'contratista':
+                return 'Contratista';
+            case 'practicante':
+                return 'Practicante';
+            case 'instructor':
+                return 'Instructor';
+            case 'supervisor':
+                return 'Supervisor';
+            default:
+                return 'Banco de Herramientas';
         }
-    }
-    if (!userRole) {
-        navigate('/login');
-        return null; 
-    }
+    };
 
     const menuItems = [
-        { name: "Inicio", to: "/inicio", roles: ["admin"]},
+        { name: "Inicio", to: "/inicio", roles: ["admin", "contratista", "practicante"]},
         { 
             name: "Prestamos", 
             to: "/prestamos", 
@@ -78,7 +71,9 @@ export const Menu = ({ children }) => {
             roles: ["admin", "contratista", "practicante"],
             subMenu: [
                 { name: "Registrar Consumo", to: "/consumos", roles: ["admin", "contratista", "practicante"]}, 
-                { name: "Lista Consumos", to: "/consumos/historial", roles: ["admin", "contratista", "practicante"]}
+                { name: "Lista Consumos", to: "/consumos/lista", roles: ["admin", "contratista", "practicante"]},
+                { name: "Historial Consumos", to: "/consumos/historial", roles: ["admin", "contratista", "practicante"]}
+
             ]
         },
         { 
@@ -140,26 +135,26 @@ export const Menu = ({ children }) => {
             to: "/elementos", 
             roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Registrar Elemento", to: "/elementos/formulario", roles: ["admin", "contratista"]}, 
+                { name: "Registrar Elemento", to: "/elementos/formulario", roles: ["admin", "contratista", "practicante"]}, 
                 { name: "Lista", to: "/elementos/lista", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 
             name: "Areas", 
             to: "/areas", 
-            roles: ["admin"],
+            roles: ["supervisor"],
             subMenu: [
-                { name: "Registrar Área", to: "/areas/formulario", roles: ["admin"]}, 
-                { name: "Lista", to: "/areas/lista", roles: ["admin"]}
+                { name: "Registrar Área", to: "/areas/formulario", roles: ["supervisor"]}, 
+                { name: "Lista", to: "/areas/lista", roles: ["supervisor"]}
             ]
         },
         { 
             name: "Administrador", 
             to: "/admin", 
-            roles: ["admin"],
+            roles: ["admin", "supervisor"],
             subMenu: [
-                { name: "Registrar Admin", to: "/administrador/formulario", roles: ["admin"]}, 
-                { name: "Lista", to: "/administrador/lista", roles: ["admin"]}
+                { name: "Registrar Admin", to: "/administrador/formulario", roles: ["admin", "supervisor"]}, 
+                { name: "Lista", to: "/administrador/lista", roles: ["admin", "supervisor"]}
             ]
         },
         { 
@@ -194,11 +189,11 @@ export const Menu = ({ children }) => {
 
     const perfiles = [
         { key: 1, name: "Mi Perfil", to: "/Perfil-Cliente", roles: ["instructor"]},
-        { key: 2, name: "Mi Perfil", to: "/Perfil-Admin", roles: ["admin", "contratista", "practicante"]},
+        { key: 2, name: "Mi Perfil", to: "/Perfil-Admin", roles: ["admin", "contratista", "practicante", "supervisor"]},
     ];
 
-    const filteredMenuItems = menuItems.filter(item => item.roles.includes(userRole));
-    const filteredPerfiles = perfiles.filter(item => item.roles.includes(userRole));
+    const filteredMenuItems = menuItems.filter(item => item.roles.includes(role));
+    const filteredPerfiles = perfiles.filter(item => item.roles.includes(role));
 
     return (
         <div className={`flex min-h-screen ${darkMode ? "dark" : ""}`}>
@@ -207,10 +202,10 @@ export const Menu = ({ children }) => {
                 <div className="flex items-center p-4 border-b">
                     <Avatar>
                         <img src="../../src/assets/Sena.png" />
-                        <AvatarFallback>AB</AvatarFallback>
+                        <AvatarFallback>BH</AvatarFallback>
                     </Avatar>
                     <div className="ml-4">
-                        <h1 className="text-lg font-bold">Admin BH</h1>
+                        <h1 className="text-lg font-bold">{getTitle()}</h1>                    
                     </div>
                 </div>
                 <nav className="max-w-lg flex-1 p-4 space-y-2 overflow-hidden overflow-y-scroll">
@@ -274,7 +269,7 @@ export const Menu = ({ children }) => {
                             <DropdownMenuTrigger asChild>
                                 <Avatar className="cursor-pointer">
                                     <AvatarImage src="/placeholder-user.jpg" />
-                                    <AvatarFallback className="border border-black">AB</AvatarFallback>
+                                    <AvatarFallback className="border border-black">BH</AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">

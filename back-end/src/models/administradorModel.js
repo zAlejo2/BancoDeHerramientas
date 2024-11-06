@@ -19,7 +19,7 @@ Administrador.init({
     allowNull: false
   },
   tipo: {
-    type: DataTypes.ENUM('admin', 'contratista', 'practicante'),
+    type: DataTypes.ENUM('admin', 'contratista', 'practicante', 'supervisor'),
     allowNull: false
   },
   correo: {

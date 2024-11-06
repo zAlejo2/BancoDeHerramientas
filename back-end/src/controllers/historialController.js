@@ -4,7 +4,7 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 // REGISTRAR UN HISTORIAL
-const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, elementoId, descripcion, Cantidad, Observaciones, Estado, Accion) => {
+const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, clienteNombre, elementoId, descripcion, Cantidad, Observaciones, Estado, Accion, t) => {
     try{
 
         await Historial.create({
@@ -13,6 +13,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
             entidad_id: entidadId,
             admin_id: adminId,
             cliente_id: clienteId,
+            cliente_nombre: clienteNombre,
             elemento_id: elementoId,
             elemento_descripcion: descripcion,
             cantidad: Cantidad,
@@ -20,7 +21,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
             estado: Estado,
             accion: Accion,
             fecha_accion: obtenerHoraActual()
-        });
+        }, { transaction: t });
     } catch(error) {
         console.log(error)
     }      
@@ -33,24 +34,11 @@ const getAllRecord = async (req, res) => {
         const historiales = await Historial.findAll({ where: { area_id: area }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
-            // Consulta el nombre del cliente
-            const cliente = await Cliente.findOne({
-                where: { documento: historial.cliente_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de cliente
-                attributes: ['nombre'], // Solo traemos el nombre
-            });
-
-            // Consulta el nombre del elemento
-            const elemento = await Elemento.findOne({
-                where: { idelemento: historial.elemento_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de elemento
-                attributes: ['descripcion'], // Solo traemos el nombre
-            });
 
             const fechaAccion = formatFecha(historial.fecha_accion, 5);
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
-                elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };
         }));
@@ -69,24 +57,11 @@ const getAllRecordEncargo = async (req, res) => {
         const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'encargo' }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
-            // Consulta el nombre del cliente
-            const cliente = await Cliente.findOne({
-                where: { documento: historial.cliente_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de cliente
-                attributes: ['nombre'], // Solo traemos el nombre
-            });
-
-            // Consulta el nombre del elemento
-            const elemento = await Elemento.findOne({
-                where: { idelemento: historial.elemento_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de elemento
-                attributes: ['descripcion'], // Solo traemos el nombre
-            });
 
             const fechaAccion = formatFecha(historial.fecha_accion, 5);
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
-                elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };
         }));
@@ -105,24 +80,34 @@ const getAllRecordPrestamo = async (req, res) => {
         const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'prestamo' }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
-            // Consulta el nombre del cliente
-            const cliente = await Cliente.findOne({
-                where: { documento: historial.cliente_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de cliente
-                attributes: ['nombre'], // Solo traemos el nombre
-            });
-
-            // Consulta el nombre del elemento
-            const elemento = await Elemento.findOne({
-                where: { idelemento: historial.elemento_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de elemento
-                attributes: ['descripcion'], // Solo traemos el nombre
-            });
 
             const fechaAccion = formatFecha(historial.fecha_accion, 5);
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
-                elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
+                fecha_accion: fechaAccion,
+            };
+        }));
+
+        res.json(historialFormateado); 
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ mensaje: 'Error al obtener el historial', error });
+    }
+};
+
+// OBTENER TODOS LOS REGISTROS DEL HISTORIAL DE LOS CONSUMOS
+const getAllRecordConsumo = async (req, res) => {
+    try {
+        const area = req.area; 
+        const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'consumo' }, order: [['fecha_accion', 'DESC']] });
+
+        const historialFormateado = await Promise.all(historiales.map(async (historial) => {
+
+            const fechaAccion = formatFecha(historial.fecha_accion, 5);
+
+            return {
+                ...historial.dataValues,
                 fecha_accion: fechaAccion,
             };
         }));
@@ -141,24 +126,11 @@ const getAllRecordMora = async (req, res) => {
         const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'mora' }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
-            // Consulta el nombre del cliente
-            const cliente = await Cliente.findOne({
-                where: { documento: historial.cliente_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de cliente
-                attributes: ['nombre'], // Solo traemos el nombre
-            });
-
-            // Consulta el nombre del elemento
-            const elemento = await Elemento.findOne({
-                where: { idelemento: historial.elemento_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de elemento
-                attributes: ['descripcion'], // Solo traemos el nombre
-            });
 
             const fechaAccion = formatFecha(historial.fecha_accion, 5);
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
-                elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };
         }));
@@ -177,24 +149,11 @@ const getAllRecordDano = async (req, res) => {
         const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'daño' }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
-            // Consulta el nombre del cliente
-            const cliente = await Cliente.findOne({
-                where: { documento: historial.cliente_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de cliente
-                attributes: ['nombre'], // Solo traemos el nombre
-            });
-
-            // Consulta el nombre del elemento
-            const elemento = await Elemento.findOne({
-                where: { idelemento: historial.elemento_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de elemento
-                attributes: ['descripcion'], // Solo traemos el nombre
-            });
 
             const fechaAccion = formatFecha(historial.fecha_accion, 5);
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
-                elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };
         }));
@@ -213,24 +172,11 @@ const getAllRecordTraspaso= async (req, res) => {
         const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'traspaso' }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
-            // Consulta el nombre del cliente
-            const cliente = await Cliente.findOne({
-                where: { documento: historial.cliente_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de cliente
-                attributes: ['nombre'], // Solo traemos el nombre
-            });
-
-            // Consulta el nombre del elemento
-            const elemento = await Elemento.findOne({
-                where: { idelemento: historial.elemento_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de elemento
-                attributes: ['descripcion'], // Solo traemos el nombre
-            });
 
             const fechaAccion = formatFecha(historial.fecha_accion, 5);
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
-                elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };
         }));
@@ -249,24 +195,11 @@ const getAllRecordReintegro = async (req, res) => {
         const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'reintegro' }, order: [['fecha_accion', 'DESC']] });
 
         const historialFormateado = await Promise.all(historiales.map(async (historial) => {
-            // Consulta el nombre del cliente
-            const cliente = await Cliente.findOne({
-                where: { documento: historial.cliente_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de cliente
-                attributes: ['nombre'], // Solo traemos el nombre
-            });
-
-            // Consulta el nombre del elemento
-            const elemento = await Elemento.findOne({
-                where: { idelemento: historial.elemento_id }, // Cambia 'id' por el campo que corresponda a la clave primaria de elemento
-                attributes: ['descripcion'], // Solo traemos el nombre
-            });
 
             const fechaAccion = formatFecha(historial.fecha_accion, 5);
 
             return {
                 ...historial.dataValues,
-                cliente_nombre: cliente ? cliente.nombre : 'Banco', // Añade el nombre del cliente
-                elemento_nombre: elemento ? elemento.descripcion : '', // Añade el nombre del elemento
                 fecha_accion: fechaAccion,
             };
         }));
@@ -278,4 +211,4 @@ const getAllRecordReintegro = async (req, res) => {
     }
 };
 
-export { getAllRecord, createRecord, getAllRecordEncargo, getAllRecordPrestamo, getAllRecordMora, getAllRecordDano, getAllRecordReintegro, getAllRecordTraspaso };
+export { getAllRecord, createRecord, getAllRecordEncargo, getAllRecordPrestamo, getAllRecordMora, getAllRecordDano, getAllRecordReintegro, getAllRecordTraspaso, getAllRecordConsumo };

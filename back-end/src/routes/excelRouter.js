@@ -6,7 +6,7 @@ import { uploadExcelClienteData, uploadExcelElementoData } from '../controllers/
 const router = express.Router();
 
 // Ruta para subir y procesar el archivo Excel
-router.post('/cliente', upload.single('file'), uploadExcelClienteData);
-router.post('/elemento', authenticate, upload.single('file'), uploadExcelElementoData);
+router.post('/cliente', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), upload.single('file'), uploadExcelClienteData);
+router.post('/elemento', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), upload.single('file'), uploadExcelElementoData);
 
 export default router;

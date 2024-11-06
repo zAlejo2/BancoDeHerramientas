@@ -5,7 +5,7 @@ import { createRecord } from './historialController.js';
 const obtenerHoraActual = () => ajustarHora(new Date());
  
 // CREAR DAÑO
-const createDano = async (cantidad, observaciones, idelemento, documento, area) => {
+const createDano = async (cantidad, observaciones, idelemento, documento, area, t) => {
     const dano= await Dano.create({
         cantidad: cantidad,
         fecha: obtenerHoraActual(),
@@ -13,7 +13,7 @@ const createDano = async (cantidad, observaciones, idelemento, documento, area) 
         elementos_idelemento: idelemento,
         clientes_documento: documento,
         areas_idarea: area
-    })
+    }, { transaction: t })
     return dano;
 }
 
@@ -22,9 +22,15 @@ const returnDano = async (req, res) => {
     try {
       const { area, id: adminId } = req.user;
       const { iddano, idelemento, cantidadDevuelta, observaciones, documento } = req.body;
-      const dano = await Dano.findOne({ where: {iddano: iddano}});
+
+      const cliente = await Cliente.findOne({ where: {documento: documento}});
       const elemento = await Elemento.findOne({where: {idelemento: idelemento}});
-      const descripcion = elemento.descripcion;
+
+      const nombreClienteEnDano = cliente.nombre; // Nombre actual del cliente
+      const descripcionElementoEnDano = elemento.descripcion;
+
+      const dano = await Dano.findOne({ where: {iddano: iddano}});
+
       if (dano.cantidad == cantidadDevuelta) {
         await Elemento.update(
           {
@@ -39,7 +45,7 @@ const returnDano = async (req, res) => {
                 elementos_idelemento: idelemento
             }
         });
-        createRecord(area, 'daño', iddano, adminId, documento, idelemento, descripcion, cantidadDevuelta, observaciones, 'finalizado', 'REPONER TOTAL ELEMENTO EN DAÑO');
+        createRecord(area, 'daño', iddano, adminId, documento, nombreClienteEnDano, idelemento, descripcionElementoEnDano, cantidadDevuelta, observaciones, 'finalizado', 'REPONER TOTAL ELEMENTO EN DAÑO');
       } else if  (dano.cantidad !== cantidadDevuelta) {
           await Elemento.update(
             {
@@ -52,7 +58,7 @@ const returnDano = async (req, res) => {
             { cantidad: dano.cantidad - cantidadDevuelta },
             { where: { iddano: iddano}}
           );
-          createRecord(area, 'daño', iddano, adminId, documento, idelemento, descripcion, cantidadDevuelta, observaciones, 'daño', 'REPONER PARTE ELEMENTO EN DAÑO');
+          createRecord(area, 'daño', iddano, adminId, documento, nombreClienteEnDano, idelemento, descripcionElementoEnDano, cantidadDevuelta, observaciones, 'daño', 'REPONER PARTE ELEMENTO EN DAÑO');
       } else if (dano.cantidad<cantidadDevuelta || cantidadDevuelta<1) {
           return res.status(400).json({ mensaje: 'La cantidad de devolución no puede ser mayor a la cantidad a dano ni meno a 1', error})
       } 

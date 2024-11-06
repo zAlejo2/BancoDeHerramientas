@@ -10,7 +10,7 @@ router.get('/:documento', authenticate, verifyType(['administrador']), verifyRol
 router.put('/cambiar-contrasena', authenticate, verifyType(['cliente']), verifyRole(['instructor']), changeContrasenaClient);
 router.put('/cambiar-correo', authenticate, verifyType(['cliente']), verifyRole(['instructor']), changeCorreoClient);
 router.post('/', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), createClient);
-router.put('/:documento', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista']), updateClient);
-router.delete('/:documento', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista' ]), deleteClient);
+router.put('/:documento', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), updateClient);
+router.delete('/:documento', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), deleteClient);
 
 export default router;

@@ -1,4 +1,4 @@
-import { Consumo, ElementoHasConsumo, Cliente, Elemento, Mora, Dano } from '../models/index.js';
+import { Consumo, ElementoHasConsumo, Cliente, Elemento, Mora, Dano, Rol } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
 
@@ -50,6 +50,7 @@ const addElements = async (req, res) => {
         const { area, id: adminId } = req.user;
 
         const consumo = await Consumo.findOne({ where: { idconsumo } });
+        const cliente = await Cliente.findOne({ where: {documento: consumo.clientes_documento}});
 
         if (!consumo) {
             return res.status(404).json({ mensaje: 'Consumo no encontrado' });
@@ -96,7 +97,7 @@ const addElements = async (req, res) => {
                 },
                 { where: { idelemento } }
             );
-            createRecord(area, 'consumo', consumo.idconsumo, adminId, consumo.clientes_documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE CONSUMO');
+            createRecord(area, 'consumo', consumo.idconsumo, adminId, consumo.clientes_documento, cliente.nombre, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE CONSUMO');
         }
         return res.status(201).json({ mensaje: 'Elementos agregados al consumo con éxito' });
 
@@ -161,13 +162,14 @@ const getAllConsumptions = async (req, res) => {
 }
 
 // REGISTRAR CONSUMO DESDE PRESTAMO
-const recordConsumption = async (cantidad, observaciones, idelemento, documento, area, adminId) => {
+const recordConsumption = async (cantidad, observaciones, idelemento, documento, area, adminId, t) => {
+    const cliente = await Cliente.findOne({ where: {documento: documento}, transaction: t});
     const consumo = await Consumo.create({
         clientes_documento: documento,
         areas_idarea: area,
-    });
+    }, { transaction: t });
 
-    const elemento = await Elemento.findOne({where: { idelemento }});
+    const elemento = await Elemento.findOne({where: { idelemento }, transaction: t});
 
     await ElementoHasConsumo.create({
         elementos_idelemento: idelemento,
@@ -176,17 +178,17 @@ const recordConsumption = async (cantidad, observaciones, idelemento, documento,
         observaciones,
         fecha: obtenerHoraActual(),
         administradores_documento: adminId
-    });
+    }, { transaction: t });
 
     await Elemento.update(
         {
             cantidad: elemento.cantidad - cantidad,
             estado: elemento.disponibles - cantidad <= elemento.minimo ? 'agotado' : 'disponible'
         },
-        { where: { idelemento } }
+        { where: { idelemento }, transaction: t}
     );
 
-    createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, idelemento, elemento.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO');
+    createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, cliente.nombre, idelemento, elemento.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO', t);
 };
 
 //Obtener datos del cliente para mostrar en el consumo
@@ -195,9 +197,11 @@ const clienteData = async (req, res) => {
         const {idconsumo} = req.params;
         const consumo = await Consumo.findOne({ where: { idconsumo }});
         const cliente = await Cliente.findOne({ where: {documento:consumo.clientes_documento}});
+        const rol = cliente.roles_idrol;
+        const descripcion = await Rol.findOne({where:{idrol: rol}})
         const nombre = cliente.nombre;
         const documento = cliente.documento;
-        const grupo = cliente.roles_idrol;
+        const grupo = descripcion.descripcion;
         if (consumo) {
             return res.status(200).json({ documento, nombre, grupo });
         } else {

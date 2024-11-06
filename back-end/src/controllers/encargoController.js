@@ -1,4 +1,4 @@
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { Encargo, ElementoHasEncargo, Cliente, Elemento, Area, PrestamoCorriente, ElementoHasPrestamoCorriente } from '../models/index.js';
 import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 import { createRecord } from './historialController.js';
@@ -20,6 +20,13 @@ const createEncargo = async (req, res) => {
         }
         // esta constante debe ir después de la validación de arriba porque sino saldrá error de 'Invalid time value' al intentar ajustar la hora en caso de que no se haya indicado la fecha desde el front y sea undefined
         const fechaReclamo = ajustarHora(new Date(fecha_reclamo)); 
+        // Obtener la fecha actual en formato 'YYYY-MM-DD'
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // Comparar las fechas (solo la parte de la fecha, sin la hora)
+        if (fechaReclamo < currentDate) {
+            return res.status(400).json({ mensaje: 'No puedes hacer un encargo a una fecha anterior para la actual' });
+        }
 
         const existeEncargos = await Encargo.findAll({where: {clientes_documento: clientes_documento}});
 
@@ -209,6 +216,8 @@ const rejectEncargo = async (req, res) => {
 
         const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}})
         const encargoEncargo = await Encargo.findOne({ where: {idencargo: idencargo}})
+        const documento = encargoEncargo.clientes_documento;
+        const cliente = await Cliente.findOne({where: {documento}})
         const encargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});  
         if (!encargo) {
             return res.status(400).json({ mensaje: 'El encargo que intenta rechazar no existe'});
@@ -216,7 +225,7 @@ const rejectEncargo = async (req, res) => {
         if (encargo.estado == 'pendiente') {
             await ElementoHasEncargo.update({estado: 'rechazado', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
         }
-        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'rechazado', 'RECHAZAR ENCARGO'); 
+        createRecord(area,'encargo', idencargo, adminId, documento, cliente.nombre, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'rechazado', 'RECHAZAR ENCARGO'); 
 
         res.status(200).json({mensaje: 'Encargo rechazado correctamente'})
     } catch (error) {
@@ -234,6 +243,7 @@ const reclaimEncargo = async (req, res) => {
 
         const encargo = await Encargo.findOne({where: {idencargo: idencargo}});
         const documento = encargo.clientes_documento;
+        const cliente = await Cliente.findOne({where: {documento}})
         const elementoEncargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}}); 
         const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}});
 
@@ -330,7 +340,7 @@ const reclaimEncargo = async (req, res) => {
             await Encargo.destroy({where: {idencargo: idencargo}});
         }
         
-        createRecord(area,'encargo', idencargo, adminId, encargo.clientes_documento, elemento, elementoEncontrado.descripcion, elementoEncargo.cantidad, observaciones, 'actual', 'RECLAMAR ENCARGO'); 
+        createRecord(area,'encargo', idencargo, adminId, documento, cliente.nombre, elemento, elementoEncontrado.descripcion, elementoEncargo.cantidad, observaciones, 'actual', 'RECLAMAR ENCARGO'); 
 
         return res.status(200).json({mensaje: 'Encargo aceptado correctamente'})
     } catch (error) {
@@ -348,14 +358,26 @@ const acceptEncargo = async (req, res) => {
 
         const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}})
         const encargoEncargo = await Encargo.findOne({ where: {idencargo: idencargo}})
+        const documento = encargoEncargo.clientes_documento;
+        const cliente = await Cliente.findOne({where: {documento}})
         const encargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});  
         if (!encargo) {
             return res.status(400).json({ mensaje: 'El encargo que intenta aceptar no existe'});
         }
+        // Obtener la fecha actual en formato 'YYYY-MM-DD'
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // Obtener la fecha del encargo (en formato 'YYYY-MM-DD')
+        const encargoDate = encargoEncargo.fecha_reclamo.toISOString().split('T')[0];
+
+        // Comparar las fechas (solo la parte de la fecha, sin la hora)
+        if (encargoDate < currentDate) {
+            return res.status(400).json({ mensaje: 'El encargo no puede ser aceptado, la fecha del encargo ya ha pasado' });
+        }
         if (encargo.estado == 'pendiente') {
             await ElementoHasEncargo.update({estado: 'aceptado', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
         }
-        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'aceptado', 'ACEPTAR ENCARGO'); 
+        createRecord(area,'encargo', idencargo, adminId, documento, cliente.nombre, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'aceptado', 'ACEPTAR ENCARGO'); 
 
         res.status(200).json({mensaje: 'Encargo aceptado correctamente'})
     } catch (error) {
@@ -373,6 +395,8 @@ const cancelAceptar = async (req, res) => {
 
         const elementoEncontrado = await Elemento.findOne({where: {idelemento: elemento}})
         const encargoEncargo = await Encargo.findOne({ where: {idencargo: idencargo}})
+        const documento = encargoEncargo.clientes_documento;
+        const cliente = await Cliente.findOne({where: {documento}})
         const encargo = await ElementoHasEncargo.findOne({ where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});  
         if (!encargo) {
             return res.status(400).json({ mensaje: 'El encargo que intenta pasar a pendiente no existe'});
@@ -380,7 +404,7 @@ const cancelAceptar = async (req, res) => {
         if (encargo.estado == 'aceptado') {
             await ElementoHasEncargo.update({estado: 'pendiente', observaciones: observaciones}, {where: {encargos_idencargo: idencargo, elementos_idelemento: elemento}});
         }
-        createRecord(area,'encargo', idencargo, adminId, encargoEncargo.clientes_documento, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'pendiente', 'CNACELAR ENCARGO ACEPTADO'); 
+        createRecord(area,'encargo', idencargo, adminId, documento, cliente.nombre, elemento, elementoEncontrado.descripcion, encargo.cantidad, observaciones, 'pendiente', 'CNACELAR ENCARGO ACEPTADO'); 
 
         res.status(200).json({mensaje: 'Encargo pasado a pendientes correctamente'})
     } catch (error) {
@@ -389,4 +413,27 @@ const cancelAceptar = async (req, res) => {
     }
 }
 
-export { createEncargo, cancelEncargo, getInstructorEncargos, getAdminEncargos, rejectEncargo, acceptEncargo, reclaimEncargo, cancelAceptar };
+// OBTENER LS ENCARGOS QUE HAY PARA EL DÍA ACTUAL PARA QUE LE AVISE AL ADMIN AL INICIAR SESION
+const encargosHoy = async (today, area) => {
+    const encargos = await ElementoHasEncargo.findAll({
+        include: [
+            {
+                model: Encargo,
+                where: { 
+                    areas_idarea: area,
+                    [Op.and]: [
+                        Sequelize.where(Sequelize.fn('DATE', Sequelize.col('fecha_reclamo')), today) // Compara solo la fecha
+                    ]
+                }
+            }
+        ],
+        where: {
+            estado: {
+                [Op.ne]: 'rechazado'  // `Op.ne` significa "no igual"
+            }
+        }
+    });
+    return encargos;
+}
+
+export { createEncargo, cancelEncargo, getInstructorEncargos, getAdminEncargos, rejectEncargo, acceptEncargo, reclaimEncargo, cancelAceptar, encargosHoy };

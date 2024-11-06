@@ -23,11 +23,11 @@ Cliente.init ({
         allowNull: true
     },
     fechaInicio: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: false 
     },
     fechaFin: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.DATE,
         allowNull: false 
     },
     observaciones: {

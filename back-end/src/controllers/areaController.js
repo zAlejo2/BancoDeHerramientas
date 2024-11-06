@@ -1,9 +1,22 @@
+import { Op } from 'sequelize';
 import { Area } from '../models/index.js';
 
 // Obtener todas las areas
 const getAllAreas = async (req, res) => {
     try {
-        const areas = await Area.findAll();
+        const { area } = req.user;
+        let areas;
+        if(area == 0) {
+            areas = await Area.findAll();
+        } else {
+            areas = await Area.findAll({
+                where: {
+                    idarea: {
+                        [Op.ne]: 0 // Excluir el área con id_areas igual a area
+                    }
+                }
+            });
+        }
         res.json(areas);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -29,6 +42,13 @@ const createArea = async (req, res) => {
     try {
 
         const { nombre } = req.body;
+
+        // Verificar si el área ya existe
+        const existingArea = await Area.findOne({ where: { nombre } });
+        if (existingArea) {
+            return res.status(400).json({ mensaje: 'El área que intenta crear ya existe' });
+        }
+
         const areaMax = await Area.findOne({
             order: [['idarea', 'DESC']],
             attributes: ['idarea'],

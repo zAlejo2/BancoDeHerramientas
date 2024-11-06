@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useContext } from 'react';
+import { MediosContext } from '@/Context';
 import usePostData from "../../hooks/usePostData";
 import { Input } from "../../components/forms/elements/input";
 import { Button } from "../../components/forms/elements/button";
@@ -8,6 +10,9 @@ import { useNavigate } from 'react-router-dom';
 import useGetData from "@/hooks/useGetData";
 
 export const FormAdmin = () => {
+    const { area, role } = useContext(MediosContext); 
+    const { data: areasd } = useGetData(['areas']);
+    const areas = areasd.areas || []; 
     const initialData = { documento: "", contrasena: "", nombre: "", tipo: "", correo: "", numero: ""};
     const [inputs, setInputs] = useState(initialData);
     const navigate = useNavigate();
@@ -46,6 +51,11 @@ export const FormAdmin = () => {
             }
         ]
     };
+
+    const areaOptions = areas.map(area => ({
+        value: area.idarea, // O el campo adecuado para el ID de rol
+        label: area.nombre, // O el campo adecuado para el nombre del rol
+    }));
 
     const inputs1 = [
         { 
@@ -90,6 +100,19 @@ export const FormAdmin = () => {
         },
     ];
 
+    const tipeOptions = [
+        { label: 'Administrador', value: 'admin' },
+        { label: 'Practicante', value: 'practicante' },
+        { label: 'Contratista', value: 'contratista' }
+    ]
+
+    if (role === 'supervisor') {
+        tipeOptions.push({
+            label: 'Supervisor',
+            value: 'supervisor'
+        })
+    }
+
     const handleInputChange = (event) => {
         const { name, value } = event.target;
         setInputs({ ...inputs, [name]: value });
@@ -119,21 +142,17 @@ export const FormAdmin = () => {
                     name="tipo"
                     value={inputs.tipo}
                     onChange={handleInputChange}
-                    options={[
-                        {
-                            value: "admin",
-                            label: "Admin",
-                        },
-                        {
-                            value: "practicante",
-                            label: "Practicante",
-                        },
-                        {
-                            value: "contratista",
-                            label: "Contratista",
-                        },
-                    ]}                
+                    options={tipeOptions}             
                 />
+                {area === 0 && role === 'supervisor' && (
+                    <Select
+                        label="Área"
+                        name="areas_idarea"
+                        value={inputs.areas_idarea}
+                        onChange={handleInputChange}
+                        options={areaOptions}             
+                    />
+                )}
                 <div className={inputs1.length % 2 === 0 ? "md:col-span-2" : "flex items-center justify-center mt-6"}>
                     <Button type={'submit'} name={'Enviar'} />
                 </div>

@@ -17,7 +17,7 @@ const useLogin = (url, inputs) => {
 
             // Decodificar el token para obtener el tipo de usuario
             const decodedToken = jwtDecode(token);
-            const userType = decodedToken.type;
+            const userType = decodedToken.role;
 
             Swal.fire({
                 title: "¡Bien!",
@@ -29,15 +29,27 @@ const useLogin = (url, inputs) => {
             }).then(() => {
                 setLoader(false);
                 setTokenSession(token);
+
+                // Verifica si hay encargos
+                if (response.data.tieneEncargos) {
+                    Swal.fire({
+                        title: "Recordatorio de Encargos",
+                        text: "Tienes encargos para hoy. Recuerda que el sistema no te restringirá el préstamo de estos elementos, por lo que debes tener en cuenta la cantidad que puedes prestar. De la cantidad que originalmente tienes para prestar debes descontar la cantidad de los elementos que aceptaste en los encargos.",
+                        icon: "info",
+                        confirmButtonColor: '#007BFF',
+                    });
+                }
                 
                 // Redirige según el tipo de usuario
-                if (userType === 'administrador') {
+                if (userType === 'admin' || userType === 'contratista' || userType === 'practicante') {
                     navigate("/inicio", { replace: true });
-                } else if (userType === 'cliente') {
+                } else if (userType === 'instructor') {
                     navigate("/encargos/lista", { replace: true });
+                } else if (userType === 'supervisor') {
+                    navigate("/Perfil-Admin", { replace: true });
                 } else {
                     // Manejo de errores o redirección por defecto
-                    navigate("/inicio", { replace: true });
+                    navigate("/login", { replace: true });
                 }
             });
         } catch (error) {

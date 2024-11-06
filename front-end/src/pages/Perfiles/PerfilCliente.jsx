@@ -55,8 +55,8 @@ const PerfilCliente = () => {
       confirmButtonColor: '#007BFF',
       cancelButtonColor: '#81d4fa',
       preConfirm: () => {
-        const newPassword = document.getElementById('newPassword').value;
-        const confirmPassword = document.getElementById('confirmPassword').value;
+        const newPassword = document.getElementById('newPassword').value.trim();
+        const confirmPassword = document.getElementById('confirmPassword').value.trim();
 
         if (!newPassword || !confirmPassword) {
           Swal.showValidationMessage('Ambos campos son obligatorios');

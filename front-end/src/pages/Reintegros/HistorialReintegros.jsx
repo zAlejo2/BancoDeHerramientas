@@ -13,7 +13,7 @@ const HistorialReintegros= () => {
             <td className="px-4 py-2">{historial.cliente_id}</td>
             <td className="px-4 py-2">{historial.cliente_nombre}</td>
             <td className="px-4 py-2">{historial.elemento_id}</td>
-            <td className="px-4 py-2">{historial.elemento_nombre}</td>
+            <td className="px-4 py-2">{historial.elemento_descripcion}</td>
             <td className="px-4 py-2">{historial.cantidad}</td>
             <td className="px-4 py-2">{historial.observaciones}</td>
             <td className="px-4 py-2">{historial.estado}</td>

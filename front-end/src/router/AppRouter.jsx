@@ -9,13 +9,13 @@ import { FormElementos } from '@/pages/Elementos/FormElementos';
 import { FormRoles } from '@/pages/Roles/FormRoles';
 import { FormClientes } from '@/pages/Clientes/FormClientes';
 import PrestamosActivos from '@/pages/Prestamos/PrestamosActivos';
-import ListaElementos from '@/pages/Prestamos/ListaElementos';
 import { FormAreas } from '@/pages/Areas/FormAreas';
 import { FormAdmin } from '@/pages/Administradores/FormAdmin';
 import { FormCrearConsumo } from '../pages/Consumos/FormCrearConsumo.jsx';
 import { FormAgregarEditarConsumo } from '../pages/Consumos/FormAgregegarEditar.jsx';
 import { FormAgregarEditarPrestamo } from '../pages/Prestamos/FormAgregarEditar.jsx';
-import Consumos from '@/pages/Consumos/HistorialConsumos';
+import Consumos from '@/pages/Consumos/ListaConsumos';
+import HistorialConsumos from '@/pages/Consumos/HistorialConsumos';
 import ElementosList from '@/pages/Elementos/ListaElementos';
 import Clientes from '@/pages/Clientes/ListaClientes';
 import Admin from '@/pages/Administradores/ListaAdmin';
@@ -89,7 +89,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/roles/formulario',
             element: (
-                <ProtectedRoute allowedRoles={['admin', 'contratista']}>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormRoles />
                 </ProtectedRoute>
             ),
@@ -97,7 +97,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/roles/lista',
             element: (
-                <ProtectedRoute allowedRoles={['admin', 'contratista']}>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <Roles />
                 </ProtectedRoute>
             ),
@@ -127,17 +127,9 @@ export const AppRoutes = ({tokenSession}) => {
             ),
         },
         {
-            path: '/prestamos/lista2',
-            element: (
-                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
-                    <ListaElementos />
-                </ProtectedRoute>
-            ),
-        },
-        {
             path: '/areas/formulario',
             element: (
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['supervisor']}>
                     <FormAreas />
                 </ProtectedRoute>
             ),
@@ -145,7 +137,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/areas/lista',
             element: (
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['supervisor']}>
                     <Areas />
                 </ProtectedRoute>
             ),
@@ -153,7 +145,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/administrador/formulario',
             element: (
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['admin', 'supervisor']}>
                     <FormAdmin />
                 </ProtectedRoute>
             ),
@@ -161,7 +153,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/administrador/lista',
             element: (
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['admin', 'supervisor']}>
                     <Admin />
                 </ProtectedRoute>
             ),
@@ -183,6 +175,22 @@ export const AppRoutes = ({tokenSession}) => {
             )
         },
         {
+            path: '/consumos/lista',
+            element: (
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <Consumos/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/consumos/historial',
+            element: (
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <HistorialConsumos/>
+                </ProtectedRoute>
+            )
+        },
+        {
             path: '/prestamos/elementos/:idprestamo',
             element: (
                 <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
@@ -195,14 +203,6 @@ export const AppRoutes = ({tokenSession}) => {
             element: (
                 <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <HistorialPrestamos/>
-                </ProtectedRoute>
-            )
-        },
-        {
-            path: '/consumos/historial',
-            element: (
-                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
-                    <Consumos/>
                 </ProtectedRoute>
             )
         },
@@ -329,7 +329,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/encargos',
             element: (
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <ListaEncargosAdmin/>
                 </ProtectedRoute>
             )
@@ -337,7 +337,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/encargos/historial',
             element: (
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <HistorialEncargos/>
                 </ProtectedRoute>
             )
@@ -365,7 +365,7 @@ export const AppRoutes = ({tokenSession}) => {
         {
             path: '/perfil-Admin',
             element: (
-                <ProtectedRoute allowedRoles={['admin']}>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante', 'supervisor']}>
                     <PerfilAdmin/>
                 </ProtectedRoute>
             )

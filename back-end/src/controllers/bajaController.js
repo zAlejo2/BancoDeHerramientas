@@ -58,7 +58,7 @@ const createReintegro = async (req, res) => {
                     { where: { idelemento } }
                 );
 
-                createRecord(area, 'reintegro', reintegro.idbaja, adminId, 0, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'reintegro', 'REINTEGRO');
+                createRecord(area, 'reintegro', reintegro.idbaja, adminId, 0, 'Banco', idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'reintegro', 'REINTEGRO');
             }
             return res.status(200).json({ mensaje: 'Elementos reintegrados con éxito' });
         });
@@ -132,7 +132,7 @@ const createTraspaso = async (req, res) => {
                     { where: { idelemento } }
                 );
 
-                createRecord(area, 'traspaso', traspaso.idbaja, adminId, documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'TRASPASO A CUENTADANTE');
+                createRecord(area, 'traspaso', traspaso.idbaja, adminId, documento, cuentadante.nombre, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'TRASPASO A CUENTADANTE');
             }
             return res.status(200).json({ mensaje: 'Elementos traspasados con éxito' });
         });
@@ -247,7 +247,7 @@ const returnTraspaso = async (req, res) => {
                 { where: { idelemento: elementos_idelemento } }
             );
             
-            createRecord(area, 'traspaso', traspasoBanco.idbaja, adminId, 0, elementos_idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'TRASPASO A BANCO');
+            createRecord(area, 'traspaso', traspasoBanco.idbaja, adminId, 0, 'Banco', elementos_idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'traspaso', 'TRASPASO A BANCO');
         });
         return res.status(200).json({ mensaje: 'Elemento transferido al banco con éxito'})
     } catch (error) {

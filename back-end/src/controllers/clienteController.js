@@ -63,6 +63,10 @@ const createClient = async (req, res) => {
                 return res.status(400).json({ mensaje: 'Solo si es instructor puede registrar contraseña' });
             }
 
+            if (req.body.fechaInicio >= req.body.fechaFin) {
+                return res.status(400).json({ mensaje: 'La fecha de inicio no puede ser más reciente que la fecha de fin' });
+            }
+
             const user = await Cliente.create({ ...req.body, foto });
             res.status(201).json(user);
         });
@@ -98,8 +102,15 @@ const updateClient = async (req, res) => {
                 return res.status(400).json({ mensaje: 'El rol ingresado no existe' });
             }
 
+            if (rolExist.descripcion !== 'instructor') {
+                client.update({contrasena: ''});
+            }
+
+            if (rolExist.descripcion == 'instructor' && req.body.contrasena.trim() == '') {
+                return res.status(400).json({ mensaje: 'No puedes poner espacios como contraseña' });
+            }
             // Si hay una nueva contraseña, encriptarla
-            if (req.body.contrasena && req.body.contrasena !== '') {
+            if (req.body.contrasena && req.body.contrasena.trim() !== '') {
                 req.body.contrasena = await bcrypt.hash(req.body.contrasena, 10);
             } else {
                 // Mantener la contraseña actual si no se ha proporcionado una nueva
@@ -152,13 +163,16 @@ const changeCorreoClient = async (req, res) => {
     try {
         const { id: clienteId } = req.user;
         let correo = req.body.correo;
-        const numero = req.body.numero;
+        const numero = req.body.numero; 
         // Validar el formato del correo
         if (typeof correo !== 'string') {
             correo = String(correo); // Convertir a cadena si es necesario
         }
         if (!correo || !validator.isEmail(correo)) {
             return res.status(400).json({mensaje: 'El correo no puede estar vacío y debe tener un formato válido'})
+        }
+        if (!numero) {
+            return res.status(400).json({mensaje: 'El número no puede estar vacío y debe tener un formato válido'})
         }
         const user = await Cliente.update({correo: correo, numero: numero},{ where: {documento: clienteId}});
         if (user) {

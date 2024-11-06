@@ -60,36 +60,36 @@ export const FormAgregarEditarPrestamo = () => {
         );
     };
 
-    const handleCederAll = () => {
-        Swal.fire({
-            title: 'Ceder todos los elementos',
-            input: 'text',
-            inputPlaceholder: 'Documento de la persona a ceder elementos',
-            showCancelButton: true,
-            confirmButtonText: 'Ceder',
-            confirmButtonColor: '#007BFF',
-            cancelButtonText: 'Cancelar',
-            cancelButtonColor: '#81d4fa',
-            preConfirm: (cedido) => {
-                if (!cedido) {
-                    Swal.showValidationMessage('Debe ingresar un documento.');
-                }
-                return cedido;
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const cedidoDocumento = result.value;
+    // const handleCederAll = () => {
+    //     Swal.fire({
+    //         title: 'Ceder todos los elementos',
+    //         input: 'text',
+    //         inputPlaceholder: 'Documento de la persona a ceder elementos',
+    //         showCancelButton: true,
+    //         confirmButtonText: 'Ceder',
+    //         confirmButtonColor: '#007BFF',
+    //         cancelButtonText: 'Cancelar',
+    //         cancelButtonColor: '#81d4fa',
+    //         preConfirm: (cedido) => {
+    //             if (!cedido) {
+    //                 Swal.showValidationMessage('Debe ingresar un documento.');
+    //             }
+    //             return cedido;
+    //         }
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             const cedidoDocumento = result.value;
     
-                setSelectedItems((prevItems) =>
-                    prevItems.map((item) =>
-                        item.fecha_entregaFormato
-                            ? { ...item, manualStatus: 'cedido', estado: 'cedido', cedido: cedidoDocumento }
-                            : item
-                    )
-                );
-            }
-        });
-    };
+    //             setSelectedItems((prevItems) =>
+    //                 prevItems.map((item) =>
+    //                     item.fecha_entregaFormato
+    //                         ? { ...item, manualStatus: 'cedido', estado: 'cedido', cedido: cedidoDocumento }
+    //                         : item
+    //                 )
+    //             );
+    //         }
+    //     });
+    // };
     
     useEffect(() => {
         const fetchExistingLoan = async () => {
@@ -428,14 +428,14 @@ export const FormAgregarEditarPrestamo = () => {
                     >
                         Consumir Todo
                     </button>
-                    <button
+                    {/* <button
                         type="button"
                         className="consume-button"
                         onClick={handleCederAll} // Cambiar la función
                         disabled={selectedItems.length<1}
                     >
                         Ceder Todo
-                    </button>
+                    </button> */}
                 </div>
             </div>
         </div>

@@ -4,10 +4,10 @@ import { authenticate, verifyType, verifyRole, verifyArea } from '../middlewares
 
 const router = Router();
 
-router.get('/:idarea', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), verifyArea, getAreaById);
-router.get('/', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['admin', 'contratista', 'practicante', 'instructor']),  getAllAreas);
-router.post('/', authenticate, verifyType(['administrador']), verifyRole(['admin']), verifyArea, createArea);
-router.put('/:idarea', authenticate, verifyType(['administrador']), verifyRole(['admin']), updateArea);
-router.delete('/:idarea', authenticate, verifyType(['administrador']), verifyRole(['admin', 'contratista', 'practicante']), deleteArea);
+router.get('/:idarea', authenticate, verifyType(['administrador']), verifyRole(['supervisor']), verifyArea, getAreaById);
+router.get('/', authenticate, verifyType(['administrador', 'cliente']), verifyRole(['supervisor', 'instructor', 'admin']),  getAllAreas);
+router.post('/', authenticate, verifyType(['administrador']), verifyRole(['supervisor']), createArea);
+router.put('/:idarea', authenticate, verifyType(['administrador']), verifyRole(['supervisor']), updateArea);
+router.delete('/:idarea', authenticate, verifyType(['administrador']), verifyRole(['supervisor']), deleteArea);
 
 export default router;

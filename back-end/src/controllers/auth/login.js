@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { Administrador, Cliente, Rol } from '../../models/index.js';
 import generarToken from '../../helpers/tokenHelper.js';
 import {nuevaSesion} from './adminsesionController.js';
+import { encargosHoy } from '../encargoController.js';
 
 //Login 
 const login = async (req, res) => {
@@ -31,12 +32,26 @@ const login = async (req, res) => {
           nuevaSesion(documento);
 
           const token = generarToken(id, type, role, area);
+          const today = new Date().toISOString().split('T')[0]; 
+          const encargosDia = await encargosHoy(today,area); 
 
-          res.send({
-            documento: id,
-            tipo: type,
-            token
-          });
+          if (encargosDia.length > 0) {
+              // Si hay encargos, puedes incluir esta información en la respuesta
+              res.send({
+                  documento: id,
+                  tipo: type,
+                  token,
+                  tieneEncargos: true, // Indica que hay encargos
+                  encargos: encargosDia // Opcional: puedes enviar los detalles de los encargos
+              });
+          } else {
+              res.send({
+                  documento: id,
+                  tipo: type,
+                  token,
+                  tieneEncargos: false // Indica que no hay encargos
+              });
+          }
 
         }
 
@@ -78,7 +93,7 @@ const login = async (req, res) => {
       }
       
     } catch (error) {
-
+      console.log(error)
       res.status(500).json({ mensaje: 'Error en el login, por favor vuelva a intentarlo'});
 
     }

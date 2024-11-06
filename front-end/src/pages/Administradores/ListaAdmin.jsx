@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useContext } from 'react';
+import { MediosContext } from '@/Context';
 import useGetData from '@/hooks/useGetData';
 import useUpdate from '@/hooks/useUpdate';
 import ListComponent from '@/components/listas/ListComponent';
@@ -6,6 +8,7 @@ import ModalComponent from '@/components/listas/Modal';
 import useDeleteData from '@/hooks/useDeleteData';
 
 const Admin = () => {
+    const { area, role } = useContext(MediosContext); 
     const { data } = useGetData(['admins']);
     const { updateEntity } = useUpdate('/admins', '/administrador/lista');
     const [selectedAdmin, setSelectedAdmin] = useState(null);
@@ -15,7 +18,7 @@ const Admin = () => {
     const [documento, setIdadmin] = useState(null);
     const { deleteData, data: deleted, isLoading, error } = useDeleteData(`admins/${documento}`, '/administrador/lista');
 
-    const columns = ['Documento', 'Nombre', 'Correo', 'Número', 'Tipo', 'Área', ''];
+    const columns = ['Documento', 'Nombre', 'Correo', 'Número', 'Tipo', ''];
 
     const renderRow = (admin) => (
         <tr key={admin.documento} className="border-b">
@@ -24,7 +27,6 @@ const Admin = () => {
             <td className="px-4 py-2">{admin.correo}</td>
             <td className="px-4 py-2">{admin.numero}</td>
             <td className="px-4 py-2">{admin.tipo}</td>
-            <td className="px-4 py-2">{admin.areas_idarea}</td>
             <td className="px-4 py-2">
                 <button onClick={() => openModal(admin, admin.documento)} className="bg-black text-white px-4 py-2 rounded-md">
                     Ver
@@ -66,8 +68,21 @@ const Admin = () => {
         label: area.nombre, // O el campo adecuado para el nombre del rol
     }));
 
+    const tipeOptions = [
+        { label: 'Administrador', value: 'admin' },
+        { label: 'Practicante', value: 'practicante' },
+        { label: 'Contratista', value: 'contratista' }
+    ]
+
+    if (role === 'supervisor') {
+        tipeOptions.push({
+            label: 'Supervisor',
+            value: 'supervisor'
+        })
+    }
+
     const fields = [
-        { label: 'Documento', name: 'documento' },
+        { label: 'Documento', name: 'documento', readOnly: true },
         { label: 'Nombre', name: 'nombre' },
         { label: 'Correo', name: 'correo' },
         { label: 'Número', name: 'numero' },
@@ -75,13 +90,19 @@ const Admin = () => {
             label: 'Tipo', 
             name: 'tipo', 
             type: 'select', // Indicamos que es un select
-            options: [ // Agregamos las opciones
-                { label: 'Administrador', value: 'admin' },
-                { label: 'Practicante', value: 'practicante' },
-                { label: 'Contratista', value: 'contratista' }
-            ]},
-        { label: 'Area', name: 'areas_idarea', type: 'select', options: areaOptions },
+            options: tipeOptions
+        }
     ];
+
+    // Agregar el campo del área solo si areas_idarea es 0
+    if (area === 0 && role === 'supervisor') {
+        fields.push({
+            label: 'Área',
+            name: 'areas_idarea',
+            type: 'select',
+            options: areaOptions,
+        });
+    }
 
     return (
         <div>
