@@ -91,12 +91,13 @@ const createPrestamoEspecial = async (req, res) => {
             if (err) {
                 return res.status(400).json({ mensaje: 'Error desconocido con el archivo' });
             }
-            // Parsear elementos desde JSON
+            // Parsear elementos desde JSON(Variables de solicitud)
             const elementos = JSON.parse(req.body.elementos);
             const { area, id: adminId } = req.user;
             const { clientes_documento, fecha_inicio, fecha_fin } = req.body;
             const archivo = req.file ? req.file.filename : null;
 
+            //Verificación de Cliente y Archivo
             const clienteExists = await Cliente.findOne({where: {documento: clientes_documento}});
             if (!clienteExists || clientes_documento == '') {
                 return res.status(400).json({ mensaje: 'La persona no se encuentra registrada'})
@@ -105,7 +106,8 @@ const createPrestamoEspecial = async (req, res) => {
             if (!archivo) {
                 return res.status(400).json({mensaje: 'El archivo es obligatorio'});
             }
-
+            
+            //Creación del Préstamo Especial
             const prestamoEspecial = await PrestamoEspecial.create({
                 clientes_documento: clientes_documento,
                 fecha_inicio: fecha_inicio,
@@ -157,6 +159,8 @@ const createPrestamoEspecial = async (req, res) => {
                 createRecord(area,'prestamo', idprestamo, adminId, prestamoEspecial.clientes_documento, idelemento, elementoEncontrado.descripcion, cantidad, observaciones, 'actual', 'PRESTAMO ESPECIAL ELEMENTO'); 
             }
             
+            //Este Actualiza el estado del Prestamo
+
             const elementosDelPrestamo = await ElementoHasPrestamoEspecial.findAll({ where: { prestamosespeciales_idprestamo: prestamoEspecial.idprestamo }});
             const estadosDeElementos = elementosDelPrestamo.map((elemento) => elemento.estado);
             if(!estadosDeElementos.includes('actual')) {
