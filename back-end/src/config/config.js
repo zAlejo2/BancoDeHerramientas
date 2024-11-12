@@ -3,7 +3,7 @@ dotenv.config();
 
 const config = {
     app: {
-        port: process.env.PORT  
+        port: process.env.PORT
     }, 
     jwt: {
         secret: process.env.JET_SECRET,
@@ -13,7 +13,8 @@ const config = {
         host: process.env.MYSQL_HOST,
         user: process.env.MYSQL_USER,
         password: process.env.MYSQL_PASSWORD,  
-        database: process.env.MYSQL_DATABASE 
+        database: process.env.MYSQL_DATABASE, 
+        port: process.env.MYSQL_PORT || 3306
     },
     email: {
         user: process.env.EMAIL_USER,
