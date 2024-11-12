@@ -162,14 +162,14 @@ const getAllConsumptions = async (req, res) => {
 }
 
 // REGISTRAR CONSUMO DESDE PRESTAMO
-const recordConsumption = async (cantidad, observaciones, idelemento, documento, area, adminId, t) => {
-    const cliente = await Cliente.findOne({ where: {documento: documento}, transaction: t});
+const recordConsumption = async (cantidad, observaciones, idelemento, documento, area, adminId, tipoPrestamo) => {
+    const cliente = await Cliente.findOne({ where: {documento: documento}});
     const consumo = await Consumo.create({
         clientes_documento: documento,
         areas_idarea: area,
-    }, { transaction: t });
+    });
 
-    const elemento = await Elemento.findOne({where: { idelemento }, transaction: t});
+    const elemento = await Elemento.findOne({where: { idelemento }});
 
     await ElementoHasConsumo.create({
         elementos_idelemento: idelemento,
@@ -178,17 +178,13 @@ const recordConsumption = async (cantidad, observaciones, idelemento, documento,
         observaciones,
         fecha: obtenerHoraActual(),
         administradores_documento: adminId
-    }, { transaction: t });
+    });
 
-    await Elemento.update(
-        {
-            cantidad: elemento.cantidad - cantidad,
-            estado: elemento.disponibles - cantidad <= elemento.minimo ? 'agotado' : 'disponible'
-        },
-        { where: { idelemento }, transaction: t}
-    );
-
-    createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, cliente.nombre, idelemento, elemento.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO', t);
+    if (tipoPrestamo === 'co') {
+        createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, cliente.nombre, idelemento, elemento.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PRESTAMO');
+    } else if ( tipoPrestamo === 'es') {
+        createRecord(area, 'consumo', consumo.idconsumo, adminId, documento, cliente.nombre, idelemento, elemento.descripcion, cantidad, observaciones, 'consumo', 'CONSUMIR ELEMENTO DESDE PE');
+    }
 };
 
 //Obtener datos del cliente para mostrar en el consumo

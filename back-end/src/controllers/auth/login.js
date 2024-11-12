@@ -3,6 +3,7 @@ import { Administrador, Cliente, Rol } from '../../models/index.js';
 import generarToken from '../../helpers/tokenHelper.js';
 import {nuevaSesion} from './adminsesionController.js';
 import { encargosHoy } from '../encargoController.js';
+import { prestamosesManana } from '../prestamoEspecialController.js';
 
 //Login 
 const login = async (req, res) => {
@@ -35,26 +36,50 @@ const login = async (req, res) => {
           const today = new Date().toISOString().split('T')[0]; 
           const encargosDia = await encargosHoy(today,area); 
 
-          if (encargosDia.length > 0) {
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1); // Aumenta un día a la fecha actual
+          const tomorrowDate = tomorrow.toISOString().split('T')[0]; // Convierte a formato YYYY-MM-DD
+          const prestamosManana = await prestamosesManana(tomorrowDate, area);
+
+          if (encargosDia.length > 0 && prestamosManana.length> 0) {
               // Si hay encargos, puedes incluir esta información en la respuesta
               res.send({
                   documento: id,
                   tipo: type,
                   token,
                   tieneEncargos: true, // Indica que hay encargos
-                  encargos: encargosDia // Opcional: puedes enviar los detalles de los encargos
+                  tienePrestamos: true,
+                  encargos: encargosDia, // Opcional: puedes enviar los detalles de los encargos
+                  prestamosEs: prestamosManana
               });
+          } else if (encargosDia.length > 0) {
+            res.send({
+                documento: id,
+                tipo: type,
+                token,
+                tieneEncargos: true, // Indica que hay encargos
+                tienePrestamos: false,
+                encargos: encargosDia, // Indica que no hay encargos
+            });
+          } else if (prestamosManana.length > 0) {
+            res.send({
+                documento: id,
+                tipo: type,
+                token,
+                tieneEncargos: false, // Indica que hay encargos
+                tienePrestamos: true,
+                prestamosEs: prestamosManana, // Indica que no hay encargos
+            });
           } else {
-              res.send({
-                  documento: id,
-                  tipo: type,
-                  token,
-                  tieneEncargos: false // Indica que no hay encargos
-              });
+            res.send({
+                documento: id,
+                tipo: type,
+                token,
+                tieneEncargos: false, // Indica que hay encargos
+                tienePrestamos: false
+          });
           }
-
         }
-
       } else if (client) {
 
         const isClientMatch = await bcrypt.compare(contrasena, client.contrasena);

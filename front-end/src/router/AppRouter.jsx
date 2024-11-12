@@ -26,6 +26,7 @@ import HistorialMoras from '@/pages/Moras/HistorialMoras';
 import Danos from '@/pages/Daños/ListaDanos';
 import HistorialDanos from '@/pages/Daños/HistorialDanos';
 import HistorialTodo from '@/pages/Historial/HistorialTodo';
+import HistorialPrestamosEs from '@/pages/Prestamos_Esp/HistorialPrestamosEs';
 import Areas from '@/pages/Areas/ListaAreas';
 import { FormCrearReintegro } from '@/pages/Reintegros/FormCrearReintegro';
 import Reintegros from '@/pages/Reintegros/ListaReintegros';
@@ -34,6 +35,8 @@ import { FormCrearTraspaso } from '@/pages/Traspasos/FormCrearTraspaso';
 import { FormRegistrarPrestamo_Es} from '../pages/Prestamos_Esp/FormRegistrarPrestamo_Es';
 import { FormElegirArea } from '@/pages/Encargos/FormElegirArea';
 import { FormCrearEncargo } from '@/pages/Encargos/FormCrearEncargo';
+import PrestamosEs from '@/pages/Prestamos_Esp/ListaPrestamosEs';
+import DetallePrestamoEs from '@/pages/Prestamos_Esp/DetallePrestamoEs';
 import ListaEncargosCliente from '@/pages/Encargos/ListaEncargosCliente';
 import ListaEncargosAdmin from '@/pages/Encargos/ListaEncargosAdmin';
 import HistorialEncargos from '@/pages/Encargos/HistorialEncargos';
@@ -207,10 +210,34 @@ export const AppRoutes = ({tokenSession}) => {
             )
         },
         {
-            path: '/Prestamos_Esp',
+            path: '/prestamos_esp',
             element: (
-                <ProtectedRoute>
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
                     <FormRegistrarPrestamo_Es/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/prestamos_esp/lista',
+            element: (
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <PrestamosEs/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/prestamosEs/:idprestamo/detalle',
+            element: (
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <DetallePrestamoEs/>
+                </ProtectedRoute>
+            )
+        },
+        {
+            path: '/prestamos_esp/historial',
+            element: (
+                <ProtectedRoute allowedRoles={['admin', 'contratista', 'practicante']}>
+                    <HistorialPrestamosEs/>
                 </ProtectedRoute>
             )
         },

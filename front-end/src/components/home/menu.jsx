@@ -62,7 +62,9 @@ export const Menu = ({ children }) => {
             to: "/prestamos_esp", 
             roles: ["admin", "contratista", "practicante"],
             subMenu: [
-                { name: "Formulario", to: "/prestamos_esp", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Registrar Prestamo_Esp", to: "/prestamos_esp", roles: ["admin", "contratista", "practicante"]}, 
+                { name: "Lista Prestamos_Esp", to: "/prestamos_esp/lista", roles: ["admin", "contratista", "practicante"]},
+                { name: "Historial Prestamos_Esp", to: "/prestamos_esp/historial", roles: ["admin", "contratista", "practicante"]}
             ]
         },
         { 

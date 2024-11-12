@@ -5,7 +5,7 @@ import { createRecord } from './historialController.js';
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 // CREAR UNA MORA DESDE PRÉSTAMO
-const createMora = async (cantidad, observaciones, idelemento, documento, area, t) => {
+const createMora = async (cantidad, observaciones, idelemento, documento, area) => {
     const mora= await Mora.create({
         cantidad: cantidad,
         fecha: obtenerHoraActual(),
@@ -13,7 +13,7 @@ const createMora = async (cantidad, observaciones, idelemento, documento, area, 
         elementos_idelemento: idelemento,
         clientes_documento: documento,
         areas_idarea: area
-    }, { transaction: t })
+    })
     return mora;
 }
 

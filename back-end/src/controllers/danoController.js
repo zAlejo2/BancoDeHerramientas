@@ -5,7 +5,7 @@ import { createRecord } from './historialController.js';
 const obtenerHoraActual = () => ajustarHora(new Date());
  
 // CREAR DAÑO
-const createDano = async (cantidad, observaciones, idelemento, documento, area, t) => {
+const createDano = async (cantidad, observaciones, idelemento, documento, area) => {
     const dano= await Dano.create({
         cantidad: cantidad,
         fecha: obtenerHoraActual(),
@@ -13,7 +13,7 @@ const createDano = async (cantidad, observaciones, idelemento, documento, area, 
         elementos_idelemento: idelemento,
         clientes_documento: documento,
         areas_idarea: area
-    }, { transaction: t })
+    })
     return dano;
 }
 

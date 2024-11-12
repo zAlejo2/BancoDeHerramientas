@@ -12,12 +12,14 @@ import { MdManageHistory } from "react-icons/md";
 
 export const HomePage = () => {
   const { data: cantidadPrestamo } = useGetData(["prestamos/todosPrestamos"]);
+  const { data: cantidadPrestamoEs } = useGetData(["prestamosEs/todosEspeciales"]);
   const { data: cantidadMora } = useGetData(["moras"]);
   const { data: cantidadDano } = useGetData(["danos"]);
   const { data: cantidadEncargo } = useGetData(["encargos/admin"]);
   const { data: prestamosData, error, loading } = useGetData(["historial"]);
   const prestamos = prestamosData['historial'] || [];
   const cantidadPrestamos = cantidadPrestamo['prestamos/todosPrestamos'] || [];
+  const cantidadPrestamosEs = cantidadPrestamoEs['prestamosEs/todosEspeciales'] || [];
   const cantidadMoras = cantidadMora['moras'] || [];
   const totalMoras = cantidadMoras.length;
   const cantidadDanos = cantidadDano['danos'] || [];
@@ -46,6 +48,10 @@ export const HomePage = () => {
     return cantidadPrestamos.filter(prestamo => prestamo.estado === state).length;
   };
 
+  const countPrestamosEsByState = (state) => {
+    return cantidadPrestamosEs.filter(prestamo => prestamo.estado === state).length;
+  };
+
   const latestPrestamos = getLatestPrestamos();
 
   return (
@@ -57,6 +63,8 @@ export const HomePage = () => {
             <CardTitle>
               {item === "Préstamos" 
                 ? countPrestamosByState("actual") 
+                : item === "Préstamos Especiales" 
+                ? countPrestamosEsByState("actual")
                 : item === "Moras" 
                 ? totalMoras 
                 : item === "Daños"
@@ -102,7 +110,7 @@ export const HomePage = () => {
                         <TableRow key={prestamo.id_historial}>
                           <TableCell>{prestamo.cliente_id}</TableCell>
                           <TableCell>{prestamo.cliente_nombre}</TableCell>
-                          <TableCell>{prestamo.elemento_nombre}</TableCell>
+                          <TableCell>{prestamo.elemento_descripcion}</TableCell>
                           <TableCell>{prestamo.accion}</TableCell>
                           <TableCell>{prestamo.estado}</TableCell>
                         </TableRow>

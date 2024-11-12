@@ -171,7 +171,7 @@ export const FormCrearTraspaso = () => {
                                     </td>
                                 </tr>
                             ))}
-                            <tr><td colSpan="6"><label className="font-bold"> Ingrese los siguentes datos para hacer el traspaso del elemento</label></td></tr>
+                            <tr><td colSpan="6"><label className="font-bold"> Ingrese los siguentes datos para hacer el traspaso</label></td></tr>
                             <tr>
                                 <td colSpan="3">
                                     <input type="file" onChange={handleFileChange} required/>

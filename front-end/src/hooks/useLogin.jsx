@@ -31,10 +31,24 @@ const useLogin = (url, inputs) => {
                 setTokenSession(token);
 
                 // Verifica si hay encargos
-                if (response.data.tieneEncargos) {
+                if (response.data.tieneEncargos && response.data.tienePrestamos) {
+                    Swal.fire({
+                        title: "Recordatorio de Encargos y Préstamos Especiales",
+                        text: "Tienes encargos para hoy. Tienes préstamos especiales prontos a vencer póliza.",
+                        icon: "info",
+                        confirmButtonColor: '#007BFF',
+                    });
+                } else if (response.data.tieneEncargos) {
                     Swal.fire({
                         title: "Recordatorio de Encargos",
                         text: "Tienes encargos para hoy. Recuerda que el sistema no te restringirá el préstamo de estos elementos, por lo que debes tener en cuenta la cantidad que puedes prestar. De la cantidad que originalmente tienes para prestar debes descontar la cantidad de los elementos que aceptaste en los encargos.",
+                        icon: "info",
+                        confirmButtonColor: '#007BFF',
+                    });
+                } else if (response.data.tienePrestamos) {
+                    Swal.fire({
+                        title: "Recordatorio de Préstamos Especiales",
+                        text: "Tienes préstamos especiales que vencen póliza mañana",
                         icon: "info",
                         confirmButtonColor: '#007BFF',
                     });

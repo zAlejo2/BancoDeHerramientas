@@ -25,7 +25,7 @@ const createEncargo = async (req, res) => {
 
         // Comparar las fechas (solo la parte de la fecha, sin la hora)
         if (fechaReclamo < currentDate) {
-            return res.status(400).json({ mensaje: 'No puedes hacer un encargo a una fecha anterior para la actual' });
+            return res.status(400).json({ mensaje: 'No puedes hacer un encargo para una fecha anterior a la actual' });
         }
 
         const existeEncargos = await Encargo.findAll({where: {clientes_documento: clientes_documento}});

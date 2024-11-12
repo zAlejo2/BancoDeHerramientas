@@ -4,7 +4,7 @@ import { ajustarHora, formatFecha } from './auth/adminsesionController.js';
 const obtenerHoraActual = () => ajustarHora(new Date());
 
 // REGISTRAR UN HISTORIAL
-const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, clienteNombre, elementoId, descripcion, Cantidad, Observaciones, Estado, Accion, t) => {
+const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, clienteNombre, elementoId, descripcion, Cantidad, Observaciones, Estado, Accion) => {
     try{
 
         await Historial.create({
@@ -21,7 +21,7 @@ const createRecord = async (areaId, tipoEntidad, entidadId, adminId, clienteId, 
             estado: Estado,
             accion: Accion,
             fecha_accion: obtenerHoraActual()
-        }, { transaction: t });
+        });
     } catch(error) {
         console.log(error)
     }      
@@ -211,4 +211,28 @@ const getAllRecordReintegro = async (req, res) => {
     }
 };
 
-export { getAllRecord, createRecord, getAllRecordEncargo, getAllRecordPrestamo, getAllRecordMora, getAllRecordDano, getAllRecordReintegro, getAllRecordTraspaso, getAllRecordConsumo };
+
+// OBTENER TODOS LOS REGISTROS DEL HISTORIAL DE LOS REINTEGROS
+const getAllRecordPrestamoEs = async (req, res) => {
+    try {
+        const area = req.area; 
+        const historiales = await Historial.findAll({ where: { area_id: area, tipo_entidad: 'prestamoes' }, order: [['fecha_accion', 'DESC']] });
+
+        const historialFormateado = await Promise.all(historiales.map(async (historial) => {
+
+            const fechaAccion = formatFecha(historial.fecha_accion, 5);
+
+            return {
+                ...historial.dataValues,
+                fecha_accion: fechaAccion,
+            };
+        }));
+
+        res.json(historialFormateado); 
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ mensaje: 'Error al obtener el historial', error });
+    }
+};
+
+export { getAllRecord, createRecord, getAllRecordEncargo, getAllRecordPrestamo, getAllRecordMora, getAllRecordDano, getAllRecordReintegro, getAllRecordTraspaso, getAllRecordConsumo, getAllRecordPrestamoEs };
