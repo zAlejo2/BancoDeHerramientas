@@ -52,17 +52,17 @@ export const AppRoutes = ({tokenSession}) => {
         { 
             path: '/', 
             element: (
-                // <LoginRoute>
+                <LoginRoute>
                     <Login /> 
-                // </LoginRoute>
+                </LoginRoute>
             )
         },
         { 
             path: '/login', 
             element: (
-                // <LoginRoute>
+                <LoginRoute>
                     <Login /> 
-                // </LoginRoute>
+                </LoginRoute>
             )
         },
         {
