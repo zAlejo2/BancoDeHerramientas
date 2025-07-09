@@ -13,6 +13,7 @@ function generarToken(userId, userType, userRole, areaId) {
     const expiresIn = userType === 'administrador' ? '8h' : '30m';
 
     const secretKey = config.jwt.secret;
+     console.log("CLAVE SECRETA JWT:", secretKey);
 
     return jwt.sign(payload, secretKey, {expiresIn});
 }
