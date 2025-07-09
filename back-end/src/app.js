@@ -71,7 +71,8 @@ sequelize.sync()
   .catch((error) => console.error('Error syncing models:', error));
 
 // configuración 
-app.set('port', config.app.port);
+app.set('port', process.env.PORT || 7000);
+
 
 export default app;
 
