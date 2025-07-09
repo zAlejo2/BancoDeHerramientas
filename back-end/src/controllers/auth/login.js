@@ -118,7 +118,8 @@ const login = async (req, res) => {
       }
       
     } catch (error) {
-      console.log(error)
+      console.error('Error en login:', error.message, error.stack);
+
       res.status(500).json({ mensaje: 'Error en el login, por favor vuelva a intentarlo'});
 
     }
